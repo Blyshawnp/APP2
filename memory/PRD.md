@@ -41,7 +41,24 @@ User uploaded an Electron-based Mock Testing Suite app (FastAPI + vanilla HTML/C
 - Sidebar navigation, ticker bar, Discord post popup
 - Dark/Light theme support
 
-### Code Quality Fixes Applied (April 2026)
+### Settings Page Complete Rebuild (April 2026)
+- 10 tabs: General, Shows, Call Types, Callers, Sup Reasons, Discord, Payment, Gemini AI, Google Sheets, Calendar
+- Shows: Editable table with Name, One-Time, Monthly, Gift + Add/Remove/Reset
+- Call Types: Editable list with "Use Own/Custom" always appended
+- Callers: Advanced table with 3 category sub-tabs (New Donors, Existing Members, Increase Sustaining) + state dropdowns
+- Sup Reasons: Editable list with "Use Own/Other" always appended
+- Discord: 15 trigger/message pairs with add/remove
+- General: Ticker Doc URL, Auto-Updater Doc URL placeholders
+- All data persisted to MongoDB via Save Settings
+
+### UX Improvements (April 2026)
+- Buzz sound on auto-fail buttons (NC/NS, Stopped Responding, Not Ready) via Web Audio API
+- Tooltips on all interactive buttons with descriptive hover text
+- Sidebar: Sheets link conditionally hidden when Google Sheets disabled
+- Newbie Shift: Time input auto-formats with colon (H:MM), helper text
+- Google Calendar events titled "Supervisor Test Call - [First Name Last Initial]"
+- Right-click copy/paste enabled on all form fields
+- Real data from default_data.py (shows, callers, call types, discord templates)
 - **XSS**: All `dangerouslySetInnerHTML` uses sanitized via DOMPurify; `innerHTML` replaced with safe DOM methods
 - **Hook Dependencies**: All `useEffect`/`useCallback`/`useMemo` hooks have complete dependency arrays; cancellation tokens for async effects
 - **Component Complexity**: TechIssueDialog split into 13 focused sub-components; CallsPage business logic extracted into helper functions; App routing extracted into PageRouter component

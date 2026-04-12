@@ -334,6 +334,18 @@ async def lifespan(app: FastAPI):
     if not existing:
         await db.settings.insert_one({"_id": "app_settings", **DEFAULT_SETTINGS})
         logger.info("[STARTUP] Created default settings")
+    else:
+        # Migrate: backfill any missing fields from defaults
+        updates = {}
+        for key, val in DEFAULT_SETTINGS.items():
+            if key not in existing:
+                updates[key] = val
+        # Migrate old 3-template discord to new 15-template list
+        if len(existing.get("discord_templates", [])) < 5:
+            updates["discord_templates"] = DISCORD_TEMPLATES
+        if updates:
+            await db.settings.update_one({"_id": "app_settings"}, {"$set": updates})
+            logger.info(f"[STARTUP] Migrated settings: {list(updates.keys())}")
     logger.info(f"[STARTUP] Mock Testing Suite v{APP_VERSION}")
     yield
     client.close()

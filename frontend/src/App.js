@@ -91,7 +91,13 @@ function App() {
     return () => clearInterval(interval);
   }, []);
 
-  const navigate = useCallback((p) => setPage(p), []);
+  const navigate = useCallback((p) => {
+    setPage(p);
+    // Refetch settings when leaving settings page to sync sidebar state
+    if (page === 'settings') {
+      api.getSettings().then(s => setSettings(s)).catch(() => {});
+    }
+  }, [page]);
 
   const handleLinkClick = useCallback((key) => {
     if (key === 'discord') { setDiscordOpen(true); return; }
