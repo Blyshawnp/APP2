@@ -111,15 +111,15 @@ User uploaded an Electron-based Mock Testing Suite app (FastAPI + vanilla HTML/C
 - None — all core features working
 
 ### P1 (Important)
-- Gemini AI integration for professional summary rewriting
-- Google Sheets backup integration
-- Full end-to-end session flow testing with real data
+- Gemini AI actual API integration for professional summary rewriting
+- Google Sheets backup integration with header row locking
+- Sup Transfer Only flow (search history, autofill basics)
+- Form field mapping for Cert Test Call Results Form (12 fields mapped)
 
 ### P2 (Nice to Have)
-- Tutorial overlay on first launch after setup
+- Visual tutorial with screenshots overlay
 - Session draft auto-recovery
 - Export session history as CSV
-- Customizable caller data in settings
 
 ## Next Tasks
 1. User testing of full session flow
