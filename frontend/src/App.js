@@ -172,8 +172,8 @@ function App() {
 function DiscordModal({ settings, onClose }) {
   const templates = settings?.discord_templates || [];
   return (
-    <div className="modal-overlay open" onClick={e => { if (e.target === e.currentTarget) onClose(); }} data-testid="discord-modal">
-      <div className="modal">
+    <div className="modal-overlay open" onClick={e => { if (e.target.classList.contains('modal-overlay')) onClose(); }} data-testid="discord-modal">
+      <div className="modal" onClick={e => e.stopPropagation()}>
         <div className="modal-header">
           <h2>Discord Post Templates</h2>
           <button className="modal-close" onClick={onClose}>&times;</button>
