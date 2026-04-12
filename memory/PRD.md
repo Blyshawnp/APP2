@@ -59,6 +59,17 @@ User uploaded an Electron-based Mock Testing Suite app (FastAPI + vanilla HTML/C
 - Google Calendar events titled "Supervisor Test Call - [First Name Last Initial]"
 - Right-click copy/paste enabled on all form fields
 - Real data from default_data.py (shows, callers, call types, discord templates)
+
+### Scenario & UI Improvements (April 2026 - Iteration 3)
+- Sidebar: Colorful emoji icons for all nav items, styled action buttons (Discord Post purple, Cert Spreadsheet gray, Sheets green conditional)
+- Call Scenario Card: Dynamic with caller demographics, randomized Phone Type (Mobile/Landline), SMS Opt-In (Mobile only), E-Newsletter, $6 Shipping, CC Processing Fee (non-one-time only), Regenerate button
+- Sup Transfer Scenario: Fixed grammar ("was hung up on" not "was wants to cancel"), added randomized variables
+- Pronouns: "Optional — for accurate summaries" helper text
+- Discord Post popup: Searchable with filter input
+- Sound effects: Error tone on auto-fail buttons, tada on form fill
+- Settings: Removed Google Docs Integration fields, added Gemini AI prompt editors (coaching + fail prompts) when enabled
+- Google Docs ticker/updater URLs kept as code-only placeholders in backend
+
 - **XSS**: All `dangerouslySetInnerHTML` uses sanitized via DOMPurify; `innerHTML` replaced with safe DOM methods
 - **Hook Dependencies**: All `useEffect`/`useCallback`/`useMemo` hooks have complete dependency arrays; cancellation tokens for async effects
 - **Component Complexity**: TechIssueDialog split into 13 focused sub-components; CallsPage business logic extracted into helper functions; App routing extracted into PageRouter component
