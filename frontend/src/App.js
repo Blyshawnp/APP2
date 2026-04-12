@@ -116,7 +116,7 @@ function App() {
         <div className="app-shell">
           <aside className="sidebar" data-testid="sidebar">
             <div className="sidebar-brand">
-              <div className="sidebar-logo">MTS</div>
+              <img src="/logo.png" alt="ACD" className="sidebar-logo-img" />
               <div className="sidebar-title">Mock Testing<br />Suite</div>
               <div className="sidebar-version">v3.0</div>
             </div>

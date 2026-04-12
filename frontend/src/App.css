@@ -78,6 +78,7 @@ a { color: var(--color-primary); text-decoration: none; }
 .sidebar { width: var(--sidebar-width); min-width: var(--sidebar-width); background: var(--bg-sidebar); display: flex; flex-direction: column; user-select: none; overflow-y: auto; overflow-x: hidden; }
 .sidebar-brand { padding: var(--space-lg) var(--space-md) var(--space-sm); text-align: center; border-bottom: 1px solid rgba(255,255,255,0.06); }
 .sidebar-logo { width: 48px; height: 48px; margin: 0 auto var(--space-sm); border-radius: var(--radius-md); background: rgba(255,255,255,0.08); display: flex; align-items: center; justify-content: center; color: #60a5fa; font-weight: 800; font-size: 14px; letter-spacing: 1px; }
+.sidebar-logo-img { width: 56px; height: 56px; margin: 0 auto var(--space-sm); border-radius: var(--radius-md); object-fit: contain; display: block; }
 .sidebar-title { color: #fff; font-size: var(--font-size-lg); font-weight: 700; line-height: 1.25; }
 .sidebar-version { font-size: var(--font-size-xs); color: rgba(255,255,255,0.35); margin-top: 2px; font-weight: 600; }
 .sidebar-nav { flex: 1; display: flex; flex-direction: column; gap: 1px; padding: var(--space-sm) 0; }
@@ -204,7 +205,12 @@ select { cursor: pointer; }
 .recent-row:hover { background: var(--bg-card-hover); }
 .recent-date { min-width: 160px; font-size: var(--font-size-xs); color: var(--text-tertiary); font-family: var(--font-mono); }
 .recent-name { flex: 1; font-weight: 600; font-size: var(--font-size-sm); }
-.home-actions { display: flex; align-items: center; justify-content: center; gap: var(--space-md); margin-top: var(--space-2xl); flex-wrap: wrap; }
+.home-actions { display: flex; align-items: center; justify-content: center; gap: var(--space-md); margin-top: var(--space-lg); flex-wrap: wrap; }
+.home-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 32px; border: none; border-radius: var(--radius-md); font-family: var(--font-body); font-size: var(--font-size-base); font-weight: 700; color: white; cursor: pointer; transition: all var(--transition-fast); min-width: 200px; }
+.home-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); filter: brightness(1.1); }
+.home-btn-start { background: #2563eb; }
+.home-btn-sup { background: #16a34a; }
+.home-btn-history { background: #5f6368; }
 
 /* Split Layout */
 .split-layout { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg); margin-bottom: var(--space-lg); }

@@ -209,6 +209,12 @@ export default function CallsPage({ onNavigate }) {
       if (!hasCheck) { await modal.warning('Notice', 'You must select at least one Fail Reason.'); return; }
       if (fails['Other'] && !failNotes.trim()) { await modal.warning('Notice', 'You selected "Other" — please provide notes.'); return; }
     }
+    // Coaching validation - warn if no coaching selected
+    const hasCoaching = Object.values(coaching).some(v => v);
+    if (!hasCoaching) {
+      const cont = await modal.confirm('No Coaching', 'You did not select any coaching for this call. Continue anyway?');
+      if (!cont) return;
+    }
 
     const callData = {
       call_num: callNum, result, type: callSetup.type, show: callSetup.show,
@@ -223,8 +229,11 @@ export default function CallsPage({ onNavigate }) {
     if (routeResult === 'next') {
       setCallNum(prev => prev + 1);
       resetCall();
+      // Scroll to top so tester sees they moved to next call
+      const el = document.querySelector('[data-testid="page-content"]');
+      if (el) el.scrollTo({ top: 0, behavior: 'smooth' });
     }
-  }, [result, fails, failNotes, callNum, callSetup, currentCaller, donations, coaching, coachNotes, modal, onNavigate, resetCall]);
+  }, [result, fails, failNotes, coaching, callNum, callSetup, currentCaller, donations, coachNotes, modal, onNavigate, resetCall]);
 
   return (
     <div data-testid="calls-page">

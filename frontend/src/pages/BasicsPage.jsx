@@ -107,11 +107,20 @@ export default function BasicsPage({ onNavigate }) {
         </div>
       </div>
       <div className="card" style={{ marginBottom: 8, padding: '16px 24px' }}>
-        <h3 style={{ marginBottom: 8 }}>Headset Requirements</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px 24px', alignItems: 'center' }}>
-          <div><label className="text-sm font-bold text-muted" style={{ display: 'block', marginBottom: 4 }}>USB Headset?</label><RadioGroup name="b-usb" value={form.headset_usb} onChange={v => set('headset_usb', v)} /></div>
-          <div><label className="text-sm font-bold text-muted" style={{ display: 'block', marginBottom: 4 }}>Noise Cancelling?</label><RadioGroup name="b-noise" value={form.noise_cancel} onChange={v => set('noise_cancel', v)} /></div>
-          <div><label className="text-sm font-bold text-muted" style={{ display: 'block', marginBottom: 4 }}>Brand / Model</label><input type="text" value={form.headset_brand} onChange={e => set('headset_brand', e.target.value)} placeholder="e.g. Logitech H390" data-testid="basics-brand" /></div>
+        <h3 style={{ marginBottom: 12 }}>Headset Requirements</h3>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <label className="text-sm font-bold" style={{ minWidth: 160 }}>Is the headset USB?</label>
+            <RadioGroup name="b-usb" value={form.headset_usb} onChange={v => set('headset_usb', v)} />
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <label className="text-sm font-bold" style={{ minWidth: 160 }}>Noise Cancelling Mic?</label>
+            <RadioGroup name="b-noise" value={form.noise_cancel} onChange={v => set('noise_cancel', v)} />
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+            <label className="text-sm font-bold" style={{ minWidth: 160 }}>Brand / Model</label>
+            <input type="text" value={form.headset_brand} onChange={e => set('headset_brand', e.target.value)} placeholder="e.g. Logitech H390" style={{ maxWidth: 280 }} data-testid="basics-brand" />
+          </div>
         </div>
       </div>
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>

@@ -4,15 +4,15 @@ import { useModal } from '../components/ModalProvider';
 
 const TABS = [
   { key: 'general', label: 'General' },
-  { key: 'shows', label: 'Shows' },
-  { key: 'calltypes', label: 'Call Types' },
-  { key: 'callers', label: 'Callers' },
-  { key: 'supreasons', label: 'Sup Reasons' },
-  { key: 'discord', label: 'Discord' },
-  { key: 'payment', label: 'Payment' },
   { key: 'gemini', label: 'Gemini AI' },
   { key: 'sheets', label: 'Google Sheets' },
   { key: 'calendar', label: 'Calendar' },
+  { key: 'payment', label: 'Payment' },
+  { key: 'calltypes', label: 'Call Types' },
+  { key: 'shows', label: 'Shows' },
+  { key: 'callers', label: 'Callers' },
+  { key: 'supreasons', label: 'Sup Reasons' },
+  { key: 'discord', label: 'Discord' },
 ];
 
 const US_STATES = ['AL','AK','AZ','AR','CA','CO','CT','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY','DC'];

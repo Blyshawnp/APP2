@@ -97,6 +97,11 @@ export default function SupTransferPage({ onNavigate }) {
   const handleContinue = async () => {
     if (!result) { await modal.warning('Notice', 'Select PASS or FAIL.'); return; }
     if (result === 'Fail' && !Object.values(fails).some(v => v)) { await modal.warning('Notice', 'Select at least one Fail Reason.'); return; }
+    const hasCoaching = Object.values(coaching).some(v => v);
+    if (!hasCoaching) {
+      const cont = await modal.confirm('No Coaching', 'You did not select any coaching for this transfer. Continue anyway?');
+      if (!cont) return;
+    }
 
     const data = {
       transfer_num: transferNum, result,
@@ -108,7 +113,13 @@ export default function SupTransferPage({ onNavigate }) {
 
     if (transferNum === 1) {
       if (result === 'Pass') { onNavigate('review'); }
-      else { setTransferNum(2); resetTransfer(); }
+      else {
+        setTransferNum(2);
+        resetTransfer();
+        regenSupFlags();
+        const el = document.querySelector('[data-testid="page-content"]');
+        if (el) el.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     } else {
       if (result === 'Fail') {
         const { session } = await api.getCurrentSession();
