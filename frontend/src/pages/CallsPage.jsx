@@ -88,16 +88,6 @@ function ScenarioCard({ currentCaller, callSetup, randFlags, donations, onRegene
   );
 }
 
-function ScenarioVar({ label, value, highlight }) {
-  const isYes = value === 'Yes' || value === 'Mobile';
-  return (
-    <div className="scenario-var">
-      <span className="scenario-var-label">{label}:</span>
-      <span className={`scenario-var-value ${highlight ? 'scenario-highlight' : ''} ${isYes ? 'scenario-yes' : 'scenario-no'}`}>{value}</span>
-    </div>
-  );
-}
-
 async function evaluateCallRouting(session, modal, onNavigate, apiRef) {
   let passes = [];
   let failCount = 0;
