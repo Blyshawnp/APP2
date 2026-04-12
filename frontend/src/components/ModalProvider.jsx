@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, useRef, useEffect } from 'react';
+import DOMPurify from 'dompurify';
 
 const ModalContext = createContext(null);
 
@@ -66,7 +67,7 @@ export function ModalProvider({ children }) {
               <i data-lucide={modal.icon}></i>
             </div>
             <div className="cmodal-title">{modal.title}</div>
-            <div className="cmodal-body" dangerouslySetInnerHTML={{ __html: modal.body }} />
+            <div className="cmodal-body" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(modal.body) }} />
             <div className="cmodal-btns">
               {modal.buttons.map((btn, i) => (
                 <button key={i} className={`btn ${btn.cls}`} onClick={() => closeModal(btn.value)} data-testid={`modal-btn-${i}`}>

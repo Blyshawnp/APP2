@@ -10,13 +10,17 @@ export default function HomePage({ onNavigate }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    let cancelled = false;
     (async () => {
       try {
         const [s, st, h] = await Promise.all([api.getSettings(), api.getHistoryStats(), api.getHistory()]);
-        setSettings(s); setStats(st); setHistory(h || []);
-      } catch (e) { console.error(e); }
-      setLoading(false);
+        if (!cancelled) { setSettings(s); setStats(st); setHistory(h || []); }
+      } catch (_err) {
+        // Home page data load failed — stats remain at defaults
+      }
+      if (!cancelled) setLoading(false);
     })();
+    return () => { cancelled = true; };
   }, []);
 
   if (loading) return <div className="page-loading">Loading...</div>;

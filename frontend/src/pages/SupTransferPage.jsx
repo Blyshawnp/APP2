@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import DOMPurify from 'dompurify';
 import api from '../api';
 import { useModal } from '../components/ModalProvider';
 import TechIssueDialog from '../components/TechIssueDialog';
@@ -40,28 +41,34 @@ export default function SupTransferPage({ onNavigate }) {
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
     (async () => {
       try {
         const [d, s] = await Promise.all([api.getDefaults(), api.getSettings()]);
+        if (cancelled) return;
         setDefaults(d); setSettings(s);
         const { session } = await api.getCurrentSession();
-        if (session) setIsFinal(session.final_attempt || false);
-      } catch {}
+        if (!cancelled && session) setIsFinal(session.final_attempt || false);
+      } catch (err) {
+        // Failed to load transfer setup data — page renders with empty dropdowns
+      }
     })();
+    return () => { cancelled = true; };
   }, []);
 
   const shows = settings.shows || defaults.shows || [];
-  const callers = settings.donors_existing || defaults.donors_existing || [];
+  const callers = useMemo(() => settings.donors_existing || defaults.donors_existing || [], [settings.donors_existing, defaults.donors_existing]);
   const callerIdx = Math.max(0, callers.findIndex(c => `${c[0]} ${c[1]}` === setup.caller));
-  const currentCaller = callers[callerIdx] || callers[0] || [];
+  const currentCaller = useMemo(() => callers[callerIdx] || callers[0] || [], [callers, callerIdx]);
 
-  const buildScenario = () => {
+  const scenarioHtml = useMemo(() => {
     if (!currentCaller.length) return 'Select caller, show, and reason.';
     const fullName = `${currentCaller[0]} ${currentCaller[1]}`;
     const fname = currentCaller[0];
     const phone = ['Cell', 'Landline'][Math.floor(Math.random() * 2)];
-    return `<b>For this call you will portray ${fullName}.</b> ${fname} would like to speak with a supervisor. The caller was ${(setup.reason || '').toLowerCase()} during a previous call.<br/><b>Phone Type:</b> ${phone}`;
-  };
+    const raw = `<b>For this call you will portray ${fullName}.</b> ${fname} would like to speak with a supervisor. The caller was ${(setup.reason || '').toLowerCase()} during a previous call.<br/><b>Phone Type:</b> ${phone}`;
+    return DOMPurify.sanitize(raw);
+  }, [currentCaller, setup.reason]);
 
   const resetTransfer = () => {
     setResult(null);
@@ -132,7 +139,7 @@ export default function SupTransferPage({ onNavigate }) {
         </div>
         <div className="card card-scenario">
           <h3 style={{ color: 'var(--border-scenario)', marginBottom: 8 }}>SCENARIO</h3>
-          <div style={{ lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: buildScenario() }} />
+          <div style={{ lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: scenarioHtml }} />
         </div>
       </div>
 

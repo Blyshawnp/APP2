@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import api from '../api';
 import { useModal } from '../components/ModalProvider';
 
@@ -9,14 +9,16 @@ export default function HistoryPage({ onNavigate }) {
   const [search, setSearch] = useState('');
   const [detail, setDetail] = useState(null);
 
-  const load = async () => {
+  const load = useCallback(async () => {
     try {
       const [st, h] = await Promise.all([api.getHistoryStats(), api.getHistory()]);
       setStats(st); setHistory(h || []);
-    } catch (e) { console.error(e); }
-  };
+    } catch (_err) {
+      // History data load failed — table remains empty
+    }
+  }, []);
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => { load(); }, [load]);
 
   const filtered = history.filter(s => (s.candidate || '').toLowerCase().includes(search.toLowerCase()));
   const badgeClass = (s) => ({ Pass: 'badge-pass', Fail: 'badge-fail', Incomplete: 'badge-incomplete', 'NC/NS': 'badge-ncns' }[s] || 'badge-ncns');

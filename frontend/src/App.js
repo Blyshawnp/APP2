@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import '@/App.css';
 import api from './api';
 import { ModalProvider } from './components/ModalProvider';
@@ -30,6 +30,23 @@ const LINK_ITEMS = [
   { key: 'cert', label: 'Cert Spreadsheet', icon: 'file-spreadsheet' },
 ];
 
+function PageRouter({ page, navigate }) {
+  const props = { onNavigate: navigate };
+  switch (page) {
+    case 'setup': return <SetupPage {...props} />;
+    case 'home': return <HomePage {...props} />;
+    case 'basics': return <BasicsPage {...props} />;
+    case 'calls': return <CallsPage {...props} />;
+    case 'suptransfer': return <SupTransferPage {...props} />;
+    case 'newbieshift': return <NewbieShiftPage {...props} />;
+    case 'review': return <ReviewPage {...props} />;
+    case 'history': return <HistoryPage {...props} />;
+    case 'settings': return <SettingsPage {...props} />;
+    case 'help': return <HelpPage {...props} />;
+    default: return <HomePage {...props} />;
+  }
+}
+
 function App() {
   const [page, setPage] = useState('home');
   const [settings, setSettings] = useState(null);
@@ -43,28 +60,31 @@ function App() {
   }, []);
 
   useEffect(() => {
+    let cancelled = false;
     (async () => {
       try {
         const s = await api.getSettings();
+        if (cancelled) return;
         setSettings(s);
         if (!s.setup_complete) setPage('setup');
-        else if (!s.tutorial_completed) {
-          // Tutorial will be available from Help page
-        }
       } catch (err) {
-        console.error('Backend unreachable:', err);
+        if (!cancelled) {
+          // Backend unreachable — settings will remain null, loading state handles UI
+        }
       }
-      setLoading(false);
+      if (!cancelled) setLoading(false);
     })();
+    return () => { cancelled = true; };
   }, []);
 
-  // Ticker
   useEffect(() => {
     const fetchTicker = async () => {
       try {
         const data = await api.getTicker();
         if (data.messages?.length > 0) setTickerMessages(data.messages);
-      } catch {}
+      } catch (err) {
+        // Ticker fetch is non-critical; silently retry on next interval
+      }
     };
     fetchTicker();
     const interval = setInterval(fetchTicker, 90000);
@@ -73,38 +93,28 @@ function App() {
 
   const navigate = useCallback((p) => setPage(p), []);
 
-  const handleLinkClick = (key) => {
+  const handleLinkClick = useCallback((key) => {
     if (key === 'discord') { setDiscordOpen(true); return; }
     if (!settings) return;
-    if (key === 'tracker') {
-      const url = settings.cert_sheet_url;
-      if (url) window.open(url, '_blank');
-    } else if (key === 'cert') {
-      const url = settings.cert_sheet_url;
-      if (url) window.open(url, '_blank');
+    const url = settings.cert_sheet_url;
+    if ((key === 'tracker' || key === 'cert') && url) {
+      window.open(url, '_blank');
     }
-  };
+  }, [settings]);
 
-  const renderPage = () => {
-    if (loading) return <div className="page-loading">Connecting to server...</div>;
-    const props = { onNavigate: navigate };
-    switch (page) {
-      case 'setup': return <SetupPage {...props} />;
-      case 'home': return <HomePage {...props} />;
-      case 'basics': return <BasicsPage {...props} />;
-      case 'calls': return <CallsPage {...props} />;
-      case 'suptransfer': return <SupTransferPage {...props} />;
-      case 'newbieshift': return <NewbieShiftPage {...props} />;
-      case 'review': return <ReviewPage {...props} />;
-      case 'history': return <HistoryPage {...props} />;
-      case 'settings': return <SettingsPage {...props} />;
-      case 'help': return <HelpPage {...props} />;
-      default: return <HomePage {...props} />;
+  const handleExit = useCallback(() => {
+    const root = document.getElementById('root');
+    if (root) {
+      while (root.firstChild) root.removeChild(root.firstChild);
+      const msg = document.createElement('div');
+      msg.style.cssText = 'display:flex;align-items:center;justify-content:center;height:100vh;color:#888;';
+      msg.textContent = 'You can close this window now.';
+      root.appendChild(msg);
     }
-  };
+  }, []);
 
   const tickerContent = tickerMessages.length > 0
-    ? tickerMessages.join('  ◆  ') + '  ◆  ' + tickerMessages.join('  ◆  ')
+    ? tickerMessages.join('  \u25C6  ') + '  \u25C6  ' + tickerMessages.join('  \u25C6  ')
     : 'Welcome to Mock Testing Suite v3.0';
 
   return (
@@ -143,16 +153,17 @@ function App() {
               ))}
             </div>
             <div className="sidebar-footer">
-              <button className="exit-btn" onClick={() => {
-                document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;color:#888;">You can close this window now.</div>';
-              }} data-testid="exit-btn">Exit App</button>
+              <button className="exit-btn" onClick={handleExit} data-testid="exit-btn">Exit App</button>
             </div>
           </aside>
 
           {/* Main */}
           <main className="content-area">
             <div className="page-content" data-testid="page-content">
-              {renderPage()}
+              {loading
+                ? <div className="page-loading">Connecting to server...</div>
+                : <PageRouter page={page} navigate={navigate} />
+              }
             </div>
             <div className="status-bar">
               <span id="status-text"></span>

@@ -12,22 +12,26 @@ export default function ReviewPage({ onNavigate }) {
   const [filling, setFilling] = useState(false);
 
   useEffect(() => {
+    let cancelled = false;
     (async () => {
       try {
         const { session: s } = await api.getCurrentSession();
+        if (cancelled) return;
         if (!s || !s.candidate_name) { setSession(null); setLoading(false); return; }
         setSession(s);
 
         // Calculate final status
         const autoFail = s.auto_fail_reason;
         const supOnly = s.supervisor_only || false;
-        const c1r = (s.call_1 || {}).result;
-        const c2r = (s.call_2 || {}).result;
-        const c3r = (s.call_3 || {}).result;
-        const s1r = (s.sup_transfer_1 || {}).result;
-        const s2r = (s.sup_transfer_2 || {}).result;
-        const callsPassed = [c1r, c2r, c3r].filter(r => r === 'Pass').length;
-        const supsPassed = [s1r, s2r].filter(r => r === 'Pass').length;
+        const callsPassed = [
+          (s.call_1 || {}).result,
+          (s.call_2 || {}).result,
+          (s.call_3 || {}).result,
+        ].filter(r => r === 'Pass').length;
+        const supsPassed = [
+          (s.sup_transfer_1 || {}).result,
+          (s.sup_transfer_2 || {}).result,
+        ].filter(r => r === 'Pass').length;
         const newbie = s.newbie_shift_data;
 
         let finalStatus = 'Fail';
@@ -46,13 +50,16 @@ export default function ReviewPage({ onNavigate }) {
 
         // Generate summaries
         const summaries = await api.generateSummaries();
-        setCoaching(summaries.coaching || '');
-        setFail(summaries.fail || '');
-      } catch (e) {
-        console.error(e);
+        if (!cancelled) {
+          setCoaching(summaries.coaching || '');
+          setFail(summaries.fail || '');
+        }
+      } catch (_err) {
+        // Session load or summary generation failed — handled by loading/empty state
       }
-      setLoading(false);
+      if (!cancelled) setLoading(false);
     })();
+    return () => { cancelled = true; };
   }, []);
 
   if (loading) return <div className="page-loading" data-testid="review-page">Loading review...</div>;

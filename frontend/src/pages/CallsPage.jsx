@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import DOMPurify from 'dompurify';
 import api from '../api';
 import { useModal } from '../components/ModalProvider';
 import TechIssueDialog from '../components/TechIssueDialog';
@@ -18,6 +19,97 @@ const CALL_FAILS = [
   'Paraphrased script', 'Wrong thank you gift', 'Script navigation issues', 'Other',
 ];
 
+// --- Extracted helpers to reduce main component complexity ---
+function pickRandom(arr) {
+  return arr[Math.floor(Math.random() * arr.length)];
+}
+
+function generateRandomFlags() {
+  return {
+    phone: pickRandom(['Cell', 'Landline']),
+    text: pickRandom(['Yes', 'No']),
+    enews: pickRandom(['Yes', 'No']),
+    ship: pickRandom(['Yes', 'No']),
+    ccfee: pickRandom(['Yes', 'No']),
+  };
+}
+
+function getCallersForType(callType, settings, defaults) {
+  const ct = callType.toLowerCase();
+  if (ct.includes('increase')) return settings.donors_increase || defaults.donors_increase || [];
+  if (ct.includes('new')) return settings.donors_new || defaults.donors_new || [];
+  return settings.donors_existing || defaults.donors_existing || [];
+}
+
+function getDonationsForShow(showData, callType) {
+  if (!showData) return ['Other'];
+  const ct = callType.toLowerCase();
+  const isMonthly = !ct.includes('one time');
+  const amt = isMonthly ? showData[2] : showData[1];
+  return amt ? [amt, 'Other'] : ['Other'];
+}
+
+function buildScenarioHtml(currentCaller, callSetup, randFlags, donations) {
+  if (!currentCaller.length) return 'Select call type, show, and caller.';
+  const fname = currentCaller[0];
+  const fullName = `${currentCaller[0]} ${currentCaller[1]}`;
+  const ct = callSetup.type.toLowerCase();
+  const donorType = ct.includes('new') ? 'a new donor' : 'an existing member';
+  const isSustaining = ct.includes('sustaining') || ct.includes('monthly') || ct.includes('increase');
+  let action = 'make a one-time donation of';
+  if (ct.includes('increase')) action = 'increase their sustaining donation to';
+  else if (isSustaining) action = 'start a new sustaining donation of';
+  let html = `<b>For this call you will portray ${fullName}.</b> ${fname} is ${donorType} wishing to ${action} ${callSetup.donation || donations[0]} to support ${callSetup.show}.<br/><br/>`;
+  html += `<b>Phone Type:</b> ${randFlags.phone || 'Cell'}<br/>`;
+  if (randFlags.phone === 'Cell') html += `<b>Text Messages:</b> ${randFlags.text || 'No'}<br/>`;
+  html += `<b>E-Newsletter:</b> ${randFlags.enews || 'No'}<br/>`;
+  html += `<b>Cover $6 Shipping:</b> ${randFlags.ship || 'No'}<br/>`;
+  if (isSustaining) html += `<b>Cover $2 CC Fee:</b> ${randFlags.ccfee || 'No'}`;
+  return html;
+}
+
+async function evaluateCallRouting(session, modal, onNavigate, apiRef) {
+  let passes = [];
+  let failCount = 0;
+  for (let i = 1; i <= 3; i++) {
+    const c = session[`call_${i}`];
+    if (c && c.result === 'Pass') passes.push(c.type || '');
+    else if (c && c.result === 'Fail') failCount++;
+  }
+
+  if (passes.length === 2) {
+    const hasNew = passes.some(t => t.toLowerCase().includes('new'));
+    const hasExt = passes.some(t => t.toLowerCase().includes('existing'));
+    if (!hasNew || !hasExt) {
+      const missing = hasNew ? 'Existing Member' : 'New Donor';
+      await modal.warning('Call Type Error', `You must pass one New Donor and one Existing Member call.<br><br>Change this call's type to a "${missing}" scenario.`);
+      return 'stay';
+    }
+  }
+
+  if (failCount >= 2) {
+    await apiRef.updateSession({ final_status: 'Fail' });
+    await modal.warning('Notice', 'The candidate has failed 2 calls. Proceeding to Review.');
+    onNavigate('review');
+    return 'navigated';
+  }
+
+  if (passes.length >= 2) {
+    const hasTime = await modal.confirm('Confirm', 'Is there enough time for Supervisor Transfers?');
+    if (hasTime) {
+      await apiRef.updateSession({ time_for_sup: true });
+      onNavigate('suptransfer');
+    } else {
+      await apiRef.updateSession({ time_for_sup: false });
+      onNavigate('newbieshift');
+    }
+    return 'navigated';
+  }
+
+  return 'next';
+}
+
+// --- Main Component ---
 export default function CallsPage({ onNavigate }) {
   const modal = useModal();
   const [callNum, setCallNum] = useState(1);
@@ -33,78 +125,54 @@ export default function CallsPage({ onNavigate }) {
   const [randFlags, setRandFlags] = useState({});
   const [isFinal, setIsFinal] = useState(false);
 
-  const pick = (a) => a[Math.floor(Math.random() * a.length)];
   const rollRandom = useCallback(() => {
-    setRandFlags({ phone: pick(['Cell', 'Landline']), text: pick(['Yes', 'No']), enews: pick(['Yes', 'No']), ship: pick(['Yes', 'No']), ccfee: pick(['Yes', 'No']) });
+    setRandFlags(generateRandomFlags());
   }, []);
 
   useEffect(() => {
+    let cancelled = false;
     (async () => {
       try {
         const [d, s] = await Promise.all([api.getDefaults(), api.getSettings()]);
-        setDefaults(d); setSettings(s);
+        if (cancelled) return;
+        setDefaults(d);
+        setSettings(s);
         const types = s.call_types || d.call_types || [];
         const shows = s.shows || d.shows || [];
         if (types.length) setCallSetup(prev => ({ ...prev, type: types[0] }));
         if (shows.length) setCallSetup(prev => ({ ...prev, show: shows[0][0] }));
         const { session } = await api.getCurrentSession();
-        if (session) setIsFinal(session.final_attempt || false);
-      } catch {}
-      rollRandom();
+        if (!cancelled && session) setIsFinal(session.final_attempt || false);
+      } catch (err) {
+        // Failed to load defaults/settings — page will render with empty dropdowns
+      }
+      if (!cancelled) rollRandom();
     })();
+    return () => { cancelled = true; };
   }, [rollRandom]);
 
   const callTypes = settings.call_types || defaults.call_types || [];
   const shows = settings.shows || defaults.shows || [];
-  const getCallers = () => {
-    const ct = callSetup.type.toLowerCase();
-    if (ct.includes('increase')) return settings.donors_increase || defaults.donors_increase || [];
-    if (ct.includes('new')) return settings.donors_new || defaults.donors_new || [];
-    return settings.donors_existing || defaults.donors_existing || [];
-  };
-
-  const callers = getCallers();
+  const callers = useMemo(() => getCallersForType(callSetup.type, settings, defaults), [callSetup.type, settings, defaults]);
   const callerIdx = Math.max(0, callers.findIndex(c => `${c[0]} ${c[1]}` === callSetup.caller));
-  const currentCaller = callers[callerIdx] || callers[0] || [];
+  const currentCaller = useMemo(() => callers[callerIdx] || callers[0] || [], [callers, callerIdx]);
   const showData = shows.find(s => s[0] === callSetup.show);
+  const donations = useMemo(() => getDonationsForShow(showData, callSetup.type), [showData, callSetup.type]);
+  const scenarioHtml = useMemo(
+    () => DOMPurify.sanitize(buildScenarioHtml(currentCaller, callSetup, randFlags, donations)),
+    [currentCaller, callSetup, randFlags, donations]
+  );
 
-  const getDonations = () => {
-    if (!showData) return ['Other'];
-    const ct = callSetup.type.toLowerCase();
-    const isMonthly = !ct.includes('one time');
-    const amt = isMonthly ? showData[2] : showData[1];
-    return amt ? [amt, 'Other'] : ['Other'];
-  };
-
-  const buildScenario = () => {
-    if (!currentCaller.length) return 'Select call type, show, and caller.';
-    const fname = currentCaller[0];
-    const fullName = `${currentCaller[0]} ${currentCaller[1]}`;
-    const ct = callSetup.type.toLowerCase();
-    const donorType = ct.includes('new') ? 'a new donor' : 'an existing member';
-    const isSustaining = ct.includes('sustaining') || ct.includes('monthly') || ct.includes('increase');
-    let action = 'make a one-time donation of';
-    if (ct.includes('increase')) action = 'increase their sustaining donation to';
-    else if (isSustaining) action = 'start a new sustaining donation of';
-    let html = `<b>For this call you will portray ${fullName}.</b> ${fname} is ${donorType} wishing to ${action} ${callSetup.donation || getDonations()[0]} to support ${callSetup.show}.<br/><br/>`;
-    html += `<b>Phone Type:</b> ${randFlags.phone || 'Cell'}<br/>`;
-    if (randFlags.phone === 'Cell') html += `<b>Text Messages:</b> ${randFlags.text || 'No'}<br/>`;
-    html += `<b>E-Newsletter:</b> ${randFlags.enews || 'No'}<br/>`;
-    html += `<b>Cover $6 Shipping:</b> ${randFlags.ship || 'No'}<br/>`;
-    if (isSustaining) html += `<b>Cover $2 CC Fee:</b> ${randFlags.ccfee || 'No'}`;
-    return html;
-  };
-
-  const resetCall = () => {
+  const resetCall = useCallback(() => {
     setResult(null);
     setCoaching({});
     setCoachNotes('');
     setFails({});
     setFailNotes('');
     rollRandom();
-  };
+  }, [rollRandom]);
 
-  const handleContinue = async () => {
+  const handleContinue = useCallback(async () => {
     if (!result) { await modal.warning('Notice', 'You must select PASS or FAIL.'); return; }
     if (result === 'Fail') {
       const hasCheck = Object.values(fails).some(v => v);
@@ -115,51 +183,18 @@ export default function CallsPage({ onNavigate }) {
     const callData = {
       call_num: callNum, result, type: callSetup.type, show: callSetup.show,
       caller: callSetup.caller || (currentCaller.length ? `${currentCaller[0]} ${currentCaller[1]}` : ''),
-      donation: callSetup.donation || getDonations()[0],
+      donation: callSetup.donation || donations[0],
       coaching, coach_notes: coachNotes, fails, fail_notes: failNotes,
     };
     await api.saveCall(callData);
 
     const { session } = await api.getCurrentSession();
-    let passes = [], failCount = 0;
-    for (let i = 1; i <= 3; i++) {
-      const c = session[`call_${i}`];
-      if (c && c.result === 'Pass') passes.push(c.type || '');
-      else if (c && c.result === 'Fail') failCount++;
+    const routeResult = await evaluateCallRouting(session, modal, onNavigate, api);
+    if (routeResult === 'next') {
+      setCallNum(prev => prev + 1);
+      resetCall();
     }
-
-    if (passes.length === 2) {
-      const hasNew = passes.some(t => t.toLowerCase().includes('new'));
-      const hasExt = passes.some(t => t.toLowerCase().includes('existing'));
-      if (!hasNew || !hasExt) {
-        const missing = hasNew ? 'Existing Member' : 'New Donor';
-        await modal.warning('Call Type Error', `You must pass one New Donor and one Existing Member call.<br><br>Change this call's type to a "${missing}" scenario.`);
-        return;
-      }
-    }
-
-    if (failCount >= 2) {
-      await api.updateSession({ final_status: 'Fail' });
-      await modal.warning('Notice', 'The candidate has failed 2 calls. Proceeding to Review.');
-      onNavigate('review');
-      return;
-    }
-
-    if (passes.length >= 2) {
-      const hasTime = await modal.confirm('Confirm', 'Is there enough time for Supervisor Transfers?');
-      if (hasTime) {
-        await api.updateSession({ time_for_sup: true });
-        onNavigate('suptransfer');
-      } else {
-        await api.updateSession({ time_for_sup: false });
-        onNavigate('newbieshift');
-      }
-      return;
-    }
-
-    setCallNum(prev => prev + 1);
-    resetCall();
-  };
+  }, [result, fails, failNotes, callNum, callSetup, currentCaller, donations, coaching, coachNotes, modal, onNavigate, resetCall]);
 
   return (
     <div data-testid="calls-page">
@@ -184,42 +219,19 @@ export default function CallsPage({ onNavigate }) {
           </div>
           <div className="form-row"><label>Donation</label>
             <select value={callSetup.donation} onChange={e => setCallSetup(p => ({ ...p, donation: e.target.value }))} data-testid="call-donation">
-              {getDonations().map(d => <option key={d}>{d}</option>)}
+              {donations.map(d => <option key={d}>{d}</option>)}
             </select>
           </div>
         </div>
         <div className="card card-scenario">
           <h3 style={{ color: 'var(--border-scenario)', marginBottom: 8 }}>SCENARIO</h3>
-          <div style={{ lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: buildScenario() }} />
+          <div style={{ lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: scenarioHtml }} />
         </div>
       </div>
 
-      <div className="card" style={{ marginBottom: 16 }}>
-        <h3 style={{ marginBottom: 8 }}>Payment Simulation</h3>
-        <div className="payment-grid">
-          <div className="payment-card payment-card-cc">
-            <div style={{ fontWeight: 700, fontSize: 12, marginBottom: 6 }}>AMERICAN EXPRESS</div>
-            <div className="font-mono font-bold" style={{ fontSize: 18, letterSpacing: 2 }}>3782 822463 10005</div>
-            <div style={{ fontWeight: 600, fontSize: 13, marginTop: 4 }}>EXP: 07/2027 &nbsp; CVV: 1928</div>
-          </div>
-          <div className="payment-card payment-card-eft">
-            <div style={{ fontWeight: 700, fontSize: 12, marginBottom: 6 }}>EFT / BANK DRAFT</div>
-            <div className="font-mono font-bold" style={{ fontSize: 15 }}>RTN: 021000021</div>
-            <div className="font-mono font-bold" style={{ fontSize: 15 }}>ACC: 1357902468</div>
-          </div>
-        </div>
-      </div>
+      <PaymentSimulation />
 
-      {currentCaller.length > 0 && (
-        <div className="card" style={{ marginBottom: 16 }}>
-          <h3 style={{ marginBottom: 8 }}>Caller Demographics</h3>
-          <div style={{ textAlign: 'center' }}>
-            <b>{currentCaller[0]} {currentCaller[1]}</b><br />
-            {currentCaller[2]}{currentCaller[3] ? `, ${currentCaller[3]}` : ''}, {currentCaller[4]}, {currentCaller[5]} {currentCaller[6]}<br />
-            Phone: {currentCaller[7]} | Email: {currentCaller[8]}
-          </div>
-        </div>
-      )}
+      {currentCaller.length > 0 && <CallerDemographics caller={currentCaller} />}
 
       <div className="card" style={{ marginBottom: 16 }}>
         <h3 style={{ marginBottom: 8 }}>Call Result</h3>
@@ -264,21 +276,47 @@ export default function CallsPage({ onNavigate }) {
   );
 }
 
+// --- Extracted sub-components to reduce main component size ---
+function PaymentSimulation() {
+  return (
+    <div className="card" style={{ marginBottom: 16 }}>
+      <h3 style={{ marginBottom: 8 }}>Payment Simulation</h3>
+      <div className="payment-grid">
+        <div className="payment-card payment-card-cc">
+          <div style={{ fontWeight: 700, fontSize: 12, marginBottom: 6 }}>AMERICAN EXPRESS</div>
+          <div className="font-mono font-bold" style={{ fontSize: 18, letterSpacing: 2 }}>3782 822463 10005</div>
+          <div style={{ fontWeight: 600, fontSize: 13, marginTop: 4 }}>EXP: 07/2027 &nbsp; CVV: 1928</div>
+        </div>
+        <div className="payment-card payment-card-eft">
+          <div style={{ fontWeight: 700, fontSize: 12, marginBottom: 6 }}>EFT / BANK DRAFT</div>
+          <div className="font-mono font-bold" style={{ fontSize: 15 }}>RTN: 021000021</div>
+          <div className="font-mono font-bold" style={{ fontSize: 15 }}>ACC: 1357902468</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function CallerDemographics({ caller }) {
+  return (
+    <div className="card" style={{ marginBottom: 16 }}>
+      <h3 style={{ marginBottom: 8 }}>Caller Demographics</h3>
+      <div style={{ textAlign: 'center' }}>
+        <b>{caller[0]} {caller[1]}</b><br />
+        {caller[2]}{caller[3] ? `, ${caller[3]}` : ''}, {caller[4]}, {caller[5]} {caller[6]}<br />
+        Phone: {caller[7]} | Email: {caller[8]}
+      </div>
+    </div>
+  );
+}
+
 function CoachingGrid({ items, checked, onChange }) {
   const toggle = (key) => onChange(prev => ({ ...prev, [key]: !prev[key] }));
   const half = Math.ceil(items.length / 2);
   return (
     <div className="coaching-grid">
-      <div>
-        {items.slice(0, half).map(item => (
-          <CoachingItem key={item.id} item={item} checked={checked} onToggle={toggle} />
-        ))}
-      </div>
-      <div>
-        {items.slice(half).map(item => (
-          <CoachingItem key={item.id} item={item} checked={checked} onToggle={toggle} />
-        ))}
-      </div>
+      <div>{items.slice(0, half).map(item => <CoachingItem key={item.id} item={item} checked={checked} onToggle={toggle} />)}</div>
+      <div>{items.slice(half).map(item => <CoachingItem key={item.id} item={item} checked={checked} onToggle={toggle} />)}</div>
     </div>
   );
 }

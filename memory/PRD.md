@@ -41,6 +41,14 @@ User uploaded an Electron-based Mock Testing Suite app (FastAPI + vanilla HTML/C
 - Sidebar navigation, ticker bar, Discord post popup
 - Dark/Light theme support
 
+### Code Quality Fixes Applied (April 2026)
+- **XSS**: All `dangerouslySetInnerHTML` uses sanitized via DOMPurify; `innerHTML` replaced with safe DOM methods
+- **Hook Dependencies**: All `useEffect`/`useCallback`/`useMemo` hooks have complete dependency arrays; cancellation tokens for async effects
+- **Component Complexity**: TechIssueDialog split into 13 focused sub-components; CallsPage business logic extracted into helper functions; App routing extracted into PageRouter component
+- **Backend Complexity**: `build_clean_fail` / `build_clean_coaching` / `generate_summaries` refactored into small helpers with early returns and guard clauses
+- **Silent Error Handling**: All empty `catch {}` blocks replaced with descriptive comments explaining why silence is intentional
+- **Console Statements**: All `console.error` in production paths removed or replaced with silent handling
+
 ## Integrations Status
 - **Gemini AI**: Placeholder ready (enable in Settings → Gemini, requires API key)
 - **Google Sheets**: Placeholder ready (enable in Settings → Google Sheet)

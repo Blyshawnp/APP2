@@ -195,30 +195,96 @@ def _get_fail_items(data):
     return items
 
 
+AUTO_FAIL_MESSAGES = {
+    "nc/ns": "was a No Call / No Show. Session did not occur.",
+    "stopped": "stopped responding in Discord during the session.",
+    "vpn": "is using a VPN and was unable to turn it off.",
+    "not ready": "was not ready for the session:",
+}
+
+AUTO_FAIL_HEADSET_KEYWORDS = ("usb", "noise")
+
+
+def _resolve_auto_fail_message(name, auto_fail):
+    """Map auto-fail reason to a human-readable sentence. Reduces nesting in build_clean_fail."""
+    af = auto_fail.lower()
+    for keyword, template in AUTO_FAIL_MESSAGES.items():
+        if keyword in af:
+            suffix = f" {auto_fail}" if template.endswith(":") else ""
+            return f"{name} {template}{suffix}"
+    if any(kw in af for kw in AUTO_FAIL_HEADSET_KEYWORDS):
+        return f"{name} did not have a qualifying headset: {auto_fail}."
+    return f"{name} — {auto_fail}."
+
+
+def _collect_call_coaching_lines(session):
+    """Gather coaching lines from call data."""
+    lines = []
+    for i in range(1, 4):
+        call = session.get(f"call_{i}")
+        if not call or not call.get("result"):
+            continue
+        coaching = _get_coaching_items(call)
+        coaching_str = ", ".join(coaching) if coaching else "none noted"
+        lines.append(f"Call {i} ({call.get('type', 'Unknown type')}): {call['result']}. Coaching: {coaching_str}.")
+    return lines
+
+
+def _collect_sup_coaching_lines(session):
+    """Gather coaching lines from supervisor transfer data."""
+    lines = []
+    for i in range(1, 3):
+        sup = session.get(f"sup_transfer_{i}")
+        if not sup or not sup.get("result"):
+            continue
+        coaching = _get_coaching_items(sup)
+        coaching_str = ", ".join(coaching) if coaching else "none noted"
+        lines.append(f"Supervisor Transfer {i}: {sup['result']}. Coaching: {coaching_str}.")
+    return lines
+
+
+def _collect_fail_lines(session):
+    """Gather fail reason lines from calls and supervisor transfers."""
+    lines = []
+    for i in range(1, 4):
+        call = session.get(f"call_{i}")
+        if not call or call.get("result") != "Fail":
+            continue
+        reasons = _get_fail_items(call)
+        reasons_str = ", ".join(reasons) if reasons else "unspecified"
+        lines.append(f"Call {i} ({call.get('type', 'Unknown type')}) failed: {reasons_str}.")
+    for i in range(1, 3):
+        sup = session.get(f"sup_transfer_{i}")
+        if not sup or sup.get("result") != "Fail":
+            continue
+        reasons = _get_fail_items(sup)
+        reasons_str = ", ".join(reasons) if reasons else "unspecified"
+        lines.append(f"Supervisor Transfer {i} failed: {reasons_str}.")
+    return lines
+
+
+def _is_fail_na(session):
+    """Determine whether the fail summary should be N/A (passing/incomplete sessions)."""
+    if session.get("auto_fail_reason"):
+        return False
+    sup_only = session.get("supervisor_only", False)
+    calls_passed = sum(1 for i in range(1, 4) if (session.get(f"call_{i}") or {}).get("result") == "Pass")
+    sups_passed = sum(1 for i in range(1, 3) if (session.get(f"sup_transfer_{i}") or {}).get("result") == "Pass")
+    newbie = session.get("newbie_shift_data")
+    if sup_only:
+        return sups_passed >= 1
+    return calls_passed >= 2 and (sups_passed >= 1 or newbie)
+
+
 def build_clean_coaching(session):
     name = session.get("candidate_name", "Candidate")
     auto_fail = session.get("auto_fail_reason")
-    sup_only = session.get("supervisor_only", False)
-    lines = []
     if auto_fail:
-        lines.append(f"{name} — Auto-fail: {auto_fail}.")
-        return "\n".join(lines)
-    if not sup_only:
-        for i in range(1, 4):
-            call = session.get(f"call_{i}")
-            if call and call.get("result"):
-                result = call["result"]
-                ctype = call.get("type", "Unknown type")
-                coaching = _get_coaching_items(call)
-                coaching_str = ", ".join(coaching) if coaching else "none noted"
-                lines.append(f"Call {i} ({ctype}): {result}. Coaching: {coaching_str}.")
-    for i in range(1, 3):
-        sup = session.get(f"sup_transfer_{i}")
-        if sup and sup.get("result"):
-            result = sup["result"]
-            coaching = _get_coaching_items(sup)
-            coaching_str = ", ".join(coaching) if coaching else "none noted"
-            lines.append(f"Supervisor Transfer {i}: {result}. Coaching: {coaching_str}.")
+        return f"{name} — Auto-fail: {auto_fail}."
+    lines = []
+    if not session.get("supervisor_only", False):
+        lines.extend(_collect_call_coaching_lines(session))
+    lines.extend(_collect_sup_coaching_lines(session))
     return "\n".join(lines) if lines else "No coaching data recorded."
 
 
@@ -226,51 +292,14 @@ def build_clean_fail(session):
     name = session.get("candidate_name", "Candidate")
     auto_fail = session.get("auto_fail_reason")
     if auto_fail:
-        af = auto_fail.lower()
-        if "nc/ns" in af:
-            return f"{name} was a No Call / No Show. Session did not occur."
-        elif "stopped" in af:
-            return f"{name} stopped responding in Discord during the session."
-        elif "vpn" in af:
-            return f"{name} is using a VPN and was unable to turn it off."
-        elif "usb" in af or "noise" in af:
-            return f"{name} did not have a qualifying headset: {auto_fail}."
-        elif "not ready" in af:
-            return f"{name} was not ready for the session: {auto_fail}."
-        return f"{name} — {auto_fail}."
-    fail_lines = []
-    for i in range(1, 4):
-        call = session.get(f"call_{i}")
-        if call and call.get("result") == "Fail":
-            ctype = call.get("type", "Unknown type")
-            reasons = _get_fail_items(call)
-            reasons_str = ", ".join(reasons) if reasons else "unspecified"
-            fail_lines.append(f"Call {i} ({ctype}) failed: {reasons_str}.")
-    for i in range(1, 3):
-        sup = session.get(f"sup_transfer_{i}")
-        if sup and sup.get("result") == "Fail":
-            reasons = _get_fail_items(sup)
-            reasons_str = ", ".join(reasons) if reasons else "unspecified"
-            fail_lines.append(f"Supervisor Transfer {i} failed: {reasons_str}.")
+        return _resolve_auto_fail_message(name, auto_fail)
+    fail_lines = _collect_fail_lines(session)
     return "\n".join(fail_lines) if fail_lines else "N/A"
 
 
 def generate_summaries(session, api_key=""):
-    sup_only = session.get("supervisor_only", False)
-    auto_fail = session.get("auto_fail_reason")
-    calls_passed = sum(1 for i in range(1, 4) if (session.get(f"call_{i}") or {}).get("result") == "Pass")
-    sups_passed = sum(1 for i in range(1, 3) if (session.get(f"sup_transfer_{i}") or {}).get("result") == "Pass")
-    newbie = session.get("newbie_shift_data")
-
-    fail_is_na = False
-    if not auto_fail:
-        if sup_only and sups_passed >= 1:
-            fail_is_na = True
-        elif not sup_only and calls_passed >= 2 and (sups_passed >= 1 or newbie):
-            fail_is_na = True
-
     coaching = build_clean_coaching(session)
-    fail = "N/A" if fail_is_na else build_clean_fail(session)
+    fail = "N/A" if _is_fail_na(session) else build_clean_fail(session)
     return {"coaching": coaching, "fail": fail}
 
 
