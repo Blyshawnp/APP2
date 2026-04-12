@@ -3,6 +3,7 @@ import DOMPurify from 'dompurify';
 import api from '../api';
 import { useModal } from '../components/ModalProvider';
 import TechIssueDialog from '../components/TechIssueDialog';
+import { playBuzz } from '../utils/buzz';
 
 const CALL_COACHING = [
   { id: 'c-show-app', label: 'Show appreciation', children: ['For Current/Existing Donors', 'After donation amount is given'] },
@@ -267,8 +268,8 @@ export default function CallsPage({ onNavigate }) {
 
       <div className="footer-bar" data-testid="calls-footer">
         <button className="btn btn-muted btn-sm" onClick={() => { if (callNum > 1) { setCallNum(n => n - 1); resetCall(); } else onNavigate('basics'); }} data-testid="calls-back">Back</button>
-        <button className="btn btn-danger btn-sm" onClick={async () => { await api.updateSession({ auto_fail_reason: 'Stopped Responding in Chat', final_status: 'Fail' }); onNavigate('review'); }} data-testid="calls-stopped">Stopped Responding</button>
-        <button className="btn btn-muted btn-sm" onClick={() => setTechOpen(true)} data-testid="calls-tech">Tech Issue</button>
+        <button className="btn btn-danger btn-sm" onClick={async () => { playBuzz(); await api.updateSession({ auto_fail_reason: 'Stopped Responding in Chat', final_status: 'Fail' }); onNavigate('review'); }} data-testid="calls-stopped" title="Candidate went silent in Discord during the session">Stopped Responding</button>
+        <button className="btn btn-muted btn-sm" onClick={() => setTechOpen(true)} data-testid="calls-tech" title="Log a technical issue">Tech Issue</button>
         <span className="spacer" />
         <button className="btn btn-primary" onClick={handleContinue} data-testid="calls-continue">Continue</button>
       </div>

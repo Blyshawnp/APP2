@@ -305,6 +305,33 @@ select { cursor: pointer; }
 .setup-dot.active { background: var(--color-primary); transform: scale(1.2); }
 .setup-dot.done { background: var(--color-primary); opacity: 0.5; }
 
+
+/* ══════════ SETTINGS TABLES ══════════ */
+.settings-table-wrap { overflow-x: auto; margin-bottom: 8px; }
+.settings-table { width: 100%; border-collapse: collapse; }
+.settings-table thead th { text-align: left; padding: 8px 10px; font-size: var(--font-size-xs); font-weight: 700; color: var(--text-tertiary); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border-subtle); white-space: nowrap; }
+.settings-table tbody tr { border-bottom: 1px solid var(--border-subtle); }
+.settings-table tbody tr:hover { background: var(--bg-card-hover); }
+.settings-table td { padding: 6px 4px; }
+.settings-table td input, .settings-table td select { padding: 6px 8px; font-size: var(--font-size-xs); }
+
+.editable-row { display: flex; gap: var(--space-sm); align-items: center; margin-bottom: var(--space-sm); }
+.editable-row input { flex: 1; }
+
+.discord-edit-row { display: flex; gap: var(--space-md); align-items: flex-start; margin-bottom: var(--space-md); padding-bottom: var(--space-md); border-bottom: 1px solid var(--border-subtle); }
+.discord-edit-row:last-of-type { border-bottom: none; }
+.discord-edit-trigger { min-width: 160px; max-width: 160px; }
+.discord-edit-msg { flex: 1; }
+
+/* Allow right-click context menu on all inputs */
+input, textarea, select { user-select: text; -webkit-user-select: text; }
+
+/* Tooltips on hover for buttons */
+.btn[title]:hover { position: relative; }
+.btn[title]::after { content: attr(title); position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); background: var(--bg-tooltip); color: var(--text-primary); padding: 6px 10px; border-radius: var(--radius-sm); font-size: 11px; font-weight: 500; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity 150ms ease; z-index: 100; max-width: 280px; white-space: normal; text-align: center; line-height: 1.4; box-shadow: var(--shadow-md); }
+.btn[title]:hover::after { opacity: 1; }
+
+
 /* ══════════ TRANSITIONS ══════════ */
 body, .sidebar, .content-area, .card, .footer-bar, input, select, textarea, button {
   transition: background-color var(--transition-base), color var(--transition-base), border-color var(--transition-base);

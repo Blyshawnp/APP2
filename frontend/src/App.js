@@ -26,7 +26,7 @@ const NAV_ITEMS = [
 
 const LINK_ITEMS = [
   { key: 'discord', label: 'Discord Post', icon: 'message-square' },
-  { key: 'tracker', label: 'My Tracker Sheet', icon: 'bar-chart' },
+  { key: 'sheets', label: 'Sheets', icon: 'plus', sheetsOnly: true },
   { key: 'cert', label: 'Cert Spreadsheet', icon: 'file-spreadsheet' },
 ];
 
@@ -96,9 +96,10 @@ function App() {
   const handleLinkClick = useCallback((key) => {
     if (key === 'discord') { setDiscordOpen(true); return; }
     if (!settings) return;
-    const url = settings.cert_sheet_url;
-    if ((key === 'tracker' || key === 'cert') && url) {
-      window.open(url, '_blank');
+    if (key === 'sheets' && settings.sheet_id) {
+      window.open(`https://docs.google.com/spreadsheets/d/${settings.sheet_id}`, '_blank');
+    } else if (key === 'cert' && settings.cert_sheet_url) {
+      window.open(settings.cert_sheet_url, '_blank');
     }
   }, [settings]);
 
@@ -145,7 +146,7 @@ function App() {
             </nav>
             <div className="sidebar-divider" />
             <div className="sidebar-links">
-              {LINK_ITEMS.map(item => (
+              {LINK_ITEMS.filter(item => !item.sheetsOnly || settings?.enable_sheets).map(item => (
                 <button key={item.key} className="link-btn" onClick={() => handleLinkClick(item.key)} data-testid={`link-${item.key}`}>
                   <span className="nav-icon"><NavIcon name={item.icon} /></span>
                   <span className="nav-label">{item.label}</span>

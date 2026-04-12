@@ -3,6 +3,7 @@ import DOMPurify from 'dompurify';
 import api from '../api';
 import { useModal } from '../components/ModalProvider';
 import TechIssueDialog from '../components/TechIssueDialog';
+import { playBuzz } from '../utils/buzz';
 
 const SUP_COACHING = [
   { label: 'Minimize dead air', helper: 'Maintain engagement throughout hold and transfer' },
@@ -191,8 +192,8 @@ export default function SupTransferPage({ onNavigate }) {
 
       <div className="footer-bar" data-testid="sup-footer">
         <button className="btn btn-muted btn-sm" onClick={() => { if (transferNum > 1) { setTransferNum(1); resetTransfer(); } else onNavigate('calls'); }} data-testid="sup-back">Back</button>
-        <button className="btn btn-danger btn-sm" onClick={async () => { await api.updateSession({ auto_fail_reason: 'Stopped Responding in Chat', final_status: 'Fail' }); onNavigate('review'); }} data-testid="sup-stopped">Stopped Responding</button>
-        <button className="btn btn-muted btn-sm" onClick={() => setTechOpen(true)} data-testid="sup-tech">Tech Issue</button>
+        <button className="btn btn-danger btn-sm" onClick={async () => { playBuzz(); await api.updateSession({ auto_fail_reason: 'Stopped Responding in Chat', final_status: 'Fail' }); onNavigate('review'); }} data-testid="sup-stopped" title="Candidate went silent in Discord during the session">Stopped Responding</button>
+        <button className="btn btn-muted btn-sm" onClick={() => setTechOpen(true)} data-testid="sup-tech" title="Log a technical issue">Tech Issue</button>
         <span className="spacer" />
         <button className="btn btn-primary" onClick={handleContinue} data-testid="sup-continue">Continue</button>
       </div>

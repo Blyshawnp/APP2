@@ -33,8 +33,10 @@ APP_VERSION = "3.0"
 
 CALL_TYPES = [
     "New Donor - One Time Donation",
-    "Existing Member - Monthly Donation",
-    "Increase Sustaining",
+    "New Donor - New Sustaining Donation",
+    "Existing Member - One Time Donation",
+    "Existing Member - New Monthly Sustaining Donation",
+    "Existing Member - Increase Current Sustaining Amount",
 ]
 
 SUP_REASONS = [
@@ -42,40 +44,51 @@ SUP_REASONS = [
     "Damaged Gift", "Didn't Receive Gift", "Cancel Sustaining", "Use Own/Other",
 ]
 
+# [Show Name, One-Time, Monthly, Gift]
 SHOWS = [
-    ["PBS NewsHour", "$60", "$10/mo"],
-    ["Frontline", "$75", "$15/mo"],
-    ["NOVA", "$120", "$20/mo"],
-    ["Masterpiece", "$90", "$12/mo"],
-    ["Sesame Street", "$50", "$8/mo"],
-    ["Nature", "$80", "$10/mo"],
+    ["New Divas - Live in Vienna", "$216", "$18", "The New Divas - Best of Live in Vienna (CD) + Wine Glasses + PBS Retro Speaker"],
+    ["Alan Jackson's Precious Memories", "$120", "$10", "2-CD Set"],
+    ["Doo Wop Project", "$192", "$16", "Combo-DVD & 3 CDs"],
+    ["Aging Backwards 3", "$240", "$20", "Aging Backwards 3: (DVD) + 4-DVD Workouts Set + Calendar + TV Subscription + HBK"],
+    ["Great American Recipes", "$360", "$30", "Great American Recipes cookbook and Finding Your Roots companion book (HBK)"],
+    ["Easy Yoga", "$144", "$12", "Easy Yoga for Everything 10 DVD combo"],
 ]
 
+# [First, Last, Address, City, State, Zip, Phone, Email]
 NEW_DONORS = [
-    ["John", "Smith", "123 Main St", "Apt 4B", "New York", "NY", "10001", "555-123-4567", "john.smith@email.com"],
-    ["Sarah", "Johnson", "456 Oak Ave", "", "Los Angeles", "CA", "90210", "555-234-5678", "sarah.j@email.com"],
-    ["Michael", "Williams", "789 Pine Rd", "Suite 100", "Chicago", "IL", "60601", "555-345-6789", "m.williams@email.com"],
-    ["Emily", "Brown", "321 Elm St", "", "Houston", "TX", "77001", "555-456-7890", "emily.b@email.com"],
-    ["David", "Jones", "654 Maple Dr", "Unit 7", "Phoenix", "AZ", "85001", "555-567-8901", "d.jones@email.com"],
+    ["Sam", "Smith", "400 N Broad St", "Philadelphia", "PA", "19103", "215-515-1212", "ssmith@test.com"],
+    ["Harold", "Smith", "3686 Village Dr Apt. D", "Franklin", "OH", "45005", "858-555-1212", "sally@test.com"],
+    ["Harry", "Smith", "P.O. Box 6", "Atlasburg", "PA", "15004", "602-515-1212", "testentry@test.com"],
+    ["Mark", "Jackson", "1020 Holland Ave", "Port Huron", "MI", "48060", "310-515-1212", "mjtest@test.com"],
 ]
 
 EXISTING_MEMBERS = [
-    ["Robert", "Davis", "111 Cedar Ln", "", "Philadelphia", "PA", "19101", "555-678-9012", "r.davis@email.com"],
-    ["Jennifer", "Miller", "222 Birch Way", "Apt 12", "San Antonio", "TX", "78201", "555-789-0123", "j.miller@email.com"],
-    ["James", "Wilson", "333 Walnut St", "", "San Diego", "CA", "92101", "555-890-1234", "j.wilson@email.com"],
-    ["Linda", "Moore", "444 Spruce Ave", "Suite 5", "Dallas", "TX", "75201", "555-901-2345", "l.moore@email.com"],
-    ["William", "Taylor", "555 Ash Blvd", "", "San Jose", "CA", "95101", "555-012-3456", "w.taylor@email.com"],
+    ["Ron", "Jones", "3345 W. Auburn Rd, Apt 207", "Rochester Hills", "MI", "48309", "858-555-1212", "michele@test.com"],
+    ["Diane/James", "Williams", "8150 Priestley Dr", "Reynoldsburg", "OH", "43068", "619-555-1212", "DandJ@test.com"],
+    ["Harry", "Jones", "876 McDonald Ave", "Brooklyn", "NY", "11218", "619-555-1212", "test@test.com"],
 ]
 
 INCREASE_SUSTAINING = [
-    ["Patricia", "Anderson", "666 Poplar Ct", "", "Austin", "TX", "73301", "555-111-2222", "p.anderson@email.com"],
-    ["Richard", "Thomas", "777 Willow Rd", "Apt 3A", "Jacksonville", "FL", "32099", "555-222-3333", "r.thomas@email.com"],
+    ["Alison", "DeRudder", "2200 N Hillman Rd", "Stanton", "MI", "48888", "801-555-1212", "TESTENTRY@TEST.COM"],
+    ["Sherri", "Testing", "104 Newport Dr", "Boardman", "OH", "44512", "(801) 555-1217", "TESTENTRY@TEST.COM"],
 ]
 
 DISCORD_TEMPLATES = [
-    ["Session Starting", "Mock session starting with [CANDIDATE NAME]. Please hold all calls."],
-    ["Session Complete", "Mock session with [CANDIDATE NAME] is complete. Calls can resume."],
-    ["Sup Transfer Queued", "WXYZ Supervisor Test Call Being Queued"],
+    ["Pass", "**:tada: Congratulations! You passed your test calls! :tada:**\n- 24-48hrs to go live. Watch your inbox.\n- Log out of Call Corp and Simple Script.\n- Complete TLMS courses.\n- Remove extra mock shifts from Gateway.\n**Welcome to ACDD!**"],
+    ["Fail", "Unfortunately I can't pass you today. Please reschedule in Gateway within 24 hours."],
+    ["Fail Final", "Thank you for your time. Unfortunately you have exceeded the allowed Mock Call attempts. We wish you luck."],
+    ["Incomplete", "Our time is up. We'll schedule another session for Supervisor Transfers.\nPlease give me a moment."],
+    ["Ncns", "Candidate was a No Call / No Show for mock testing."],
+    ["Sup Intro", "I'll help you complete the Supervisor Transfer test call. I'll provide instructions step by step. OK?"],
+    ["Sup Instructions", "When you need to transfer:\n1) Ask in chat first\n2) Give CCM time to check\n3) When CCM says ok - let caller know you are transferring"],
+    ["Sup Transfer", "1. Click Transfer in CC\n2. Select Queue > ACD Direct Supervisor\n3. Tell caller to hold, click Blind Transfer"],
+    ["Sup Dte", "Change DTE to Ready (green)."],
+    ["Sup Status", "I show Ready. Calling now."],
+    ["Sup Transfer Now", "You may transfer the call now."],
+    ["Sup Stars", "WXYZ Supervisor Test Call Being Queued"],
+    ["Sup Disposition", "Click cancel (red phone), disposition as Test/Training.\nThen disposition in Call Corp."],
+    ["Sup Retry", "Transfer was not successful. Review steps and let me know when ready."],
+    ["Ran Out Of Time", "We have run out of time for today's session. I will need to schedule you for a Newbie Shift to complete the Supervisor Transfer portion."],
 ]
 
 DEFAULT_PAYMENT = {
@@ -126,8 +139,16 @@ DEFAULT_SETTINGS = {
     "worksheet": "Sheet1",
     "service_account_path": "service_account.json",
     "enable_calendar": False,
+    "ticker_doc_url": "",
+    "update_doc_url": "",
     "discord_templates": DISCORD_TEMPLATES,
     "payment": DEFAULT_PAYMENT,
+    "shows": SHOWS,
+    "call_types": CALL_TYPES,
+    "sup_reasons": SUP_REASONS,
+    "donors_new": NEW_DONORS,
+    "donors_existing": EXISTING_MEMBERS,
+    "donors_increase": INCREASE_SUSTAINING,
 }
 
 
