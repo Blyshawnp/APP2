@@ -87,6 +87,19 @@ User uploaded an Electron-based Mock Testing Suite app (FastAPI + vanilla HTML/C
 - App responsive at 1280x800 (non-fullscreen friendly)
 - Favicon and logo assets integrated
 
+### Iteration 5 - v2.5.0 Release (April 2026)
+- Version updated to 2.5.0 throughout the app
+- Home page compact layout — no scrolling needed, all buttons/stats/recent sessions fit
+- Ticker: Live content fetched from Google Doc (https://docs.google.com/document/d/1kRJMSd-...), numbered lines stripped, falls back to defaults if unreachable
+- Discord Post popup: Templates + Screenshots tabs with search, copy-to-clipboard for images
+- Discord Screenshots: Welcome New Agent + Welcome to Stars images, fully editable in Settings
+- Scenario Card: Bullet-format with Thank You Gift description from show data
+- Help page: 5 comprehensive tabs (How to Use, Session Flows, Integration Setup, FAQ, Support)
+- Support tab: Send Email (blyshawnp@gmail.com) and Discord (shawnbly) buttons
+- Integration Setup: Step-by-step Gemini AI and Google Sheets setup guides
+- Default URLs: Cert form + cert sheet pre-filled from production values
+- Backend auto-updater Google Doc URL configured in code (developer-only)
+
 ## Integrations Status
 - **Gemini AI**: Placeholder ready (enable in Settings → Gemini, requires API key)
 - **Google Sheets**: Placeholder ready (enable in Settings → Google Sheet)
