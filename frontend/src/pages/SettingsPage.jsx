@@ -281,12 +281,16 @@ function CallersTab({ s, set, defaults }) {
 /* ═══════════════════════════════════════════════════════════════ */
 function DiscordTab({ s, set }) {
   const discord = s.discord_templates || [];
+  const screenshots = s.discord_screenshots || [];
   const update = (i, field, val) => {
     const next = discord.map((item, idx) => idx === i ? (field === 0 ? [val, item[1]] : [item[0], val]) : item);
     set('discord_templates', next);
   };
   const remove = (i) => set('discord_templates', discord.filter((_, idx) => idx !== i));
   const add = () => set('discord_templates', [...discord, ['New Trigger', 'Message text here']]);
+  const updateSS = (i, key, val) => set('discord_screenshots', screenshots.map((ss, idx) => idx === i ? { ...ss, [key]: val } : ss));
+  const removeSS = (i) => set('discord_screenshots', screenshots.filter((_, idx) => idx !== i));
+  const addSS = () => set('discord_screenshots', [...screenshots, { title: 'New Screenshot', image_url: '/placeholder.png' }]);
 
   return (
     <div className="card" data-testid="settings-discord">
@@ -306,6 +310,20 @@ function DiscordTab({ s, set }) {
         </div>
       ))}
       <button className="btn btn-primary btn-sm" onClick={add} style={{ marginTop: 16 }} data-testid="settings-discord-add">+ Add Template</button>
+
+      <h3 style={{ margin: '32px 0 16px' }}>Discord Screenshots</h3>
+      <p className="text-muted text-sm" style={{ marginBottom: 16 }}>Screenshots with titles that can be copied to clipboard from the Discord panel.</p>
+      {screenshots.map((ss, i) => (
+        <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', marginBottom: 12, paddingBottom: 12, borderBottom: '1px solid var(--border-subtle)' }}>
+          <div style={{ flex: 1 }}>
+            <div className="form-row" style={{ marginBottom: 8 }}><label style={{ minWidth: 80 }}>Title</label><input type="text" value={ss.title} onChange={e => updateSS(i, 'title', e.target.value)} /></div>
+            <div className="form-row" style={{ marginBottom: 0 }}><label style={{ minWidth: 80 }}>Image URL</label><input type="text" value={ss.image_url} onChange={e => updateSS(i, 'image_url', e.target.value)} /></div>
+          </div>
+          {ss.image_url && <img src={ss.image_url} alt={ss.title} style={{ width: 80, height: 60, objectFit: 'cover', borderRadius: 4, border: '1px solid var(--border-subtle)' }} />}
+          <button className="btn btn-danger btn-sm" onClick={() => removeSS(i)} title="Remove screenshot">X</button>
+        </div>
+      ))}
+      <button className="btn btn-primary btn-sm" onClick={addSS} style={{ marginTop: 8 }} data-testid="settings-discord-ss-add">+ Add Screenshot</button>
     </div>
   );
 }

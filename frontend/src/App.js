@@ -118,7 +118,7 @@ function App() {
             <div className="sidebar-brand">
               <img src="/logo.png" alt="ACD" className="sidebar-logo-img" />
               <div className="sidebar-title">Mock Testing<br />Suite</div>
-              <div className="sidebar-version">v3.0</div>
+              <div className="sidebar-version">v2.5.0</div>
             </div>
             <nav className="sidebar-nav">
               {NAV_ITEMS.map(item => (
@@ -154,7 +154,7 @@ function App() {
             <div className="status-bar">
               <span id="status-text"></span>
               <span className="status-spacer" />
-              <span>Mock Testing Suite v3.0 — By Shawn P. Bly</span>
+              <span>Mock Testing Suite v2.5.0 — By Shawn P. Bly</span>
             </div>
           </main>
         </div>
@@ -167,26 +167,43 @@ function App() {
 
 function DiscordModal({ settings, onClose }) {
   const templates = settings?.discord_templates || [];
+  const screenshots = settings?.discord_screenshots || [];
   const [search, setSearch] = useState('');
-  const filtered = templates.filter(([trigger, msg]) =>
+  const [tab, setTab] = useState('templates');
+  const filteredTemplates = templates.filter(([trigger, msg]) =>
     trigger.toLowerCase().includes(search.toLowerCase()) || msg.toLowerCase().includes(search.toLowerCase())
+  );
+  const filteredScreenshots = screenshots.filter(s =>
+    s.title.toLowerCase().includes(search.toLowerCase())
   );
   return (
     <div className="modal-overlay open" onClick={e => { if (e.target.classList.contains('modal-overlay')) onClose(); }} data-testid="discord-modal">
-      <div className="modal" onClick={e => e.stopPropagation()} style={{ width: 640 }}>
+      <div className="modal" onClick={e => e.stopPropagation()} style={{ width: 700, maxHeight: '85vh' }}>
         <div className="modal-header">
-          <h2>Discord Post Templates</h2>
+          <h2>Discord Post</h2>
           <button className="modal-close" onClick={onClose}>&times;</button>
         </div>
-        <div style={{ padding: '0 24px 12px' }}>
-          <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search templates..." data-testid="discord-search" style={{ width: '100%' }} />
+        <div style={{ padding: '0 24px 8px', display: 'flex', gap: 8 }}>
+          <button className={`tab-btn ${tab === 'templates' ? 'active' : ''}`} onClick={() => setTab('templates')} style={{ padding: '6px 14px' }}>Templates</button>
+          <button className={`tab-btn ${tab === 'screenshots' ? 'active' : ''}`} onClick={() => setTab('screenshots')} style={{ padding: '6px 14px' }}>Screenshots</button>
         </div>
-        <div className="modal-body">
-          {filtered.length === 0 ? (
-            <p className="text-muted" style={{ padding: 20 }}>No templates match your search.</p>
-          ) : filtered.map(([title, message], i) => (
-            <DiscordRow key={i} title={title} message={message} />
-          ))}
+        <div style={{ padding: '0 24px 12px' }}>
+          <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder={tab === 'templates' ? 'Search templates...' : 'Search screenshots...'} data-testid="discord-search" style={{ width: '100%' }} />
+        </div>
+        <div className="modal-body" style={{ maxHeight: '55vh', overflowY: 'auto' }}>
+          {tab === 'templates' ? (
+            filteredTemplates.length === 0 ? (
+              <p className="text-muted" style={{ padding: 20 }}>No templates match your search.</p>
+            ) : filteredTemplates.map(([title, message], i) => (
+              <DiscordRow key={i} title={title} message={message} />
+            ))
+          ) : (
+            filteredScreenshots.length === 0 ? (
+              <p className="text-muted" style={{ padding: 20 }}>No screenshots match your search.</p>
+            ) : filteredScreenshots.map((ss, i) => (
+              <DiscordScreenshotRow key={i} title={ss.title} imageUrl={ss.image_url} />
+            ))
+          )}
         </div>
       </div>
     </div>
@@ -204,6 +221,31 @@ function DiscordRow({ title, message }) {
         setCopied(true);
         setTimeout(() => setCopied(false), 1500);
       }}>{copied ? 'Copied!' : 'Copy'}</button>
+    </div>
+  );
+}
+
+function DiscordScreenshotRow({ title, imageUrl }) {
+  const [copied, setCopied] = useState(false);
+  const handleCopy = async () => {
+    try {
+      const resp = await fetch(imageUrl);
+      const blob = await resp.blob();
+      await navigator.clipboard.write([new ClipboardItem({ [blob.type]: blob })]);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch (_e) {
+      // Fallback: open image in new tab
+      window.open(imageUrl, '_blank');
+    }
+  };
+  return (
+    <div className="discord-row" style={{ flexDirection: 'column', gap: 8 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="discord-title">{title}</div>
+        <button className={`discord-copy ${copied ? 'copied' : ''}`} onClick={handleCopy}>{copied ? 'Copied!' : 'Copy Image'}</button>
+      </div>
+      <img src={imageUrl} alt={title} style={{ width: '100%', maxHeight: 300, objectFit: 'contain', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border-subtle)' }} />
     </div>
   );
 }

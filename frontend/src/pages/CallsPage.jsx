@@ -54,39 +54,35 @@ function isOneTimeDonation(callType) {
   return callType.toLowerCase().includes('one time');
 }
 
-function ScenarioCard({ currentCaller, callSetup, randFlags, donations, onRegenerate }) {
+function ScenarioCard({ currentCaller, callSetup, randFlags, donations, onRegenerate, showData }) {
   if (!currentCaller.length) return <div className="card card-scenario"><p className="text-muted">Select call type, show, and caller.</p></div>;
   const fname = currentCaller[0];
   const fullName = `${currentCaller[0]} ${currentCaller[1]}`;
   const ct = callSetup.type.toLowerCase();
   const donorType = ct.includes('new') ? 'a new donor' : 'an existing member';
-  const isSustaining = ct.includes('sustaining') || ct.includes('monthly') || ct.includes('increase');
   const isOneTime = isOneTimeDonation(callSetup.type);
   let action = 'make a one-time donation of';
   if (ct.includes('increase')) action = 'increase their sustaining donation to';
-  else if (isSustaining) action = 'start a new sustaining donation of';
+  else if (ct.includes('sustaining') || ct.includes('monthly')) action = 'start a new sustaining donation of';
   const donation = callSetup.donation || donations[0] || '';
+  const gift = showData && showData[3] ? showData[3] : '';
 
   return (
     <div className="card card-scenario" data-testid="scenario-card">
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
         <h3 style={{ color: 'var(--border-scenario)', margin: 0 }}>SCENARIO</h3>
         <button className="btn btn-ghost btn-sm" onClick={onRegenerate} data-testid="scenario-regen" title="Re-roll random variables">{'\uD83D\uDD04'} Regenerate</button>
       </div>
-      <p style={{ lineHeight: 1.7, marginBottom: 16 }}>
-        <b>For this call you will portray {fullName}.</b> {fname} is {donorType} wishing to {action} <b>{donation}</b> to support <b>{callSetup.show}</b>.
+      <p style={{ lineHeight: 1.6, marginBottom: 12 }}>
+        <b>For this call you will portray {fullName}.</b> {fname} is {donorType} wishing to {action} {donation} to support {callSetup.show}.
       </p>
-      <div className="scenario-vars">
-        <ScenarioVar label="Phone Type" value={randFlags.phone} highlight />
-        {randFlags.phone === 'Mobile' && <ScenarioVar label="SMS Opt-In" value={randFlags.sms} />}
-        <ScenarioVar label="E-Newsletter" value={randFlags.enews} />
-        <ScenarioVar label="Cover $6 Shipping" value={randFlags.ship} />
-        {!isOneTime && <ScenarioVar label="Cover CC Processing Fee" value={randFlags.ccfee} />}
-      </div>
-      <div style={{ marginTop: 16, paddingTop: 12, borderTop: '1px solid rgba(34,197,94,0.2)' }}>
-        <div className="text-sm"><b>{fullName}</b></div>
-        <div className="text-xs text-muted">{currentCaller[2]}, {currentCaller[3]}, {currentCaller[4]} {currentCaller[5]}</div>
-        <div className="text-xs text-muted">Phone: {currentCaller[6]} | Email: {currentCaller[7]}</div>
+      <div style={{ lineHeight: 1.8, fontSize: 'var(--font-size-sm)' }}>
+        {gift && <div>&bull; <b>Thank You Gift:</b> {gift}</div>}
+        <div>&bull; <b>Phone Type:</b> {randFlags.phone}</div>
+        {randFlags.phone === 'Mobile' && <div>&bull; <b>Text Messages:</b> {randFlags.sms}</div>}
+        <div>&bull; <b>E-Newsletter:</b> {randFlags.enews}</div>
+        <div>&bull; <b>Cover $6 Shipping:</b> {randFlags.ship}</div>
+        {!isOneTime && <div>&bull; <b>Cover CC Processing Fee:</b> {randFlags.ccfee}</div>}
       </div>
     </div>
   );
@@ -262,7 +258,7 @@ export default function CallsPage({ onNavigate }) {
             </select>
           </div>
         </div>
-        <ScenarioCard currentCaller={currentCaller} callSetup={callSetup} randFlags={randFlags} donations={donations} onRegenerate={rollRandom} />
+        <ScenarioCard currentCaller={currentCaller} callSetup={callSetup} randFlags={randFlags} donations={donations} onRegenerate={rollRandom} showData={showData} />
       </div>
 
       <PaymentSimulation />

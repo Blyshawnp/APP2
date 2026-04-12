@@ -29,7 +29,7 @@ logger = logging.getLogger(__name__)
 # ══════════════════════════════════════════════════════════════════
 # CONSTANTS / DEFAULTS
 # ══════════════════════════════════════════════════════════════════
-APP_VERSION = "3.0"
+APP_VERSION = "2.5.0"
 
 CALL_TYPES = [
     "New Donor - One Time Donation",
@@ -118,10 +118,21 @@ AUTO_FAIL_REASONS = [
 ]
 
 TICKER_MESSAGES = [
-    "Welcome to Mock Testing Suite v3.0",
+    "Welcome to Mock Testing Suite v2.5.0",
     "Reminder: Log out of Call Corp and Simple Script after each session",
     "Tip: Use the Discord Post button to quickly copy common messages",
     "Need help? Check the Help tab for step-by-step setup guides",
+]
+
+TICKER_DOC_URL = "https://docs.google.com/document/d/1kRJMSd-1qK3qU6jDYr30HeNglrqTiF0tF5fiYEhpP80/export?format=txt"
+UPDATE_DOC_URL = "https://docs.google.com/document/d/1_5L1LS6i5bYWxRYUiBrmaVonbQq9nEhY68XrL5G9c1w/export?format=txt"
+
+DEFAULT_FORM_URL = "https://forms.office.com/pages/responsepage.aspx?id=3KFHNUeYz0mR2noZwaJeQnNAxP4sz6FBkEyNHMuYWT1URDZKWk1RWDU2VjRLTEZKNUxCWU1RRFlUVS4u&route=shorturl"
+DEFAULT_CERT_SHEET_URL = "https://acddirect-my.sharepoint.com/:x:/p/becky_sowles/IQDxXC0z-rUHS6oowjotk0e6AZeldAj2eFiqT8oNiOEAWjA?rtime=5Q1giSl33kg"
+
+DISCORD_SCREENSHOTS = [
+    {"title": "Welcome New Agent", "image_url": "/welcome-new-agent.png"},
+    {"title": "Welcome to Stars", "image_url": "/welcome-to-stars.png"},
 ]
 
 DEFAULT_SETTINGS = {
@@ -129,8 +140,8 @@ DEFAULT_SETTINGS = {
     "tutorial_completed": False,
     "tester_name": "",
     "display_name": "",
-    "form_url": "",
-    "cert_sheet_url": "",
+    "form_url": DEFAULT_FORM_URL,
+    "cert_sheet_url": DEFAULT_CERT_SHEET_URL,
     "theme": "dark",
     "enable_gemini": False,
     "gemini_key": "",
@@ -139,9 +150,8 @@ DEFAULT_SETTINGS = {
     "worksheet": "Sheet1",
     "service_account_path": "service_account.json",
     "enable_calendar": False,
-    "ticker_doc_url": "",
-    "update_doc_url": "",
     "discord_templates": DISCORD_TEMPLATES,
+    "discord_screenshots": DISCORD_SCREENSHOTS,
     "payment": DEFAULT_PAYMENT,
     "shows": SHOWS,
     "call_types": CALL_TYPES,
@@ -508,12 +518,46 @@ async def clear_history():
     return {"ok": True}
 
 
+import re
+import httpx
+
 # ══════════════════════════════════════════════════════════════════
-# TICKER
+# TICKER (fetches from Google Doc, falls back to defaults)
 # ══════════════════════════════════════════════════════════════════
+_ticker_cache = {"messages": None, "last_fetch": 0}
+
+async def _fetch_ticker_from_doc():
+    """Fetch ticker messages from Google Doc. Each numbered line becomes a message.
+    The leading number+period is stripped. Falls back to defaults on error."""
+    import time
+    now = time.time()
+    if _ticker_cache["messages"] and (now - _ticker_cache["last_fetch"]) < 300:
+        return _ticker_cache["messages"]
+    try:
+        async with httpx.AsyncClient(timeout=10) as client:
+            resp = await client.get(TICKER_DOC_URL, follow_redirects=True)
+            if resp.status_code == 200:
+                text = resp.text.strip()
+                lines = []
+                for line in text.split('\n'):
+                    line = line.strip()
+                    if not line:
+                        continue
+                    cleaned = re.sub(r'^\d+[\.\)]\s*', '', line).strip()
+                    if cleaned:
+                        lines.append(cleaned)
+                if lines:
+                    _ticker_cache["messages"] = lines
+                    _ticker_cache["last_fetch"] = now
+                    return lines
+    except Exception as e:
+        logger.warning(f"[TICKER] Failed to fetch Google Doc: {e}")
+    return TICKER_MESSAGES
+
 @api_router.get("/ticker")
 async def get_ticker():
-    return {"messages": TICKER_MESSAGES}
+    messages = await _fetch_ticker_from_doc()
+    return {"messages": messages}
 
 
 # ══════════════════════════════════════════════════════════════════
