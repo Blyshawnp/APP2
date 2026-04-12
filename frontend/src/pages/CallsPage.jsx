@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import DOMPurify from 'dompurify';
 import api from '../api';
 import { useModal } from '../components/ModalProvider';
 import TechIssueDialog from '../components/TechIssueDialog';
-import { playBuzz } from '../utils/buzz';
+import { playError } from '../utils/buzz';
 
 const CALL_COACHING = [
   { id: 'c-show-app', label: 'Show appreciation', children: ['For Current/Existing Donors', 'After donation amount is given'] },
@@ -26,9 +25,10 @@ function pickRandom(arr) {
 }
 
 function generateRandomFlags() {
+  const phone = pickRandom(['Mobile', 'Landline']);
   return {
-    phone: pickRandom(['Cell', 'Landline']),
-    text: pickRandom(['Yes', 'No']),
+    phone,
+    sms: phone === 'Mobile' ? pickRandom(['Yes', 'No']) : 'N/A',
     enews: pickRandom(['Yes', 'No']),
     ship: pickRandom(['Yes', 'No']),
     ccfee: pickRandom(['Yes', 'No']),
@@ -50,23 +50,56 @@ function getDonationsForShow(showData, callType) {
   return amt ? [amt, 'Other'] : ['Other'];
 }
 
-function buildScenarioHtml(currentCaller, callSetup, randFlags, donations) {
-  if (!currentCaller.length) return 'Select call type, show, and caller.';
+function isOneTimeDonation(callType) {
+  return callType.toLowerCase().includes('one time');
+}
+
+function ScenarioCard({ currentCaller, callSetup, randFlags, donations, onRegenerate }) {
+  if (!currentCaller.length) return <div className="card card-scenario"><p className="text-muted">Select call type, show, and caller.</p></div>;
   const fname = currentCaller[0];
   const fullName = `${currentCaller[0]} ${currentCaller[1]}`;
   const ct = callSetup.type.toLowerCase();
   const donorType = ct.includes('new') ? 'a new donor' : 'an existing member';
   const isSustaining = ct.includes('sustaining') || ct.includes('monthly') || ct.includes('increase');
+  const isOneTime = isOneTimeDonation(callSetup.type);
   let action = 'make a one-time donation of';
   if (ct.includes('increase')) action = 'increase their sustaining donation to';
   else if (isSustaining) action = 'start a new sustaining donation of';
-  let html = `<b>For this call you will portray ${fullName}.</b> ${fname} is ${donorType} wishing to ${action} ${callSetup.donation || donations[0]} to support ${callSetup.show}.<br/><br/>`;
-  html += `<b>Phone Type:</b> ${randFlags.phone || 'Cell'}<br/>`;
-  if (randFlags.phone === 'Cell') html += `<b>Text Messages:</b> ${randFlags.text || 'No'}<br/>`;
-  html += `<b>E-Newsletter:</b> ${randFlags.enews || 'No'}<br/>`;
-  html += `<b>Cover $6 Shipping:</b> ${randFlags.ship || 'No'}<br/>`;
-  if (isSustaining) html += `<b>Cover $2 CC Fee:</b> ${randFlags.ccfee || 'No'}`;
-  return html;
+  const donation = callSetup.donation || donations[0] || '';
+
+  return (
+    <div className="card card-scenario" data-testid="scenario-card">
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+        <h3 style={{ color: 'var(--border-scenario)', margin: 0 }}>SCENARIO</h3>
+        <button className="btn btn-ghost btn-sm" onClick={onRegenerate} data-testid="scenario-regen" title="Re-roll random variables">{'\uD83D\uDD04'} Regenerate</button>
+      </div>
+      <p style={{ lineHeight: 1.7, marginBottom: 16 }}>
+        <b>For this call you will portray {fullName}.</b> {fname} is {donorType} wishing to {action} <b>{donation}</b> to support <b>{callSetup.show}</b>.
+      </p>
+      <div className="scenario-vars">
+        <ScenarioVar label="Phone Type" value={randFlags.phone} highlight />
+        {randFlags.phone === 'Mobile' && <ScenarioVar label="SMS Opt-In" value={randFlags.sms} />}
+        <ScenarioVar label="E-Newsletter" value={randFlags.enews} />
+        <ScenarioVar label="Cover $6 Shipping" value={randFlags.ship} />
+        {!isOneTime && <ScenarioVar label="Cover CC Processing Fee" value={randFlags.ccfee} />}
+      </div>
+      <div style={{ marginTop: 16, paddingTop: 12, borderTop: '1px solid rgba(34,197,94,0.2)' }}>
+        <div className="text-sm"><b>{fullName}</b></div>
+        <div className="text-xs text-muted">{currentCaller[2]}, {currentCaller[3]}, {currentCaller[4]} {currentCaller[5]}</div>
+        <div className="text-xs text-muted">Phone: {currentCaller[6]} | Email: {currentCaller[7]}</div>
+      </div>
+    </div>
+  );
+}
+
+function ScenarioVar({ label, value, highlight }) {
+  const isYes = value === 'Yes' || value === 'Mobile';
+  return (
+    <div className="scenario-var">
+      <span className="scenario-var-label">{label}:</span>
+      <span className={`scenario-var-value ${highlight ? 'scenario-highlight' : ''} ${isYes ? 'scenario-yes' : 'scenario-no'}`}>{value}</span>
+    </div>
+  );
 }
 
 async function evaluateCallRouting(session, modal, onNavigate, apiRef) {
@@ -159,10 +192,6 @@ export default function CallsPage({ onNavigate }) {
   const currentCaller = useMemo(() => callers[callerIdx] || callers[0] || [], [callers, callerIdx]);
   const showData = shows.find(s => s[0] === callSetup.show);
   const donations = useMemo(() => getDonationsForShow(showData, callSetup.type), [showData, callSetup.type]);
-  const scenarioHtml = useMemo(
-    () => DOMPurify.sanitize(buildScenarioHtml(currentCaller, callSetup, randFlags, donations)),
-    [currentCaller, callSetup, randFlags, donations]
-  );
 
   const resetCall = useCallback(() => {
     setResult(null);
@@ -224,10 +253,7 @@ export default function CallsPage({ onNavigate }) {
             </select>
           </div>
         </div>
-        <div className="card card-scenario">
-          <h3 style={{ color: 'var(--border-scenario)', marginBottom: 8 }}>SCENARIO</h3>
-          <div style={{ lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: scenarioHtml }} />
-        </div>
+        <ScenarioCard currentCaller={currentCaller} callSetup={callSetup} randFlags={randFlags} donations={donations} onRegenerate={rollRandom} />
       </div>
 
       <PaymentSimulation />
@@ -268,7 +294,7 @@ export default function CallsPage({ onNavigate }) {
 
       <div className="footer-bar" data-testid="calls-footer">
         <button className="btn btn-muted btn-sm" onClick={() => { if (callNum > 1) { setCallNum(n => n - 1); resetCall(); } else onNavigate('basics'); }} data-testid="calls-back">Back</button>
-        <button className="btn btn-danger btn-sm" onClick={async () => { playBuzz(); await api.updateSession({ auto_fail_reason: 'Stopped Responding in Chat', final_status: 'Fail' }); onNavigate('review'); }} data-testid="calls-stopped" title="Candidate went silent in Discord during the session">Stopped Responding</button>
+        <button className="btn btn-danger btn-sm" onClick={async () => { playError(); await api.updateSession({ auto_fail_reason: 'Stopped Responding in Chat', final_status: 'Fail' }); onNavigate('review'); }} data-testid="calls-stopped" title="Candidate went silent in Discord during the session">Stopped Responding</button>
         <button className="btn btn-muted btn-sm" onClick={() => setTechOpen(true)} data-testid="calls-tech" title="Log a technical issue">Tech Issue</button>
         <span className="spacer" />
         <button className="btn btn-primary" onClick={handleContinue} data-testid="calls-continue">Continue</button>

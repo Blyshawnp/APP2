@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import '@/App.css';
 import api from './api';
 import { ModalProvider } from './components/ModalProvider';
@@ -14,20 +14,14 @@ import SettingsPage from './pages/SettingsPage';
 import HelpPage from './pages/HelpPage';
 
 const NAV_ITEMS = [
-  { key: 'home', label: 'Home', icon: 'home' },
-  { key: 'basics', label: 'The Basics', icon: 'clipboard-list' },
-  { key: 'calls', label: 'Calls', icon: 'phone' },
-  { key: 'suptransfer', label: 'Sup Transfer', icon: 'repeat' },
-  { key: 'review', label: 'Review', icon: 'file-text' },
-  { key: 'history', label: 'History', icon: 'bar-chart-2' },
-  { key: 'settings', label: 'Settings', icon: 'settings' },
-  { key: 'help', label: 'Help', icon: 'help-circle' },
-];
-
-const LINK_ITEMS = [
-  { key: 'discord', label: 'Discord Post', icon: 'message-square' },
-  { key: 'sheets', label: 'Sheets', icon: 'plus', sheetsOnly: true },
-  { key: 'cert', label: 'Cert Spreadsheet', icon: 'file-spreadsheet' },
+  { key: 'home', label: 'Home', emoji: '\uD83C\uDFE0' },
+  { key: 'basics', label: 'The Basics', emoji: '\uD83D\uDCCB' },
+  { key: 'calls', label: 'Calls', emoji: '\uD83D\uDCDE' },
+  { key: 'suptransfer', label: 'Sup Transfer', emoji: '\uD83D\uDD04' },
+  { key: 'review', label: 'Review', emoji: '\uD83D\uDCC4' },
+  { key: 'history', label: 'History', emoji: '\uD83D\uDCCA' },
+  { key: 'settings', label: 'Settings', emoji: '\u2699\uFE0F' },
+  { key: 'help', label: 'Help', emoji: '\u2753' },
 ];
 
 function PageRouter({ page, navigate }) {
@@ -67,10 +61,8 @@ function App() {
         if (cancelled) return;
         setSettings(s);
         if (!s.setup_complete) setPage('setup');
-      } catch (err) {
-        if (!cancelled) {
-          // Backend unreachable — settings will remain null, loading state handles UI
-        }
+      } catch (_err) {
+        // Backend unreachable
       }
       if (!cancelled) setLoading(false);
     })();
@@ -82,8 +74,8 @@ function App() {
       try {
         const data = await api.getTicker();
         if (data.messages?.length > 0) setTickerMessages(data.messages);
-      } catch (err) {
-        // Ticker fetch is non-critical; silently retry on next interval
+      } catch (_err) {
+        // Non-critical
       }
     };
     fetchTicker();
@@ -93,21 +85,10 @@ function App() {
 
   const navigate = useCallback((p) => {
     setPage(p);
-    // Refetch settings when leaving settings page to sync sidebar state
     if (page === 'settings') {
       api.getSettings().then(s => setSettings(s)).catch(() => {});
     }
   }, [page]);
-
-  const handleLinkClick = useCallback((key) => {
-    if (key === 'discord') { setDiscordOpen(true); return; }
-    if (!settings) return;
-    if (key === 'sheets' && settings.sheet_id) {
-      window.open(`https://docs.google.com/spreadsheets/d/${settings.sheet_id}`, '_blank');
-    } else if (key === 'cert' && settings.cert_sheet_url) {
-      window.open(settings.cert_sheet_url, '_blank');
-    }
-  }, [settings]);
 
   const handleExit = useCallback(() => {
     const root = document.getElementById('root');
@@ -127,15 +108,12 @@ function App() {
   return (
     <ModalProvider>
       <div className="app-root" data-testid="app-root">
-        {/* Ticker */}
         <div className="ticker-bar">
           <div className="ticker-track">
             <span className="ticker-content">{tickerContent}</span>
           </div>
         </div>
-
         <div className="app-shell">
-          {/* Sidebar */}
           <aside className="sidebar" data-testid="sidebar">
             <div className="sidebar-brand">
               <div className="sidebar-logo">MTS</div>
@@ -145,32 +123,33 @@ function App() {
             <nav className="sidebar-nav">
               {NAV_ITEMS.map(item => (
                 <button key={item.key} className={`nav-btn ${page === item.key ? 'active' : ''}`} onClick={() => navigate(item.key)} data-testid={`nav-${item.key}`}>
-                  <span className="nav-icon"><NavIcon name={item.icon} /></span>
+                  <span className="nav-emoji">{item.emoji}</span>
                   <span className="nav-label">{item.label}</span>
                 </button>
               ))}
             </nav>
             <div className="sidebar-divider" />
-            <div className="sidebar-links">
-              {LINK_ITEMS.filter(item => !item.sheetsOnly || settings?.enable_sheets).map(item => (
-                <button key={item.key} className="link-btn" onClick={() => handleLinkClick(item.key)} data-testid={`link-${item.key}`}>
-                  <span className="nav-icon"><NavIcon name={item.icon} /></span>
-                  <span className="nav-label">{item.label}</span>
+            <div className="sidebar-actions">
+              <button className="action-btn action-discord" onClick={() => setDiscordOpen(true)} data-testid="link-discord" title="Open Discord message templates">
+                <span className="action-emoji">{'\uD83D\uDCAC'}</span><span>Discord Post</span>
+              </button>
+              {settings?.enable_sheets && (
+                <button className="action-btn action-sheets" onClick={() => { if (settings.sheet_id) window.open(`https://docs.google.com/spreadsheets/d/${settings.sheet_id}`, '_blank'); }} data-testid="link-sheets" title="Open Google Sheets backup">
+                  <span className="action-emoji">+</span><span>Sheets</span>
                 </button>
-              ))}
+              )}
+              <button className="action-btn action-cert" onClick={() => { if (settings?.cert_sheet_url) window.open(settings.cert_sheet_url, '_blank'); }} data-testid="link-cert" title="Open Cert Spreadsheet">
+                <span className="action-emoji">{'\uD83D\uDCCA'}</span><span>Cert Spreadsheet</span>
+              </button>
             </div>
             <div className="sidebar-footer">
-              <button className="exit-btn" onClick={handleExit} data-testid="exit-btn">Exit App</button>
+              <button className="exit-btn" onClick={handleExit} data-testid="exit-btn">{'\uD83D\uDEAA'} Exit App</button>
             </div>
           </aside>
 
-          {/* Main */}
           <main className="content-area">
             <div className="page-content" data-testid="page-content">
-              {loading
-                ? <div className="page-loading">Connecting to server...</div>
-                : <PageRouter page={page} navigate={navigate} />
-              }
+              {loading ? <div className="page-loading">Connecting to server...</div> : <PageRouter page={page} navigate={navigate} />}
             </div>
             <div className="status-bar">
               <span id="status-text"></span>
@@ -180,7 +159,6 @@ function App() {
           </main>
         </div>
 
-        {/* Discord Modal */}
         {discordOpen && <DiscordModal settings={settings} onClose={() => setDiscordOpen(false)} />}
       </div>
     </ModalProvider>
@@ -189,17 +167,24 @@ function App() {
 
 function DiscordModal({ settings, onClose }) {
   const templates = settings?.discord_templates || [];
+  const [search, setSearch] = useState('');
+  const filtered = templates.filter(([trigger, msg]) =>
+    trigger.toLowerCase().includes(search.toLowerCase()) || msg.toLowerCase().includes(search.toLowerCase())
+  );
   return (
     <div className="modal-overlay open" onClick={e => { if (e.target.classList.contains('modal-overlay')) onClose(); }} data-testid="discord-modal">
-      <div className="modal" onClick={e => e.stopPropagation()}>
+      <div className="modal" onClick={e => e.stopPropagation()} style={{ width: 640 }}>
         <div className="modal-header">
           <h2>Discord Post Templates</h2>
           <button className="modal-close" onClick={onClose}>&times;</button>
         </div>
+        <div style={{ padding: '0 24px 12px' }}>
+          <input type="text" value={search} onChange={e => setSearch(e.target.value)} placeholder="Search templates..." data-testid="discord-search" style={{ width: '100%' }} />
+        </div>
         <div className="modal-body">
-          {templates.length === 0 ? (
-            <p className="text-muted" style={{ padding: 20 }}>No templates configured. Add them in Settings - Discord tab.</p>
-          ) : templates.map(([title, message], i) => (
+          {filtered.length === 0 ? (
+            <p className="text-muted" style={{ padding: 20 }}>No templates match your search.</p>
+          ) : filtered.map(([title, message], i) => (
             <DiscordRow key={i} title={title} message={message} />
           ))}
         </div>
@@ -221,15 +206,6 @@ function DiscordRow({ title, message }) {
       }}>{copied ? 'Copied!' : 'Copy'}</button>
     </div>
   );
-}
-
-function NavIcon({ name }) {
-  const icons = {
-    'home': 'H', 'clipboard-list': 'B', 'phone': 'C', 'repeat': 'S', 'file-text': 'R',
-    'bar-chart-2': 'Hi', 'settings': 'St', 'help-circle': '?',
-    'message-square': 'D', 'bar-chart': 'T', 'file-spreadsheet': 'Cs',
-  };
-  return <span style={{ fontSize: 14, fontWeight: 700 }}>{icons[name] || name[0]?.toUpperCase()}</span>;
 }
 
 export default App;

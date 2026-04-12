@@ -91,13 +91,6 @@ function GeneralTab({ s, set }) {
       <h3 style={{ margin: '24px 0 16px' }}>URLs</h3>
       <SettingsRow label="Cert Form URL"><input type="text" value={s.form_url || ''} onChange={e => set('form_url', e.target.value)} style={{ maxWidth: 500 }} data-testid="settings-form-url" /></SettingsRow>
       <SettingsRow label="Cert Sheet URL"><input type="text" value={s.cert_sheet_url || ''} onChange={e => set('cert_sheet_url', e.target.value)} style={{ maxWidth: 500 }} data-testid="settings-sheet-url" /></SettingsRow>
-      <h3 style={{ margin: '24px 0 16px' }}>Google Docs Integration</h3>
-      <SettingsRow label="Ticker Doc URL">
-        <input type="text" value={s.ticker_doc_url || ''} onChange={e => set('ticker_doc_url', e.target.value)} placeholder="Google Doc URL for ticker messages" style={{ maxWidth: 500 }} data-testid="settings-ticker-doc" />
-      </SettingsRow>
-      <SettingsRow label="Auto-Updater Doc URL">
-        <input type="text" value={s.update_doc_url || ''} onChange={e => set('update_doc_url', e.target.value)} placeholder="Google Doc URL for auto-updater" style={{ maxWidth: 500 }} data-testid="settings-update-doc" />
-      </SettingsRow>
       <h3 style={{ margin: '24px 0 16px' }}>Theme</h3>
       <button className="btn btn-ghost btn-sm" onClick={() => {
         const c = document.documentElement.getAttribute('data-theme') || 'dark';
@@ -341,6 +334,9 @@ function PaymentTab({ s, set }) {
 /* GEMINI TAB                                                      */
 /* ═══════════════════════════════════════════════════════════════ */
 function GeminiTab({ s, set }) {
+  const defaultCoachingPrompt = `You are a professional QA reviewer for a call center. Based on the coaching checkboxes selected during the mock call session, write a clear, concise coaching summary. Focus on what the candidate did well and what they need to improve. Keep it professional and constructive.\n\nExample output: "The candidate showed strong engagement but needs improvement in script navigation and verbatim reading. Coaching was given on showing appreciation after donation amount is given and using the Back/Next buttons instead of icons."`;
+  const defaultFailPrompt = `You are a professional QA reviewer for a call center. Based on the fail reasons selected during the mock call session, write a clear, concise reason for failure. Be direct but professional.\n\nExample output: "The candidate failed due to paraphrasing the script and volunteering information not on the script. Additionally, there were script navigation issues causing missed sections."`;
+
   return (
     <div className="card" data-testid="settings-gemini">
       <label className="checkbox-label" style={{ marginBottom: 16 }}>
@@ -349,6 +345,16 @@ function GeminiTab({ s, set }) {
       </label>
       <SettingsRow label="API Key"><input type="password" value={s.gemini_key || ''} onChange={e => set('gemini_key', e.target.value)} placeholder="From aistudio.google.com" style={{ maxWidth: 400 }} data-testid="settings-gemini-key" /></SettingsRow>
       <p className="text-muted text-sm" style={{ marginTop: 16 }}>Go to aistudio.google.com &gt; Get API Key &gt; Create API Key &gt; Paste above.</p>
+      {s.enable_gemini && (
+        <>
+          <h3 style={{ margin: '24px 0 12px' }}>Coaching Summary Prompt</h3>
+          <p className="text-muted text-xs" style={{ marginBottom: 8 }}>Instructions sent to Gemini when generating a coaching summary from checkboxes.</p>
+          <textarea rows={5} value={s.gemini_coaching_prompt || defaultCoachingPrompt} onChange={e => set('gemini_coaching_prompt', e.target.value)} style={{ width: '100%', fontFamily: 'var(--font-mono)', fontSize: '12px' }} data-testid="settings-gemini-coaching-prompt" />
+          <h3 style={{ margin: '24px 0 12px' }}>Reason for Fail Prompt</h3>
+          <p className="text-muted text-xs" style={{ marginBottom: 8 }}>Instructions sent to Gemini when generating a fail reason summary.</p>
+          <textarea rows={5} value={s.gemini_fail_prompt || defaultFailPrompt} onChange={e => set('gemini_fail_prompt', e.target.value)} style={{ width: '100%', fontFamily: 'var(--font-mono)', fontSize: '12px' }} data-testid="settings-gemini-fail-prompt" />
+        </>
+      )}
     </div>
   );
 }

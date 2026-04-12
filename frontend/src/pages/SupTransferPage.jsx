@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import DOMPurify from 'dompurify';
 import api from '../api';
 import { useModal } from '../components/ModalProvider';
 import TechIssueDialog from '../components/TechIssueDialog';
-import { playBuzz } from '../utils/buzz';
+import { playError } from '../utils/buzz';
 
 const SUP_COACHING = [
   { label: 'Minimize dead air', helper: 'Maintain engagement throughout hold and transfer' },
@@ -62,14 +61,30 @@ export default function SupTransferPage({ onNavigate }) {
   const callerIdx = Math.max(0, callers.findIndex(c => `${c[0]} ${c[1]}` === setup.caller));
   const currentCaller = useMemo(() => callers[callerIdx] || callers[0] || [], [callers, callerIdx]);
 
-  const scenarioHtml = useMemo(() => {
-    if (!currentCaller.length) return 'Select caller, show, and reason.';
-    const fullName = `${currentCaller[0]} ${currentCaller[1]}`;
-    const fname = currentCaller[0];
-    const phone = ['Cell', 'Landline'][Math.floor(Math.random() * 2)];
-    const raw = `<b>For this call you will portray ${fullName}.</b> ${fname} would like to speak with a supervisor. The caller was ${(setup.reason || '').toLowerCase()} during a previous call.<br/><b>Phone Type:</b> ${phone}`;
-    return DOMPurify.sanitize(raw);
-  }, [currentCaller, setup.reason]);
+  const [supRandFlags, setSupRandFlags] = useState(() => ({
+    phone: ['Mobile', 'Landline'][Math.floor(Math.random() * 2)],
+    sms: ['Yes', 'No'][Math.floor(Math.random() * 2)],
+    enews: ['Yes', 'No'][Math.floor(Math.random() * 2)],
+    ship: ['Yes', 'No'][Math.floor(Math.random() * 2)],
+  }));
+
+  const regenSupFlags = () => setSupRandFlags({
+    phone: ['Mobile', 'Landline'][Math.floor(Math.random() * 2)],
+    sms: ['Yes', 'No'][Math.floor(Math.random() * 2)],
+    enews: ['Yes', 'No'][Math.floor(Math.random() * 2)],
+    ship: ['Yes', 'No'][Math.floor(Math.random() * 2)],
+  });
+
+  const buildReasonText = useCallback((reason) => {
+    const r = (reason || '').toLowerCase();
+    if (r.includes('hung up')) return 'was hung up on';
+    if (r.includes('charged') && r.includes('cancelled')) return 'was charged for a cancelled sustaining donation';
+    if (r.includes('double')) return 'was double charged';
+    if (r.includes('damaged')) return 'received a damaged gift';
+    if (r.includes('receive')) return "didn't receive their gift";
+    if (r.includes('cancel')) return 'wants to cancel their sustaining donation';
+    return reason || '';
+  }, []);
 
   const resetTransfer = () => {
     setResult(null);
@@ -138,9 +153,29 @@ export default function SupTransferPage({ onNavigate }) {
             </select>
           </div>
         </div>
-        <div className="card card-scenario">
-          <h3 style={{ color: 'var(--border-scenario)', marginBottom: 8 }}>SCENARIO</h3>
-          <div style={{ lineHeight: 1.7 }} dangerouslySetInnerHTML={{ __html: scenarioHtml }} />
+        <div className="card card-scenario" data-testid="sup-scenario-card">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+            <h3 style={{ color: 'var(--border-scenario)', margin: 0 }}>SCENARIO</h3>
+            <button className="btn btn-ghost btn-sm" onClick={regenSupFlags} data-testid="sup-regen">{'\uD83D\uDD04'} Regenerate</button>
+          </div>
+          {currentCaller.length > 0 ? (
+            <>
+              <p style={{ lineHeight: 1.7, marginBottom: 16 }}>
+                <b>For this call you will portray {currentCaller[0]} {currentCaller[1]}.</b> {currentCaller[0]} would like to speak with a supervisor. The caller {buildReasonText(setup.reason)} during a previous call.
+              </p>
+              <div className="scenario-vars">
+                <div className="scenario-var"><span className="scenario-var-label">Phone Type:</span><span className={`scenario-var-value scenario-highlight ${supRandFlags.phone === 'Mobile' ? 'scenario-yes' : 'scenario-no'}`}>{supRandFlags.phone}</span></div>
+                {supRandFlags.phone === 'Mobile' && <div className="scenario-var"><span className="scenario-var-label">SMS Opt-In:</span><span className={`scenario-var-value ${supRandFlags.sms === 'Yes' ? 'scenario-yes' : 'scenario-no'}`}>{supRandFlags.sms}</span></div>}
+                <div className="scenario-var"><span className="scenario-var-label">E-Newsletter:</span><span className={`scenario-var-value ${supRandFlags.enews === 'Yes' ? 'scenario-yes' : 'scenario-no'}`}>{supRandFlags.enews}</span></div>
+                <div className="scenario-var"><span className="scenario-var-label">Cover $6 Shipping:</span><span className={`scenario-var-value ${supRandFlags.ship === 'Yes' ? 'scenario-yes' : 'scenario-no'}`}>{supRandFlags.ship}</span></div>
+              </div>
+              <div style={{ marginTop: 16, paddingTop: 12, borderTop: '1px solid rgba(34,197,94,0.2)' }}>
+                <div className="text-sm"><b>{currentCaller[0]} {currentCaller[1]}</b></div>
+                <div className="text-xs text-muted">{currentCaller[2]}, {currentCaller[3]}, {currentCaller[4]} {currentCaller[5]}</div>
+                <div className="text-xs text-muted">Phone: {currentCaller[6]} | Email: {currentCaller[7]}</div>
+              </div>
+            </>
+          ) : <p className="text-muted">Select caller, show, and reason.</p>}
         </div>
       </div>
 
@@ -192,7 +227,7 @@ export default function SupTransferPage({ onNavigate }) {
 
       <div className="footer-bar" data-testid="sup-footer">
         <button className="btn btn-muted btn-sm" onClick={() => { if (transferNum > 1) { setTransferNum(1); resetTransfer(); } else onNavigate('calls'); }} data-testid="sup-back">Back</button>
-        <button className="btn btn-danger btn-sm" onClick={async () => { playBuzz(); await api.updateSession({ auto_fail_reason: 'Stopped Responding in Chat', final_status: 'Fail' }); onNavigate('review'); }} data-testid="sup-stopped" title="Candidate went silent in Discord during the session">Stopped Responding</button>
+        <button className="btn btn-danger btn-sm" onClick={async () => { playError(); await api.updateSession({ auto_fail_reason: 'Stopped Responding in Chat', final_status: 'Fail' }); onNavigate('review'); }} data-testid="sup-stopped" title="Candidate went silent in Discord during the session">Stopped Responding</button>
         <button className="btn btn-muted btn-sm" onClick={() => setTechOpen(true)} data-testid="sup-tech" title="Log a technical issue">Tech Issue</button>
         <span className="spacer" />
         <button className="btn btn-primary" onClick={handleContinue} data-testid="sup-continue">Continue</button>

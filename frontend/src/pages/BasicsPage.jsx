@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import api from '../api';
 import { useModal } from '../components/ModalProvider';
 import TechIssueDialog from '../components/TechIssueDialog';
-import { playBuzz } from '../utils/buzz';
+import { playError } from '../utils/buzz';
 
 export default function BasicsPage({ onNavigate }) {
   const modal = useModal();
@@ -25,7 +25,7 @@ export default function BasicsPage({ onNavigate }) {
 
   const autoFail = async (reason) => {
     if (!form.candidate_name.trim()) { await modal.warning('Missing Info', 'Enter the Candidate Name first.'); return; }
-    playBuzz();
+    playError();
     const data = { ...form, auto_fail_reason: reason, final_status: 'Fail' };
     await api.startSession(data);
     onNavigate('review');
@@ -91,9 +91,12 @@ export default function BasicsPage({ onNavigate }) {
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
             <label className="text-sm font-bold" style={{ minWidth: 110 }}>Pronouns</label>
-            <select value={form.pronoun} onChange={e => set('pronoun', e.target.value)} style={{ width: 100 }} data-testid="basics-pronoun">
-              <option value=""></option><option>She</option><option>He</option><option>They</option>
-            </select>
+            <div>
+              <select value={form.pronoun} onChange={e => set('pronoun', e.target.value)} style={{ width: 100 }} data-testid="basics-pronoun">
+                <option value=""></option><option>She</option><option>He</option><option>They</option>
+              </select>
+              <div className="text-xs text-muted" style={{ marginTop: 2 }}>Optional — for accurate summaries</div>
+            </div>
           </div>
           <div>
             <label className="checkbox-label">
