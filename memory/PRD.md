@@ -77,6 +77,16 @@ User uploaded an Electron-based Mock Testing Suite app (FastAPI + vanilla HTML/C
 - **Silent Error Handling**: All empty `catch {}` blocks replaced with descriptive comments explaining why silence is intentional
 - **Console Statements**: All `console.error` in production paths removed or replaced with silent handling
 
+### Iteration 4 Fixes (April 2026)
+- ACD logo: Integrated in sidebar (replaces MTS text) and home page center
+- Home page: Styled action buttons (blue Start, green Sup Transfer, gray History) with emoji icons
+- Basics: Headset section vertically stacked (matches screenshot reference)
+- Calls: Coaching validation popup ("No coaching selected. Continue anyway?"), scroll-to-top on next call, fail reason required for Fail result
+- Sup Transfer: Same coaching validation + scroll-to-top on next transfer
+- Settings: Tabs reordered — config tabs first (General, Gemini, Sheets, Calendar, Payment), data tabs last (Call Types, Shows, Callers, Sup Reasons, Discord)
+- App responsive at 1280x800 (non-fullscreen friendly)
+- Favicon and logo assets integrated
+
 ## Integrations Status
 - **Gemini AI**: Placeholder ready (enable in Settings → Gemini, requires API key)
 - **Google Sheets**: Placeholder ready (enable in Settings → Google Sheet)
