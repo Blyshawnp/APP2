@@ -12,6 +12,7 @@ public class Donor
     public string Phone { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
 
+    public bool IsEnabled { get; set; } = true;
     public string DisplayName => $"{FirstName} {LastName}".Trim();
     public string FullAddress => $"{Address}, {City}, {State} {ZipCode}".Trim();
 }

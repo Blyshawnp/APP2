@@ -7,4 +7,5 @@ public class FailReason
     public bool IsOther { get; set; }
     public bool AppliesToCalls { get; set; } = true;
     public bool AppliesToSupTransfers { get; set; }
+    public bool IsEnabled { get; set; } = true;
 }

@@ -127,24 +127,24 @@ public partial class CallRecordViewModel : ObservableObject
         _validation = validation;
         _sound      = sound;
 
-        // Populate lookup collections from settings
-        foreach (var ct in settings.CallTypes)
+        // Populate lookup collections from settings — only enabled items surface in the UI
+        foreach (var ct in settings.CallTypes.Where(x => x.IsEnabled))
             AvailableCallTypes.Add(ct);
-        foreach (var s in settings.Shows)
+        foreach (var s in settings.Shows.Where(x => x.IsEnabled))
             AvailableShows.Add(s);
-        foreach (var d in settings.Donors.NewDonors)
+        foreach (var d in settings.Donors.NewDonors.Where(x => x.IsEnabled))
             NewDonors.Add(d);
-        foreach (var d in settings.Donors.ExistingMembers)
+        foreach (var d in settings.Donors.ExistingMembers.Where(x => x.IsEnabled))
             ExistingMembers.Add(d);
-        foreach (var d in settings.Donors.IncreaseSustaining)
+        foreach (var d in settings.Donors.IncreaseSustaining.Where(x => x.IsEnabled))
             IncreaseSustaining.Add(d);
 
-        // Coaching categories applicable to calls
-        foreach (var c in settings.CoachingCategories.Where(c => c.AppliesToCalls))
+        // Coaching categories applicable to calls (enabled only)
+        foreach (var c in settings.CoachingCategories.Where(c => c.AppliesToCalls && c.IsEnabled))
             CoachingItems.Add(new CoachingItemViewModel(c));
 
-        // Fail reasons applicable to calls
-        foreach (var r in settings.FailReasons.Where(r => r.AppliesToCalls))
+        // Fail reasons applicable to calls (enabled only)
+        foreach (var r in settings.FailReasons.Where(r => r.AppliesToCalls && r.IsEnabled))
             FailItems.Add(new FailItemViewModel(r));
 
         ScenarioFlags = ScenarioFlags.GenerateRandom();

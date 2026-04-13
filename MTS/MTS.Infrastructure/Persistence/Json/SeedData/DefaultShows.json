@@ -1,23 +1,50 @@
 [
   {
     "Id": "f1000000-0000-0000-0000-000000000001",
-    "Name": "Morning Edition",
-    "OneTimeAmount": 75.00,
-    "MonthlyAmount": 10.00,
-    "GiftDescription": "Tote bag"
+    "Name": "New Divas - Live in Vienna",
+    "OneTimeAmount": 216.00,
+    "MonthlyAmount": 18.00,
+    "GiftDescription": "The New Divas - Best of Live in Vienna (CD) + Wine Glasses + PBS Retro Speaker",
+    "IsEnabled": true
   },
   {
     "Id": "f1000000-0000-0000-0000-000000000002",
-    "Name": "All Things Considered",
-    "OneTimeAmount": 100.00,
-    "MonthlyAmount": 15.00,
-    "GiftDescription": "Umbrella"
+    "Name": "Alan Jackson's Precious Memories",
+    "OneTimeAmount": 120.00,
+    "MonthlyAmount": 10.00,
+    "GiftDescription": "2-CD Set",
+    "IsEnabled": true
   },
   {
     "Id": "f1000000-0000-0000-0000-000000000003",
-    "Name": "Weekend Edition",
-    "OneTimeAmount": 50.00,
-    "MonthlyAmount": 8.00,
-    "GiftDescription": "Mug"
+    "Name": "Doo Wop Project",
+    "OneTimeAmount": 192.00,
+    "MonthlyAmount": 16.00,
+    "GiftDescription": "Combo-DVD & 3 CDs",
+    "IsEnabled": true
+  },
+  {
+    "Id": "f1000000-0000-0000-0000-000000000004",
+    "Name": "Aging Backwards 3",
+    "OneTimeAmount": 240.00,
+    "MonthlyAmount": 20.00,
+    "GiftDescription": "Aging Backwards 3: (DVD) + 4-DVD Workouts Set + Calendar + TV Subscription + HBK",
+    "IsEnabled": true
+  },
+  {
+    "Id": "f1000000-0000-0000-0000-000000000005",
+    "Name": "Great American Recipes",
+    "OneTimeAmount": 360.00,
+    "MonthlyAmount": 30.00,
+    "GiftDescription": "Great American Recipes cookbook and Finding Your Roots companion book (HBK)",
+    "IsEnabled": true
+  },
+  {
+    "Id": "f1000000-0000-0000-0000-000000000006",
+    "Name": "Easy Yoga",
+    "OneTimeAmount": 144.00,
+    "MonthlyAmount": 12.00,
+    "GiftDescription": "Easy Yoga for Everything 10 DVD combo",
+    "IsEnabled": true
   }
 ]

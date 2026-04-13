@@ -1,0 +1,58 @@
+[
+  {
+    "Trigger": "Pass",
+    "Text": "**:tada: Congratulations! You passed your test calls! :tada:**\n- 24-48hrs to go live. Watch your inbox.\n- Log out of Call Corp and Simple Script.\n- Complete TLMS courses.\n- Remove extra mock shifts from Gateway.\n**Welcome to ACDD!**"
+  },
+  {
+    "Trigger": "Fail",
+    "Text": "Unfortunately I can't pass you today. Please reschedule in Gateway within 24 hours."
+  },
+  {
+    "Trigger": "Fail Final",
+    "Text": "Thank you for your time. Unfortunately you have exceeded the allowed Mock Call attempts. We wish you luck."
+  },
+  {
+    "Trigger": "Incomplete",
+    "Text": "Our time is up. We'll schedule another session for Supervisor Transfers.\nPlease give me a moment."
+  },
+  {
+    "Trigger": "Ncns",
+    "Text": "Candidate was a No Call / No Show for mock testing."
+  },
+  {
+    "Trigger": "Sup Intro",
+    "Text": "I'll help you complete the Supervisor Transfer test call. I'll provide instructions step by step. OK?"
+  },
+  {
+    "Trigger": "Sup Instructions",
+    "Text": "When you need to transfer:\n1) Ask in chat first\n2) Give CCM time to check\n3) When CCM says ok - let caller know you are transferring"
+  },
+  {
+    "Trigger": "Sup Transfer",
+    "Text": "1. Click Transfer in CC\n2. Select Queue > ACD Direct Supervisor\n3. Tell caller to hold, click Blind Transfer"
+  },
+  {
+    "Trigger": "Sup Dte",
+    "Text": "Change DTE to Ready (green)."
+  },
+  {
+    "Trigger": "Sup Status",
+    "Text": "I show Ready. Calling now."
+  },
+  {
+    "Trigger": "Sup Transfer Now",
+    "Text": "You may transfer the call now."
+  },
+  {
+    "Trigger": "Sup Stars",
+    "Text": "WXYZ Supervisor Test Call Being Queued"
+  },
+  {
+    "Trigger": "Sup Disposition",
+    "Text": "Click cancel (red phone), disposition as Test/Training.\nThen disposition in Call Corp."
+  },
+  {
+    "Trigger": "Sup Retry",
+    "Text": "Transfer was not successful. Review steps and let me know when ready."
+  }
+]

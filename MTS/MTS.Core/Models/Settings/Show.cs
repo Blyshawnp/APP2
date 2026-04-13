@@ -7,4 +7,5 @@ public class Show
     public decimal OneTimeAmount { get; set; }
     public decimal MonthlyAmount { get; set; }
     public string GiftDescription { get; set; } = string.Empty;
+    public bool IsEnabled { get; set; } = true;
 }

@@ -6,6 +6,7 @@ using MTS.UI.Services;
 using MTS.UI.ViewModels;
 using MTS.UI.ViewModels.Calls;
 using MTS.UI.ViewModels.SupervisorTransfer;
+using MTS.UI.ViewModels.Settings;
 
 namespace MTS.UI;
 
@@ -48,6 +49,7 @@ public partial class App : Application
         services.AddTransient<CallsViewModel>();
         services.AddTransient<SupervisorTransferViewModel>();
         services.AddTransient<ReviewViewModel>();
+        services.AddTransient<SettingsViewModel>();
     }
 
     protected override async void OnExit(ExitEventArgs e)

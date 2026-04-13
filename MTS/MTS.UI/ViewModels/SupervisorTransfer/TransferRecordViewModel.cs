@@ -106,25 +106,26 @@ public partial class TransferRecordViewModel : ObservableObject
         _validation    = validation;
         _sound         = sound;
 
-        foreach (var s in settings.Shows)
+        // Enabled items only surface in the UI
+        foreach (var s in settings.Shows.Where(x => x.IsEnabled))
             AvailableShows.Add(s);
-        foreach (var r in settings.SupervisorReasons)
+        foreach (var r in settings.SupervisorReasons.Where(x => x.IsEnabled))
             AvailableReasons.Add(r.Label);
 
-        // All donors available for sup transfers
-        foreach (var d in settings.Donors.NewDonors)
+        // All enabled donors available for sup transfers (all three categories)
+        foreach (var d in settings.Donors.NewDonors.Where(x => x.IsEnabled))
             AllDonors.Add(d);
-        foreach (var d in settings.Donors.ExistingMembers)
+        foreach (var d in settings.Donors.ExistingMembers.Where(x => x.IsEnabled))
             AllDonors.Add(d);
-        foreach (var d in settings.Donors.IncreaseSustaining)
+        foreach (var d in settings.Donors.IncreaseSustaining.Where(x => x.IsEnabled))
             AllDonors.Add(d);
 
-        // Only sup-transfer coaching categories
-        foreach (var c in settings.CoachingCategories.Where(c => c.AppliesToSupTransfers))
+        // Only enabled sup-transfer coaching categories
+        foreach (var c in settings.CoachingCategories.Where(c => c.AppliesToSupTransfers && c.IsEnabled))
             CoachingItems.Add(new CoachingItemViewModel(c));
 
-        // Only sup-transfer fail reasons
-        foreach (var r in settings.FailReasons.Where(r => r.AppliesToSupTransfers))
+        // Only enabled sup-transfer fail reasons
+        foreach (var r in settings.FailReasons.Where(r => r.AppliesToSupTransfers && r.IsEnabled))
             FailItems.Add(new FailItemViewModel(r));
     }
 

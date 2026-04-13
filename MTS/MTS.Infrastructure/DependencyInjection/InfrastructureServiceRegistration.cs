@@ -3,6 +3,7 @@ using MTS.Core.Interfaces.Repositories;
 using MTS.Core.Interfaces.Services;
 using MTS.Core.Rules;
 using MTS.Core.Services;
+using MTS.Core.Interfaces.Services;
 using MTS.Infrastructure.ExternalServices;
 using MTS.Infrastructure.Persistence.Json;
 using MTS.Infrastructure.Persistence.LiteDb;
@@ -41,6 +42,9 @@ public static class InfrastructureServiceRegistration
         // ---- External services (AI / no-op defaults) ----
         // Replace NullSummaryService with GeminiSummaryService in Phase 5
         services.AddSingleton<ISummaryService, NullSummaryService>();
+
+        // ---- System message service (Discord — NOT editable, NOT in Settings) ----
+        services.AddSingleton<IDiscordMessageService, DiscordMessageService>();
 
         return services;
     }

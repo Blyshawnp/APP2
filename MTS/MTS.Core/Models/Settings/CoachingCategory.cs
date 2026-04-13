@@ -8,4 +8,5 @@ public class CoachingCategory
     public bool AppliesToCalls { get; set; } = true;
     public bool AppliesToSupTransfers { get; set; }
     public List<CoachingSubItem> SubItems { get; set; } = new();
+    public bool IsEnabled { get; set; } = true;
 }

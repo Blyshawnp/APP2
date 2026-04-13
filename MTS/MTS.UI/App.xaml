@@ -4,10 +4,12 @@
              xmlns:vm="clr-namespace:MTS.UI.ViewModels"
              xmlns:vmCalls="clr-namespace:MTS.UI.ViewModels.Calls"
              xmlns:vmSup="clr-namespace:MTS.UI.ViewModels.SupervisorTransfer"
+             xmlns:vmSettings="clr-namespace:MTS.UI.ViewModels.Settings"
              xmlns:views="clr-namespace:MTS.UI.Views.Dashboard"
              xmlns:viewsCalls="clr-namespace:MTS.UI.Views.Calls"
              xmlns:viewsSup="clr-namespace:MTS.UI.Views.SupervisorTransfer"
              xmlns:viewsReview="clr-namespace:MTS.UI.Views.Review"
+             xmlns:viewsSettings="clr-namespace:MTS.UI.Views.Settings"
              xmlns:conv="clr-namespace:MTS.UI.Converters"
              ShutdownMode="OnMainWindowClose">
 
@@ -48,6 +50,10 @@
 
             <DataTemplate DataType="{x:Type vm:ReviewViewModel}">
                 <viewsReview:ReviewView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vmSettings:SettingsViewModel}">
+                <viewsSettings:SettingsView/>
             </DataTemplate>
 
         </ResourceDictionary>

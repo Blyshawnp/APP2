@@ -19,7 +19,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- SeedData: user-editable defaults seeded on first run -->
     <EmbeddedResource Include="Persistence\Json\SeedData\**\*.json" />
+    <!-- SystemData: system-owned content; never editable, never in Settings -->
+    <EmbeddedResource Include="Persistence\Json\SystemData\**\*.json" />
   </ItemGroup>
 
 </Project>
