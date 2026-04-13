@@ -1,0 +1,7 @@
+[
+  { "Id": "d1000000-0000-0000-0000-000000000001", "Label": "New Donor - One Time",            "Category": 0 },
+  { "Id": "d1000000-0000-0000-0000-000000000002", "Label": "New Donor - Sustaining Monthly",  "Category": 0 },
+  { "Id": "d1000000-0000-0000-0000-000000000003", "Label": "Existing Member - One Time",       "Category": 1 },
+  { "Id": "d1000000-0000-0000-0000-000000000004", "Label": "Existing Member - Sustaining",     "Category": 1 },
+  { "Id": "d1000000-0000-0000-0000-000000000005", "Label": "Increase Sustaining",              "Category": 2 }
+]

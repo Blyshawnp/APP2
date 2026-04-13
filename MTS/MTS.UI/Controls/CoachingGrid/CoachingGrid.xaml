@@ -1,0 +1,62 @@
+<UserControl x:Class="MTS.UI.Controls.CoachingGrid.CoachingGrid"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctrl="clr-namespace:MTS.UI.Controls.OtherTextInput"
+             x:Name="Root">
+
+    <StackPanel>
+        <TextBlock Text="Coaching"
+                   Style="{StaticResource H3}"
+                   Margin="0,0,0,10"/>
+
+        <ItemsControl ItemsSource="{Binding Items, ElementName=Root}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="0,2">
+
+                        <!-- Category checkbox -->
+                        <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                  Margin="0,3">
+                            <TextBlock Text="{Binding Label}"
+                                       FontSize="13"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                       TextWrapping="Wrap"/>
+                        </CheckBox>
+
+                        <!-- Sub-items (indented, only when parent is selected and has sub-items) -->
+                        <ItemsControl ItemsSource="{Binding SubItems}"
+                                      Margin="22,2,0,0"
+                                      Visibility="{Binding IsSelected, Converter={StaticResource BoolToVisibility}}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                              Margin="0,2">
+                                        <TextBlock Text="{Binding Label}"
+                                                   FontSize="12"
+                                                   Foreground="{StaticResource TextSecondaryBrush}"/>
+                                    </CheckBox>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <!-- "Other" text input — shows when IsOther && IsSelected -->
+                        <ctrl:OtherTextInputControl
+                            IsOtherSelected="{Binding ShowOtherInput}"
+                            Text="{Binding Notes, Mode=TwoWay}"
+                            Label="Coaching notes (required):"
+                            Margin="22,0,0,4"/>
+
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+
+        <!-- Soft warning when no coaching selected -->
+        <TextBlock Text="⚠  No coaching items selected."
+                   FontSize="12"
+                   Foreground="{StaticResource WarningBrush}"
+                   Margin="0,8,0,0"
+                   Visibility="{Binding ShowCoachingWarning, ElementName=Root,
+                                        Converter={StaticResource BoolToVisibility}}"/>
+    </StackPanel>
+</UserControl>

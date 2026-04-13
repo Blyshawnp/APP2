@@ -1,0 +1,93 @@
+[
+  {
+    "Id": "c1000000-0000-0000-0000-000000000001",
+    "Label": "Skipped parts of script",
+    "IsOther": false,
+    "AppliesToCalls": true,
+    "AppliesToSupTransfers": false
+  },
+  {
+    "Id": "c1000000-0000-0000-0000-000000000002",
+    "Label": "Volunteered info",
+    "IsOther": false,
+    "AppliesToCalls": true,
+    "AppliesToSupTransfers": false
+  },
+  {
+    "Id": "c1000000-0000-0000-0000-000000000003",
+    "Label": "Wrong donation",
+    "IsOther": false,
+    "AppliesToCalls": true,
+    "AppliesToSupTransfers": false
+  },
+  {
+    "Id": "c1000000-0000-0000-0000-000000000004",
+    "Label": "Background noise on call",
+    "IsOther": false,
+    "AppliesToCalls": true,
+    "AppliesToSupTransfers": false
+  },
+  {
+    "Id": "c1000000-0000-0000-0000-000000000005",
+    "Label": "Paraphrased script",
+    "IsOther": false,
+    "AppliesToCalls": true,
+    "AppliesToSupTransfers": false
+  },
+  {
+    "Id": "c1000000-0000-0000-0000-000000000006",
+    "Label": "Wrong thank you gift",
+    "IsOther": false,
+    "AppliesToCalls": true,
+    "AppliesToSupTransfers": false
+  },
+  {
+    "Id": "c1000000-0000-0000-0000-000000000007",
+    "Label": "Script navigation issues",
+    "IsOther": false,
+    "AppliesToCalls": true,
+    "AppliesToSupTransfers": false
+  },
+  {
+    "Id": "c1000000-0000-0000-0000-000000000010",
+    "Label": "Did not ask permission to transfer",
+    "IsOther": false,
+    "AppliesToCalls": false,
+    "AppliesToSupTransfers": true
+  },
+  {
+    "Id": "c1000000-0000-0000-0000-000000000011",
+    "Label": "Did not minimize dead air",
+    "IsOther": false,
+    "AppliesToCalls": false,
+    "AppliesToSupTransfers": true
+  },
+  {
+    "Id": "c1000000-0000-0000-0000-000000000012",
+    "Label": "Caller Placed On Hold",
+    "IsOther": false,
+    "AppliesToCalls": false,
+    "AppliesToSupTransfers": true
+  },
+  {
+    "Id": "c1000000-0000-0000-0000-000000000013",
+    "Label": "Transferred to wrong queue",
+    "IsOther": false,
+    "AppliesToCalls": false,
+    "AppliesToSupTransfers": true
+  },
+  {
+    "Id": "c1000000-0000-0000-0000-000000000014",
+    "Label": "Did not inform caller of transfer",
+    "IsOther": false,
+    "AppliesToCalls": false,
+    "AppliesToSupTransfers": true
+  },
+  {
+    "Id": "c1000000-0000-0000-0000-000000000099",
+    "Label": "Other",
+    "IsOther": true,
+    "AppliesToCalls": true,
+    "AppliesToSupTransfers": true
+  }
+]

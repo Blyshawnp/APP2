@@ -1,0 +1,263 @@
+<UserControl x:Class="MTS.UI.Views.Calls.CallsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:MTS.UI.ViewModels.Calls"
+             xmlns:pf="clr-namespace:MTS.UI.Controls.PassFailToggle"
+             xmlns:cg="clr-namespace:MTS.UI.Controls.CoachingGrid"
+             xmlns:fg="clr-namespace:MTS.UI.Controls.FailReasonsGrid"
+             xmlns:wb="clr-namespace:MTS.UI.Controls.WarningBanner"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance vm:CallsViewModel}"
+             Background="{StaticResource AppBackgroundBrush}">
+
+    <Grid Margin="32,28">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>  <!-- Header + progress -->
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="Auto"/>  <!-- Page warnings -->
+            <RowDefinition Height="16"/>
+            <RowDefinition Height="*"/>     <!-- Call cards -->
+            <RowDefinition Height="20"/>
+            <RowDefinition Height="Auto"/>  <!-- Footer actions -->
+        </Grid.RowDefinitions>
+
+        <!-- ================================================================
+             HEADER
+        ================================================================ -->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Grid.Column="0">
+                <TextBlock Text="Calls" Style="{StaticResource H1}"/>
+                <TextBlock Text="Grade each mock call. Calls 1 and 2 are always required."
+                           Style="{StaticResource Muted}" Margin="0,4,0,0"/>
+            </StackPanel>
+
+            <!-- Progress bar -->
+            <StackPanel Grid.Column="1" VerticalAlignment="Center" Width="180">
+                <TextBlock Text="{Binding ProgressPercent, StringFormat='Progress: {0}%'}"
+                           Style="{StaticResource Label}" HorizontalAlignment="Right"
+                           Margin="0,0,0,4"/>
+                <ProgressBar Value="{Binding ProgressPercent}" Maximum="100" Height="8"
+                             Background="{StaticResource SurfaceElevatedBrush}"
+                             Foreground="{StaticResource AccentBrush}"
+                             BorderThickness="0"/>
+            </StackPanel>
+        </Grid>
+
+        <!-- ================================================================
+             PAGE-LEVEL WARNINGS (type mismatch, auto-fail, etc.)
+        ================================================================ -->
+        <wb:WarningBannerControl Grid.Row="2"
+                                 Warnings="{Binding PageWarnings}"/>
+
+        <!-- ================================================================
+             CALL CARDS (stacked vertically, each reveals after previous)
+        ================================================================ -->
+        <ScrollViewer Grid.Row="4"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Disabled">
+            <StackPanel>
+
+                <!-- ---- Call 1 ---- -->
+                <ContentPresenter Content="{Binding Call1}"
+                                  ContentTemplate="{StaticResource CallCardTemplate}"
+                                  Margin="0,0,0,16"/>
+
+                <!-- ---- Call 2 (shown after Call 1 submitted) ---- -->
+                <ContentPresenter Content="{Binding Call2}"
+                                  ContentTemplate="{StaticResource CallCardTemplate}"
+                                  Margin="0,0,0,16"
+                                  Visibility="{Binding IsCall2Visible,
+                                               Converter={StaticResource BoolToVisibility}}"/>
+
+                <!-- ---- Call 3 (shown only when BR-03 does NOT apply) ---- -->
+                <ContentPresenter Content="{Binding Call3}"
+                                  ContentTemplate="{StaticResource CallCardTemplate}"
+                                  Margin="0,0,0,16"
+                                  Visibility="{Binding IsCall3Visible,
+                                               Converter={StaticResource BoolToVisibility}}"/>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- ================================================================
+             FOOTER: Proceed button
+        ================================================================ -->
+        <Grid Grid.Row="6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock Grid.Column="0"
+                       Text="Complete all visible calls before proceeding."
+                       Style="{StaticResource Muted}"
+                       VerticalAlignment="Center"/>
+
+            <Button Grid.Column="1"
+                    Style="{StaticResource PrimaryButton}"
+                    Command="{Binding ProceedCommand}"
+                    IsEnabled="{Binding CanProceed}"
+                    Content="Proceed →"
+                    Padding="24,10" FontSize="14"/>
+        </Grid>
+
+    </Grid>
+
+    <!-- ================================================================
+         DATA TEMPLATE: One call card
+         Defined as a resource so it can be used by all three ContentPresenters.
+    ================================================================ -->
+    <UserControl.Resources>
+        <DataTemplate x:Key="CallCardTemplate" DataType="{x:Type vm:CallRecordViewModel}">
+            <Border Style="{StaticResource Card}" Margin="0,0,0,4">
+                <StackPanel>
+
+                    <!-- Card header -->
+                    <Grid Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" Orientation="Horizontal">
+                            <Border Width="28" Height="28" CornerRadius="14"
+                                    Background="{StaticResource AccentBrush}"
+                                    Margin="0,0,10,0">
+                                <TextBlock Text="{Binding CallNumber}"
+                                           FontWeight="Bold" FontSize="13"
+                                           Foreground="White"
+                                           HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"/>
+                            </Border>
+                            <TextBlock Text="{Binding CallNumber, StringFormat='Call {0}'}"
+                                       Style="{StaticResource H2}"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+
+                        <!-- Completed badge -->
+                        <Border Grid.Column="1"
+                                Background="{StaticResource PassSurfaceBrush}"
+                                BorderBrush="{StaticResource PassBrush}"
+                                BorderThickness="1" CornerRadius="12"
+                                Padding="10,3"
+                                Visibility="{Binding IsCompleted,
+                                             Converter={StaticResource BoolToVisibility}}">
+                            <TextBlock Text="Submitted" FontSize="11" FontWeight="SemiBold"
+                                       Foreground="{StaticResource PassBrush}"/>
+                        </Border>
+                    </Grid>
+
+                    <!-- Validation errors -->
+                    <wb:WarningBannerControl Warnings="{Binding ValidationErrors}"
+                                             Margin="0,0,0,12"/>
+
+                    <!-- Setup row -->
+                    <Grid IsEnabled="{Binding IsCompleted, Converter={StaticResource InverseBoolToVisibility}}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="12"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="12"/>
+                            <ColumnDefinition Width="120"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Call Type" Style="{StaticResource Label}" Margin="0,0,0,4"/>
+                            <ComboBox ItemsSource="{Binding AvailableCallTypes}"
+                                      SelectedItem="{Binding SelectedCallType, Mode=TwoWay}"
+                                      DisplayMemberPath="Label"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Show" Style="{StaticResource Label}" Margin="0,0,0,4"/>
+                            <ComboBox ItemsSource="{Binding AvailableShows}"
+                                      SelectedItem="{Binding SelectedShow, Mode=TwoWay}"
+                                      DisplayMemberPath="Name"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="4">
+                            <TextBlock Text="Donation ($)" Style="{StaticResource Label}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding DonationAmount, Mode=TwoWay,
+                                            StringFormat='{}{0:F2}',
+                                            UpdateSourceTrigger=LostFocus}"/>
+                        </StackPanel>
+                    </Grid>
+
+                    <!-- Caller -->
+                    <StackPanel Margin="0,12,0,0"
+                                IsEnabled="{Binding IsCompleted, Converter={StaticResource InverseBoolToVisibility}}">
+                        <TextBlock Text="Caller" Style="{StaticResource Label}" Margin="0,0,0,4"/>
+                        <ComboBox ItemsSource="{Binding AvailableCallers}"
+                                  SelectedItem="{Binding SelectedCaller, Mode=TwoWay}"
+                                  DisplayMemberPath="DisplayName"
+                                  MaxWidth="340" HorizontalAlignment="Left"/>
+                    </StackPanel>
+
+                    <!-- Scenario flags (read-only display) -->
+                    <Border Background="{StaticResource SurfaceElevatedBrush}"
+                            CornerRadius="6" Padding="12,8" Margin="0,12,0,0">
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+                            <TextBlock Text="Scenario: " Style="{StaticResource Muted}"/>
+                            <TextBlock Visibility="{Binding ScenarioFlags.HasPhone, Converter={StaticResource BoolToVisibility}}"
+                                       Text="📞 Phone  " Style="{StaticResource Muted}"/>
+                            <TextBlock Visibility="{Binding ScenarioFlags.HasSms, Converter={StaticResource BoolToVisibility}}"
+                                       Text="📱 SMS  " Style="{StaticResource Muted}"/>
+                            <TextBlock Visibility="{Binding ScenarioFlags.HasEnews, Converter={StaticResource BoolToVisibility}}"
+                                       Text="📧 eNews  " Style="{StaticResource Muted}"/>
+                            <TextBlock Visibility="{Binding ScenarioFlags.HasShipping, Converter={StaticResource BoolToVisibility}}"
+                                       Text="📦 Shipping  " Style="{StaticResource Muted}"/>
+                            <TextBlock Visibility="{Binding ScenarioFlags.HasCcFee, Converter={StaticResource BoolToVisibility}}"
+                                       Text="💳 CC Fee" Style="{StaticResource Muted}"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Separator Margin="0,16"/>
+
+                    <!-- Pass / Fail toggle -->
+                    <StackPanel Margin="0,0,0,16"
+                                IsEnabled="{Binding IsCompleted, Converter={StaticResource InverseBoolToVisibility}}">
+                        <TextBlock Text="Result" Style="{StaticResource Label}" Margin="0,0,0,8"/>
+                        <pf:PassFailToggleControl
+                            SelectedResult="{Binding Result, Mode=TwoWay}"/>
+                    </StackPanel>
+
+                    <!-- Fail reasons (shown only when Fail selected) -->
+                    <Grid Visibility="{Binding ShowFailSection, Converter={StaticResource BoolToVisibility}}"
+                          IsEnabled="{Binding IsCompleted, Converter={StaticResource InverseBoolToVisibility}}"
+                          Margin="0,0,0,16">
+                        <fg:FailReasonsGrid Items="{Binding FailItems}"
+                                            ShowRequiredError="{Binding HasOtherFail}"/>
+                    </Grid>
+
+                    <!-- Coaching grid (always shown once a result is selected) -->
+                    <Grid Visibility="{Binding Result, Converter={StaticResource NullToVisibility}}"
+                          IsEnabled="{Binding IsCompleted, Converter={StaticResource InverseBoolToVisibility}}"
+                          Margin="0,0,0,16">
+                        <cg:CoachingGrid Items="{Binding CoachingItems}"
+                                         ShowCoachingWarning="{Binding HasCoachingSkippedWarning}"/>
+                    </Grid>
+
+                    <!-- Submit button -->
+                    <Button Style="{StaticResource PrimaryButton}"
+                            Command="{Binding DataContext.SubmitCallCommand,
+                                     RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            CommandParameter="{Binding}"
+                            Content="Submit Call"
+                            HorizontalAlignment="Left"
+                            Padding="20,9"
+                            IsEnabled="{Binding IsCompleted, Converter={StaticResource InverseBoolToVisibility}}"
+                            Visibility="{Binding Result, Converter={StaticResource NullToVisibility}}"/>
+
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+    </UserControl.Resources>
+
+</UserControl>

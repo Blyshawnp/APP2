@@ -1,0 +1,52 @@
+{
+  "NewDonors": [
+    {
+      "Id": "00000001-0000-0000-0000-000000000001",
+      "FirstName": "Jane",
+      "LastName": "Smith",
+      "Address": "123 Main St",
+      "City": "Springfield",
+      "State": "IL",
+      "ZipCode": "62701",
+      "Phone": "217-555-0101",
+      "Email": "jane.smith@example.com"
+    },
+    {
+      "Id": "00000001-0000-0000-0000-000000000002",
+      "FirstName": "Robert",
+      "LastName": "Johnson",
+      "Address": "456 Oak Ave",
+      "City": "Shelbyville",
+      "State": "IL",
+      "ZipCode": "62565",
+      "Phone": "217-555-0102",
+      "Email": "r.johnson@example.com"
+    }
+  ],
+  "ExistingMembers": [
+    {
+      "Id": "00000002-0000-0000-0000-000000000001",
+      "FirstName": "Margaret",
+      "LastName": "Williams",
+      "Address": "789 Elm St",
+      "City": "Capital City",
+      "State": "IL",
+      "ZipCode": "62702",
+      "Phone": "217-555-0201",
+      "Email": "m.williams@example.com"
+    }
+  ],
+  "IncreaseSustaining": [
+    {
+      "Id": "00000003-0000-0000-0000-000000000001",
+      "FirstName": "David",
+      "LastName": "Brown",
+      "Address": "321 Pine Rd",
+      "City": "Ogdenville",
+      "State": "IL",
+      "ZipCode": "62801",
+      "Phone": "217-555-0301",
+      "Email": "d.brown@example.com"
+    }
+  ]
+}

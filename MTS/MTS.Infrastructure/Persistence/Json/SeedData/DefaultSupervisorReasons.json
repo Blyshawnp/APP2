@@ -1,0 +1,7 @@
+[
+  { "Id": "e1000000-0000-0000-0000-000000000001", "Label": "Caller wants to speak to a supervisor" },
+  { "Id": "e1000000-0000-0000-0000-000000000002", "Label": "Complaint or escalation" },
+  { "Id": "e1000000-0000-0000-0000-000000000003", "Label": "Technical issue requiring supervisor" },
+  { "Id": "e1000000-0000-0000-0000-000000000004", "Label": "Verification issue" },
+  { "Id": "e1000000-0000-0000-0000-000000000005", "Label": "Payment dispute" }
+]

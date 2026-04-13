@@ -1,0 +1,23 @@
+[
+  {
+    "Id": "f1000000-0000-0000-0000-000000000001",
+    "Name": "Morning Edition",
+    "OneTimeAmount": 75.00,
+    "MonthlyAmount": 10.00,
+    "GiftDescription": "Tote bag"
+  },
+  {
+    "Id": "f1000000-0000-0000-0000-000000000002",
+    "Name": "All Things Considered",
+    "OneTimeAmount": 100.00,
+    "MonthlyAmount": 15.00,
+    "GiftDescription": "Umbrella"
+  },
+  {
+    "Id": "f1000000-0000-0000-0000-000000000003",
+    "Name": "Weekend Edition",
+    "OneTimeAmount": 50.00,
+    "MonthlyAmount": 8.00,
+    "GiftDescription": "Mug"
+  }
+]

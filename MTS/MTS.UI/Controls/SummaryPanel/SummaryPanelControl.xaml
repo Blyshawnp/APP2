@@ -1,0 +1,87 @@
+<UserControl x:Class="MTS.UI.Controls.SummaryPanel.SummaryPanelControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Name="Root">
+
+    <Border Style="{StaticResource Card}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="10"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header row: title + regenerate button -->
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Title, ElementName=Root}"
+                               Style="{StaticResource H3}"/>
+
+                    <!-- AI badge (shown when IsAiEnabled) -->
+                    <Border Margin="10,0,0,0"
+                            Padding="8,2"
+                            CornerRadius="10"
+                            Background="{StaticResource AccentBrush}"
+                            Visibility="{Binding IsAiEnabled, ElementName=Root,
+                                                 Converter={StaticResource BoolToVisibility}}">
+                        <TextBlock Text="AI" FontSize="10" FontWeight="Bold" Foreground="White"/>
+                    </Border>
+                </StackPanel>
+
+                <!-- Regenerate button -->
+                <Button Grid.Column="1"
+                        Style="{StaticResource SecondaryButton}"
+                        Command="{Binding RegenerateCommand, ElementName=Root}"
+                        Padding="12,6" FontSize="12"
+                        Visibility="{Binding IsAiEnabled, ElementName=Root,
+                                             Converter={StaticResource BoolToVisibility}}">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="↻" FontSize="14" Margin="0,0,6,0"/>
+                        <TextBlock Text="{Binding RegenerateLabel, ElementName=Root}"/>
+                    </StackPanel>
+                </Button>
+            </Grid>
+
+            <!-- Loading indicator (shown while generating) -->
+            <Border Grid.Row="2"
+                    Background="{StaticResource SurfaceElevatedBrush}"
+                    CornerRadius="6" Padding="12"
+                    Visibility="{Binding IsGenerating, ElementName=Root,
+                                         Converter={StaticResource BoolToVisibility}}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="Generating summary…"
+                               Style="{StaticResource Muted}" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Border>
+
+            <!-- Editable text area -->
+            <TextBox Grid.Row="4"
+                     Text="{Binding SummaryText, ElementName=Root, Mode=TwoWay,
+                            UpdateSourceTrigger=PropertyChanged}"
+                     MinHeight="120" MaxHeight="300"
+                     AcceptsReturn="True"
+                     TextWrapping="Wrap"
+                     VerticalScrollBarVisibility="Auto"
+                     Padding="10,8"
+                     Visibility="{Binding IsGenerating, ElementName=Root,
+                                          Converter={StaticResource InverseBoolToVisibility}}"/>
+
+            <!-- Empty state hint -->
+            <TextBlock Grid.Row="6"
+                       Text="{Binding EmptyHint, ElementName=Root}"
+                       Style="{StaticResource Muted}"
+                       Margin="0,4,0,0"
+                       Visibility="{Binding HasSummary, ElementName=Root,
+                                    Converter={StaticResource InverseBoolToVisibility}}"/>
+        </Grid>
+    </Border>
+</UserControl>

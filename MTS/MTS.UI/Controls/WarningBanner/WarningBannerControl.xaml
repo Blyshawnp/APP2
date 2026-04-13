@@ -1,0 +1,34 @@
+<UserControl x:Class="MTS.UI.Controls.WarningBanner.WarningBannerControl"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Name="Root">
+
+    <Border x:Name="BannerRoot"
+            Background="{StaticResource WarningSurfaceBrush}"
+            BorderBrush="{StaticResource WarningBrush}"
+            BorderThickness="1"
+            CornerRadius="6"
+            Padding="14,10"
+            Visibility="Collapsed">
+
+        <StackPanel>
+            <TextBlock Text="⚠  Attention"
+                       FontWeight="SemiBold" FontSize="13"
+                       Foreground="{StaticResource WarningBrush}"
+                       Margin="0,0,0,6"/>
+
+            <ItemsControl x:Name="WarningList"
+                          ItemsSource="{Binding Warnings, ElementName=Root}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}"
+                                   Foreground="{StaticResource WarningBrush}"
+                                   FontSize="12"
+                                   Margin="0,1"
+                                   TextWrapping="Wrap"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </Border>
+</UserControl>
