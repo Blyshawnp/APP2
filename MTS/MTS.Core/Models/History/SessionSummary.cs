@@ -8,6 +8,7 @@ public class SessionSummary
     public string CandidateName { get; set; } = string.Empty;
     public string TesterName { get; set; } = string.Empty;
     public SessionStatus Status { get; set; }
+    public AutoFailReason? AutoFailReason { get; set; }
     public int CallsPassed { get; set; }
     public int CallsFailed { get; set; }
     public int SupsPassed { get; set; }

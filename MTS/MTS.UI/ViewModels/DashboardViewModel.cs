@@ -5,14 +5,13 @@ using MTS.Core.Interfaces.Services;
 using MTS.Core.Models.History;
 using MTS.UI.Services;
 using MTS.UI.ViewModels.Base;
-using MTS.UI.ViewModels.Calls;
 
 namespace MTS.UI.ViewModels;
 
 public partial class DashboardViewModel : ViewModelBase
 {
     private readonly IHistoryService _history;
-    private readonly ISessionService _sessionService;
+    private readonly ISettingsService _settings;
     private readonly INavigationService _nav;
     private readonly IDialogService _dialog;
 
@@ -25,16 +24,19 @@ public partial class DashboardViewModel : ViewModelBase
     [ObservableProperty]
     private bool _hasHistory;
 
+    [ObservableProperty]
+    private string _welcomeName = string.Empty;
+
     public DashboardViewModel(
         IHistoryService history,
-        ISessionService sessionService,
+        ISettingsService settings,
         INavigationService nav,
         IDialogService dialog)
     {
-        _history        = history;
-        _sessionService = sessionService;
-        _nav            = nav;
-        _dialog         = dialog;
+        _history  = history;
+        _settings = settings;
+        _nav      = nav;
+        _dialog   = dialog;
     }
 
     public override async Task OnNavigatedToAsync(object? parameter)
@@ -48,27 +50,18 @@ public partial class DashboardViewModel : ViewModelBase
     private async Task LoadData() => await LoadDataAsync();
 
     [RelayCommand]
-    private async Task StartSession()
+    private void StartSession() => _nav.NavigateTo<BasicsViewModel>();
+
+    [RelayCommand]
+    private void StartSupervisorOnly()
     {
-        // Phase 2 will wire this to BasicsViewModel.
-        // For now navigate to Calls as a scaffold.
-        _nav.NavigateTo<CallsViewModel>();
-        await Task.CompletedTask;
+        // Navigate to The Basics with supervisor-only flag
+        _nav.NavigateTo<BasicsViewModel>();
+        // The BasicsViewModel will handle supervisor-only via its own checkbox
     }
 
     [RelayCommand]
-    private async Task StartSupervisorOnly()
-    {
-        // Phase 4 will wire this to SupervisorTransferViewModel.
-        await _dialog.ShowAlertAsync("Coming Soon", "Supervisor-only sessions will be available in the next phase.");
-    }
-
-    [RelayCommand]
-    private void OpenHistory()
-    {
-        // Phase 6 will wire this to HistoryViewModel.
-        // Placeholder — no-op for now.
-    }
+    private void OpenHistory() => _nav.NavigateTo<HistoryViewModel>();
 
     // -------------------------------------------------------------------------
     // Private helpers
@@ -78,6 +71,9 @@ public partial class DashboardViewModel : ViewModelBase
     {
         await ExecuteBusyAsync(async () =>
         {
+            var appSettings = await _settings.LoadAsync();
+            WelcomeName = appSettings.TesterProfile?.TesterName ?? "Tester";
+
             Stats = await _history.GetStatsAsync();
 
             var all = await _history.GetAllAsync();

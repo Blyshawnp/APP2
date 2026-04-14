@@ -80,10 +80,11 @@ public class LiteDbSessionRepository : ISessionRepository, IHistoryRepository, I
 
         var stats = new HistoryStats
         {
-            TotalSessions  = sessions.Count,
-            TotalPass      = sessions.Count(s => s.Status == Core.Enums.SessionStatus.Pass),
-            TotalFail      = sessions.Count(s => s.Status == Core.Enums.SessionStatus.Fail),
-            TotalIncomplete = sessions.Count(s => s.Status == Core.Enums.SessionStatus.Incomplete)
+            TotalSessions   = sessions.Count,
+            TotalPass       = sessions.Count(s => s.Status == Core.Enums.SessionStatus.Pass),
+            TotalFail       = sessions.Count(s => s.Status == Core.Enums.SessionStatus.Fail),
+            TotalIncomplete = sessions.Count(s => s.Status == Core.Enums.SessionStatus.Incomplete),
+            TotalNcNs       = sessions.Count(s => s.AutoFailReason == Core.Enums.AutoFailReason.NcNs)
         };
         return Task.FromResult(stats);
     }
@@ -114,17 +115,18 @@ public class LiteDbSessionRepository : ISessionRepository, IHistoryRepository, I
 
     private static SessionSummary ToSummary(Session s) => new()
     {
-        Id              = s.Id,
-        CandidateName   = s.Candidate.CandidateName,
-        TesterName      = s.TesterInfo.TesterName,
-        Status          = s.Status,
-        CallsPassed     = s.CallsPassed,
-        CallsFailed     = s.CallsFailed,
-        SupsPassed      = s.SupsPassed,
-        HasNewbieShift  = s.NewbieShift != null,
+        Id               = s.Id,
+        CandidateName    = s.Candidate.CandidateName,
+        TesterName       = s.TesterInfo.TesterName,
+        Status           = s.Status,
+        AutoFailReason   = s.AutoFailReason,
+        CallsPassed      = s.CallsPassed,
+        CallsFailed      = s.CallsFailed,
+        SupsPassed       = s.SupsPassed,
+        HasNewbieShift   = s.NewbieShift != null,
         IsSupervisorOnly = s.IsSupervisorOnly,
-        IsFinalAttempt  = s.Candidate.IsFinalAttempt,
-        CreatedAt       = s.CreatedAt
+        IsFinalAttempt   = s.Candidate.IsFinalAttempt,
+        CreatedAt        = s.CreatedAt
     };
 
     public void Dispose() => _db.Dispose();

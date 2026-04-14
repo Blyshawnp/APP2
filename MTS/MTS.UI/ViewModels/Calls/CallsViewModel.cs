@@ -8,6 +8,7 @@ using MTS.Core.Rules;
 using MTS.Core.Services;
 using MTS.UI.Services;
 using MTS.UI.ViewModels.Base;
+using MTS.UI.ViewModels;
 
 namespace MTS.UI.ViewModels.Calls;
 
@@ -134,6 +135,29 @@ public partial class CallsViewModel : ViewModelBase
         await _sessionService.SaveCallAsync(record);
 
         await EvaluateAfterCall();
+    }
+
+    [RelayCommand]
+    private void Back() => _nav.NavigateTo<DashboardViewModel>();
+
+    [RelayCommand]
+    private async Task StoppedResponding()
+    {
+        bool confirmed = await _dialog.ShowDangerConfirmAsync(
+            "Stopped Responding",
+            "Mark candidate as Stopped Responding? This will auto-fail the session.",
+            "Confirm");
+
+        if (!confirmed) return;
+
+        await _sessionService.SetAutoFailAsync(AutoFailReason.StoppedResponding);
+        _nav.NavigateTo<ReviewViewModel>();
+    }
+
+    [RelayCommand]
+    private async Task TechIssue()
+    {
+        await _dialog.ShowAlertAsync("Tech Issue", "Tech Issue wizard coming soon.");
     }
 
     [RelayCommand]

@@ -46,9 +46,14 @@ public partial class App : Application
 
         // ---- Screen ViewModels (Transient = fresh instance per navigation) ----
         services.AddTransient<DashboardViewModel>();
+        services.AddTransient<BasicsViewModel>();
         services.AddTransient<CallsViewModel>();
         services.AddTransient<SupervisorTransferViewModel>();
         services.AddTransient<ReviewViewModel>();
+        services.AddTransient<NewbieShiftViewModel>();
+        services.AddTransient<HistoryViewModel>();
+        services.AddTransient<HelpViewModel>();
+        services.AddTransient<DiscordPostViewModel>();
         services.AddTransient<SettingsViewModel>();
     }
 

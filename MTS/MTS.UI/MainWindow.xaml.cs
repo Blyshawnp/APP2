@@ -1,4 +1,5 @@
 using System.Windows;
+using System.Windows.Media.Animation;
 using MTS.UI.ViewModels;
 
 namespace MTS.UI;
@@ -10,14 +11,41 @@ public partial class MainWindow : Window
     public MainWindow(MainWindowViewModel viewModel)
     {
         InitializeComponent();
-        _viewModel = viewModel;
+        _viewModel  = viewModel;
         DataContext = _viewModel;
     }
 
     protected override void OnContentRendered(EventArgs e)
     {
         base.OnContentRendered(e);
-        // Trigger initial navigation after the window is fully rendered
         _viewModel.Initialize();
+    }
+
+    // -------------------------------------------------------------------------
+    // Ticker marquee animation
+    // -------------------------------------------------------------------------
+
+    private void OnWindowLoaded(object sender, RoutedEventArgs e)
+    {
+        StartTickerAnimation();
+    }
+
+    private void StartTickerAnimation()
+    {
+        // Measure the text so we know how far to scroll
+        TickerText.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
+        double textWidth   = TickerText.DesiredSize.Width;
+        double canvasWidth = TickerCanvas.ActualWidth;
+
+        // Scroll from right edge → left (off screen)
+        var anim = new DoubleAnimation
+        {
+            From           = canvasWidth,
+            To             = -textWidth,
+            Duration       = new Duration(TimeSpan.FromSeconds(Math.Max(20, (textWidth + canvasWidth) / 80))),
+            RepeatBehavior = RepeatBehavior.Forever
+        };
+
+        TickerText.BeginAnimation(System.Windows.Controls.Canvas.LeftProperty, anim);
     }
 }

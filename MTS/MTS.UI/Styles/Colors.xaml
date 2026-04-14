@@ -1,45 +1,60 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
-    <!-- Background hierarchy -->
-    <SolidColorBrush x:Key="AppBackgroundBrush"    Color="#0F0F13"/>
-    <SolidColorBrush x:Key="SurfaceBrush"          Color="#1A1A24"/>
-    <SolidColorBrush x:Key="SurfaceElevatedBrush"  Color="#22222F"/>
-    <SolidColorBrush x:Key="SidebarBrush"          Color="#13131A"/>
-    <SolidColorBrush x:Key="BorderBrush"           Color="#2E2E40"/>
+    <!-- ====== Background Hierarchy ====== -->
+    <SolidColorBrush x:Key="AppBackgroundBrush"      Color="#1A1D2E"/>
+    <SolidColorBrush x:Key="SurfaceBrush"            Color="#21263A"/>
+    <SolidColorBrush x:Key="SurfaceElevatedBrush"    Color="#272C42"/>
+    <SolidColorBrush x:Key="SidebarBrush"            Color="#111420"/>
+    <SolidColorBrush x:Key="BorderBrush"             Color="#2A2F45"/>
 
-    <!-- Text -->
-    <SolidColorBrush x:Key="TextPrimaryBrush"      Color="#F0F0F8"/>
-    <SolidColorBrush x:Key="TextSecondaryBrush"    Color="#9090A8"/>
-    <SolidColorBrush x:Key="TextMutedBrush"        Color="#55556A"/>
-    <SolidColorBrush x:Key="TextOnAccentBrush"     Color="#FFFFFF"/>
+    <!-- ====== Text ====== -->
+    <SolidColorBrush x:Key="TextPrimaryBrush"        Color="#F0F0F8"/>
+    <SolidColorBrush x:Key="TextSecondaryBrush"      Color="#9097B5"/>
+    <SolidColorBrush x:Key="TextMutedBrush"          Color="#5A6082"/>
+    <SolidColorBrush x:Key="TextOnAccentBrush"       Color="#FFFFFF"/>
 
-    <!-- Accent -->
-    <SolidColorBrush x:Key="AccentBrush"           Color="#7C6AF7"/>
-    <SolidColorBrush x:Key="AccentHoverBrush"      Color="#9080FF"/>
-    <SolidColorBrush x:Key="AccentPressedBrush"    Color="#6050D0"/>
+    <!-- ====== Primary Accent — Blue ====== -->
+    <SolidColorBrush x:Key="AccentBrush"             Color="#4263EB"/>
+    <SolidColorBrush x:Key="AccentHoverBrush"        Color="#5575F5"/>
+    <SolidColorBrush x:Key="AccentPressedBrush"      Color="#3052CC"/>
 
-    <!-- Semantic -->
-    <SolidColorBrush x:Key="PassBrush"             Color="#22C55E"/>
-    <SolidColorBrush x:Key="PassSurfaceBrush"      Color="#14271E"/>
-    <SolidColorBrush x:Key="FailBrush"             Color="#EF4444"/>
-    <SolidColorBrush x:Key="FailSurfaceBrush"      Color="#2A1515"/>
-    <SolidColorBrush x:Key="IncompleteBrush"       Color="#F59E0B"/>
-    <SolidColorBrush x:Key="IncompleteSurfaceBrush" Color="#291E0A"/>
-    <SolidColorBrush x:Key="WarningBrush"          Color="#F59E0B"/>
-    <SolidColorBrush x:Key="WarningSurfaceBrush"   Color="#1F1A08"/>
-    <SolidColorBrush x:Key="InfoBrush"             Color="#3B82F6"/>
+    <!-- ====== Semantic ====== -->
+    <SolidColorBrush x:Key="PassBrush"               Color="#22C55E"/>
+    <SolidColorBrush x:Key="PassSurfaceBrush"        Color="#142B1F"/>
+    <SolidColorBrush x:Key="FailBrush"               Color="#E03131"/>
+    <SolidColorBrush x:Key="FailSurfaceBrush"        Color="#2A1515"/>
+    <SolidColorBrush x:Key="IncompleteBrush"         Color="#F59E0B"/>
+    <SolidColorBrush x:Key="IncompleteSurfaceBrush"  Color="#291E0A"/>
+    <SolidColorBrush x:Key="WarningBrush"            Color="#F59E0B"/>
+    <SolidColorBrush x:Key="WarningSurfaceBrush"     Color="#1F1A08"/>
+    <SolidColorBrush x:Key="InfoBrush"               Color="#4263EB"/>
 
-    <!-- Input -->
-    <SolidColorBrush x:Key="InputBackgroundBrush"  Color="#1A1A28"/>
-    <SolidColorBrush x:Key="InputBorderBrush"      Color="#34344A"/>
-    <SolidColorBrush x:Key="InputFocusBrush"       Color="#7C6AF7"/>
+    <!-- ====== Button Variants ====== -->
+    <SolidColorBrush x:Key="SuccessBrush"            Color="#2ECC71"/>
+    <SolidColorBrush x:Key="SuccessHoverBrush"       Color="#27AE60"/>
+    <SolidColorBrush x:Key="SuccessPressedBrush"     Color="#1E8449"/>
+    <SolidColorBrush x:Key="WarningButtonBrush"      Color="#E67E22"/>
+    <SolidColorBrush x:Key="WarningButtonHoverBrush" Color="#D35400"/>
 
-    <!-- Sidebar selected -->
-    <SolidColorBrush x:Key="NavSelectedBrush"      Color="#2A2540"/>
-    <SolidColorBrush x:Key="NavHoverBrush"         Color="#1E1E30"/>
+    <!-- ====== Input ====== -->
+    <SolidColorBrush x:Key="InputBackgroundBrush"    Color="#1E2238"/>
+    <SolidColorBrush x:Key="InputBorderBrush"        Color="#2A2F45"/>
+    <SolidColorBrush x:Key="InputFocusBrush"         Color="#4263EB"/>
 
-    <!-- Scalars -->
+    <!-- ====== Sidebar Navigation ====== -->
+    <SolidColorBrush x:Key="NavSelectedBrush"        Color="#C0392B"/>
+    <SolidColorBrush x:Key="NavHoverBrush"           Color="#1E2242"/>
+
+    <!-- ====== Ticker ====== -->
+    <SolidColorBrush x:Key="TickerBackgroundBrush"   Color="#0D0F1A"/>
+    <SolidColorBrush x:Key="TickerTextBrush"         Color="#F39C12"/>
+
+    <!-- ====== Scenario Card ====== -->
+    <SolidColorBrush x:Key="ScenarioBrush"           Color="#1A2F1E"/>
+    <SolidColorBrush x:Key="ScenarioBorderBrush"     Color="#2ECC71"/>
+
+    <!-- ====== Scalars ====== -->
     <CornerRadius x:Key="RadiusSm">4</CornerRadius>
     <CornerRadius x:Key="RadiusMd">8</CornerRadius>
     <CornerRadius x:Key="RadiusLg">12</CornerRadius>

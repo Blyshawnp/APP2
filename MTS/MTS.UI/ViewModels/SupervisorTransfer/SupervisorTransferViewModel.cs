@@ -1,11 +1,13 @@
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MTS.Core.Enums;
 using MTS.Core.Interfaces.Services;
 using MTS.Core.Rules;
 using MTS.Core.Services;
 using MTS.UI.Services;
 using MTS.UI.ViewModels.Base;
+using MTS.UI.ViewModels;
 
 namespace MTS.UI.ViewModels.SupervisorTransfer;
 
@@ -48,7 +50,12 @@ public partial class SupervisorTransferViewModel : ViewModelBase
     [ObservableProperty] private int _progressPercent;
     [ObservableProperty] private ObservableCollection<string> _pageWarnings = new();
 
+    [ObservableProperty] private string _supTransferPhoneNumber = "(800) 555-0100";
+    [ObservableProperty] private string _discordPostText = string.Empty;
+
     // -------------------------------------------------------------------------
+    private readonly IClipboardService _clipboard;
+
     public SupervisorTransferViewModel(
         ISessionService sessionService,
         ISessionStateService sessionState,
@@ -57,7 +64,8 @@ public partial class SupervisorTransferViewModel : ViewModelBase
         ValidationService validation,
         INavigationService nav,
         IDialogService dialog,
-        ISoundService sound)
+        ISoundService sound,
+        IClipboardService clipboard)
     {
         _sessionService  = sessionService;
         _sessionState    = sessionState;
@@ -67,6 +75,7 @@ public partial class SupervisorTransferViewModel : ViewModelBase
         _nav             = nav;
         _dialog          = dialog;
         _sound           = sound;
+        _clipboard       = clipboard;
     }
 
     // -------------------------------------------------------------------------
@@ -81,13 +90,53 @@ public partial class SupervisorTransferViewModel : ViewModelBase
             Transfer2 = new TransferRecordViewModel(2, settings, _validation, _sound);
             Transfer2.IsVisible  = false;
             IsTransfer2Visible   = false;
+
+            // Build Discord post template from settings
+            var candidate = _sessionState.CurrentSession?.Candidate;
+            DiscordPostText = BuildDiscordPost(candidate?.CandidateName ?? "Candidate", settings);
+
             RefreshProgress();
         }, "Loading transfer setup...");
     }
 
+    private static string BuildDiscordPost(string candidateName, MTS.Core.Models.Settings.AppSettings settings)
+        => $"⭐ STAR transfer for {candidateName}\n" +
+           $"Please connect to the ACD supervisor line.\n" +
+           $"Thank you!";
+
+
     // -------------------------------------------------------------------------
     // Commands
     // -------------------------------------------------------------------------
+
+    [RelayCommand]
+    private void Back() => _nav.NavigateTo<DashboardViewModel>();
+
+    [RelayCommand]
+    private async Task StoppedResponding()
+    {
+        bool confirmed = await _dialog.ShowDangerConfirmAsync(
+            "Stopped Responding",
+            "Mark candidate as Stopped Responding? This will auto-fail the session.",
+            "Confirm");
+
+        if (!confirmed) return;
+
+        await _sessionService.SetAutoFailAsync(AutoFailReason.StoppedResponding);
+        _nav.NavigateTo<ReviewViewModel>();
+    }
+
+    [RelayCommand]
+    private async Task TechIssue()
+    {
+        await _dialog.ShowAlertAsync("Tech Issue", "Tech Issue wizard coming soon.");
+    }
+
+    [RelayCommand]
+    private void CopyDiscordPost()
+    {
+        _clipboard.SetText(DiscordPostText);
+    }
 
     /// <summary>Submits a completed transfer attempt and evaluates the next step.</summary>
     [RelayCommand]
@@ -114,9 +163,7 @@ public partial class SupervisorTransferViewModel : ViewModelBase
 
         if (RequiresNewbieShift)
         {
-            // Phase 4: navigate to NewbieShiftViewModel
-            // For now navigate to Review as placeholder
-            NavigateToReview();
+            _nav.NavigateTo<NewbieShiftViewModel>();
         }
         else
         {

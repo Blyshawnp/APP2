@@ -9,6 +9,14 @@ using MTS.UI.Services;
 
 namespace MTS.UI.ViewModels.Calls;
 
+/// <summary>Randomly-generated payment simulation data shown on the call card.</summary>
+public record PaymentSimData(
+    string CardNumber,
+    string CardExpiry,
+    string CardCvv,
+    string BankRouting,
+    string BankAccount);
+
 /// <summary>
 /// Manages the form state for one mock call (1, 2, or 3).
 /// Holds all editable fields, coaching/fail item collections,
@@ -98,6 +106,16 @@ public partial class CallRecordViewModel : ObservableObject
     public bool HasOtherFail => FailItems.Any(f => f.IsOther && f.IsSelected);
 
     // -------------------------------------------------------------------------
+    // Payment simulation (random per call, read-only display)
+    // -------------------------------------------------------------------------
+    public PaymentSimData PaymentSim { get; }
+
+    // -------------------------------------------------------------------------
+    // Scenario text (computed from caller + show + call type + flags)
+    // -------------------------------------------------------------------------
+    public string ScenarioText => GenerateScenarioText();
+
+    // -------------------------------------------------------------------------
     // Validation / state
     // -------------------------------------------------------------------------
     [ObservableProperty]
@@ -148,6 +166,7 @@ public partial class CallRecordViewModel : ObservableObject
             FailItems.Add(new FailItemViewModel(r));
 
         ScenarioFlags = ScenarioFlags.GenerateRandom();
+        PaymentSim    = GeneratePaymentSim();
     }
 
     // -------------------------------------------------------------------------
@@ -249,5 +268,52 @@ public partial class CallRecordViewModel : ObservableObject
     {
         if (value != null)
             DonationAmount = value.OneTimeAmount;
+    }
+
+    // -------------------------------------------------------------------------
+    // Payment simulation generator
+    // -------------------------------------------------------------------------
+
+    private static PaymentSimData GeneratePaymentSim()
+    {
+        var rng = Random.Shared;
+
+        // AmEx: 15 digits, 4-6-5 grouping
+        static string AmexBlock(int len) =>
+            string.Concat(Enumerable.Range(0, len).Select(_ => rng.Next(0, 10).ToString()));
+
+        string card   = $"3{rng.Next(4, 8)} {AmexBlock(6)} {AmexBlock(5)}";
+        string expiry = $"{rng.Next(1, 13):D2}/{rng.Next(26, 30)}";
+        string cvv    = $"{rng.Next(1000, 9999)}";
+
+        // Bank draft
+        string routing = string.Concat(Enumerable.Range(0, 9).Select(_ => rng.Next(0, 10).ToString()));
+        string account = string.Concat(Enumerable.Range(0, rng.Next(8, 13)).Select(_ => rng.Next(0, 10).ToString()));
+
+        return new PaymentSimData(card, expiry, cvv, routing, account);
+    }
+
+    // -------------------------------------------------------------------------
+    // Scenario text generator
+    // -------------------------------------------------------------------------
+
+    private string GenerateScenarioText()
+    {
+        var parts = new List<string>();
+
+        string caller   = SelectedCaller?.DisplayName ?? "[Caller]";
+        string show     = SelectedShow?.Name ?? "[Show]";
+        string callType = SelectedCallType?.Label ?? "[Call Type]";
+
+        parts.Add($"{caller} is calling in about {show}.");
+        parts.Add($"Call type: {callType}.");
+
+        if (ScenarioFlags.HasPhone)    parts.Add("Caller prefers phone contact.");
+        if (ScenarioFlags.HasSms)      parts.Add("Caller has opted in to SMS.");
+        if (ScenarioFlags.HasEnews)    parts.Add("Caller wants to receive e-news.");
+        if (ScenarioFlags.HasShipping) parts.Add("Shipping address needed.");
+        if (ScenarioFlags.HasCcFee)    parts.Add("Credit card processing fee applies.");
+
+        return string.Join(" ", parts);
     }
 }

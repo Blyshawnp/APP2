@@ -214,6 +214,13 @@ public partial class ReviewViewModel : ViewModelBase
     private bool CanRegenerateFailSummary() => IsAiEnabled && !IsGeneratingFailSummary;
 
     // -------------------------------------------------------------------------
+    // Back navigation
+    // -------------------------------------------------------------------------
+
+    [RelayCommand]
+    private void Back() => _nav.GoBack();
+
+    // -------------------------------------------------------------------------
     // Copy to clipboard
     // -------------------------------------------------------------------------
 

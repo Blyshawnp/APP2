@@ -10,6 +10,11 @@
              xmlns:viewsSup="clr-namespace:MTS.UI.Views.SupervisorTransfer"
              xmlns:viewsReview="clr-namespace:MTS.UI.Views.Review"
              xmlns:viewsSettings="clr-namespace:MTS.UI.Views.Settings"
+             xmlns:viewsBasics="clr-namespace:MTS.UI.Views.Basics"
+             xmlns:viewsHistory="clr-namespace:MTS.UI.Views.History"
+             xmlns:viewsHelp="clr-namespace:MTS.UI.Views.Help"
+             xmlns:viewsNewbie="clr-namespace:MTS.UI.Views.NewbieShift"
+             xmlns:viewsDiscord="clr-namespace:MTS.UI.Views.DiscordPost"
              xmlns:conv="clr-namespace:MTS.UI.Converters"
              ShutdownMode="OnMainWindowClose">
 
@@ -30,11 +35,11 @@
             <conv:CallResultToBrushConverter        x:Key="CallResultToBrush"/>
             <conv:SessionStatusToBrushConverter     x:Key="SessionStatusToBrush"/>
             <conv:EnumEqualityConverter             x:Key="EnumEquality"/>
+            <conv:NavIconBrushConverter             x:Key="NavIconBrushConverter"/>
+            <conv:NullableBoolConverter             x:Key="NullableBool"/>
 
             <!-- ============================================================
                  ViewModel → View DataTemplates
-                 WPF selects the correct View automatically when the
-                 ContentControl.Content is set to a matching ViewModel type.
             ============================================================ -->
             <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
                 <views:DashboardView/>
@@ -54,6 +59,26 @@
 
             <DataTemplate DataType="{x:Type vmSettings:SettingsViewModel}">
                 <viewsSettings:SettingsView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:BasicsViewModel}">
+                <viewsBasics:BasicsView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:HistoryViewModel}">
+                <viewsHistory:HistoryView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:HelpViewModel}">
+                <viewsHelp:HelpView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:NewbieShiftViewModel}">
+                <viewsNewbie:NewbieShiftView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:DiscordPostViewModel}">
+                <viewsDiscord:DiscordPostView/>
             </DataTemplate>
 
         </ResourceDictionary>
