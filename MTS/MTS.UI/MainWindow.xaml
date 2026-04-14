@@ -87,6 +87,13 @@
                         <TextBlock Text="☎  Calls" FontSize="13"/>
                     </Button>
 
+                    <Button Style="{StaticResource GhostButton}"
+                            Command="{Binding GoToSettingsCommand}"
+                            HorizontalContentAlignment="Left"
+                            Margin="0,1" Padding="12,10">
+                        <TextBlock Text="⚙  Settings" FontSize="13"/>
+                    </Button>
+
                 </StackPanel>
 
                 <!-- Bottom: Discard + Version -->

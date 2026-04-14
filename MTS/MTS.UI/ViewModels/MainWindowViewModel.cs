@@ -5,6 +5,7 @@ using MTS.Core.Interfaces.Services;
 using MTS.UI.Services;
 using MTS.UI.ViewModels.Base;
 using MTS.UI.ViewModels.Calls;
+using MTS.UI.ViewModels.Settings;
 
 namespace MTS.UI.ViewModels;
 
@@ -81,6 +82,9 @@ public partial class MainWindowViewModel : ViewModelBase
         _nav.ClearHistory();
         _nav.NavigateTo<DashboardViewModel>();
     }
+
+    [RelayCommand]
+    private void GoToSettings() => _nav.NavigateTo<SettingsViewModel>();
 
     [RelayCommand]
     private void ToggleSidebar() => IsSidebarExpanded = !IsSidebarExpanded;
