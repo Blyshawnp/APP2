@@ -1,0 +1,87 @@
+<Application x:Class="MTS.UI.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:MTS.UI.ViewModels"
+             xmlns:vmCalls="clr-namespace:MTS.UI.ViewModels.Calls"
+             xmlns:vmSup="clr-namespace:MTS.UI.ViewModels.SupervisorTransfer"
+             xmlns:vmSettings="clr-namespace:MTS.UI.ViewModels.Settings"
+             xmlns:views="clr-namespace:MTS.UI.Views.Dashboard"
+             xmlns:viewsCalls="clr-namespace:MTS.UI.Views.Calls"
+             xmlns:viewsSup="clr-namespace:MTS.UI.Views.SupervisorTransfer"
+             xmlns:viewsReview="clr-namespace:MTS.UI.Views.Review"
+             xmlns:viewsSettings="clr-namespace:MTS.UI.Views.Settings"
+             xmlns:viewsBasics="clr-namespace:MTS.UI.Views.Basics"
+             xmlns:viewsHistory="clr-namespace:MTS.UI.Views.History"
+             xmlns:viewsHelp="clr-namespace:MTS.UI.Views.Help"
+             xmlns:viewsNewbie="clr-namespace:MTS.UI.Views.NewbieShift"
+             xmlns:viewsDiscord="clr-namespace:MTS.UI.Views.DiscordPost"
+             xmlns:conv="clr-namespace:MTS.UI.Converters"
+             ShutdownMode="OnMainWindowClose">
+
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Styles/Colors.xaml"/>
+                <ResourceDictionary Source="/Styles/BaseStyles.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- ============================================================
+                 Shared converters (application-wide singletons)
+            ============================================================ -->
+            <conv:BoolToVisibilityConverter         x:Key="BoolToVisibility"/>
+            <conv:InverseBoolToVisibilityConverter  x:Key="InverseBoolToVisibility"/>
+            <conv:NullToVisibilityConverter         x:Key="NullToVisibility"/>
+            <conv:EmptyStringToVisibilityConverter  x:Key="EmptyStringToVisibility"/>
+            <conv:CallResultToBrushConverter        x:Key="CallResultToBrush"/>
+            <conv:SessionStatusToBrushConverter     x:Key="SessionStatusToBrush"/>
+            <conv:EnumEqualityConverter             x:Key="EnumEquality"/>
+            <conv:NavIconBrushConverter             x:Key="NavIconBrushConverter"/>
+            <conv:NullableBoolConverter             x:Key="NullableBool"/>
+
+            <!-- ============================================================
+                 ViewModel → View DataTemplates
+            ============================================================ -->
+            <DataTemplate DataType="{x:Type vm:DashboardViewModel}">
+                <views:DashboardView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vmCalls:CallsViewModel}">
+                <viewsCalls:CallsView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vmSup:SupervisorTransferViewModel}">
+                <viewsSup:SupervisorTransferView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:ReviewViewModel}">
+                <viewsReview:ReviewView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vmSettings:SettingsViewModel}">
+                <viewsSettings:SettingsView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:BasicsViewModel}">
+                <viewsBasics:BasicsView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:HistoryViewModel}">
+                <viewsHistory:HistoryView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:HelpViewModel}">
+                <viewsHelp:HelpView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:NewbieShiftViewModel}">
+                <viewsNewbie:NewbieShiftView/>
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:DiscordPostViewModel}">
+                <viewsDiscord:DiscordPostView/>
+            </DataTemplate>
+
+        </ResourceDictionary>
+    </Application.Resources>
+
+</Application>

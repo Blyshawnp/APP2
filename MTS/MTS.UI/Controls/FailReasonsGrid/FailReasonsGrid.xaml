@@ -1,0 +1,45 @@
+<UserControl x:Class="MTS.UI.Controls.FailReasonsGrid.FailReasonsGrid"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ctrl="clr-namespace:MTS.UI.Controls.OtherTextInput"
+             x:Name="Root">
+
+    <StackPanel>
+        <TextBlock Text="Fail Reasons"
+                   Style="{StaticResource H3}"
+                   Margin="0,0,0,10"/>
+
+        <!-- Required indicator when none selected -->
+        <TextBlock Text="⚠  Select at least one fail reason."
+                   FontSize="12"
+                   Foreground="{StaticResource FailBrush}"
+                   Margin="0,0,0,8"
+                   Visibility="{Binding ShowRequiredError, ElementName=Root,
+                                        Converter={StaticResource BoolToVisibility}}"/>
+
+        <ItemsControl ItemsSource="{Binding Items, ElementName=Root}">
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Margin="0,2">
+
+                        <CheckBox IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                  Margin="0,3">
+                            <TextBlock Text="{Binding Label}"
+                                       FontSize="13"
+                                       Foreground="{StaticResource TextPrimaryBrush}"
+                                       TextWrapping="Wrap"/>
+                        </CheckBox>
+
+                        <!-- "Other" notes — appears only when IsOther && IsSelected -->
+                        <ctrl:OtherTextInputControl
+                            IsOtherSelected="{Binding ShowOtherInput}"
+                            Text="{Binding Notes, Mode=TwoWay}"
+                            Label="Describe the fail reason (required):"
+                            Margin="22,0,0,4"/>
+
+                    </StackPanel>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
+    </StackPanel>
+</UserControl>

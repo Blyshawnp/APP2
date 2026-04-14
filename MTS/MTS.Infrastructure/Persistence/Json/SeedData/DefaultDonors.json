@@ -1,0 +1,116 @@
+{
+  "NewDonors": [
+    {
+      "Id": "10000000-0000-0000-0000-000000000001",
+      "FirstName": "Sam",
+      "LastName": "Smith",
+      "Address": "400 N Broad St",
+      "City": "Philadelphia",
+      "State": "PA",
+      "ZipCode": "19103",
+      "Phone": "215-515-1212",
+      "Email": "ssmith@test.com",
+      "IsEnabled": true
+    },
+    {
+      "Id": "10000000-0000-0000-0000-000000000002",
+      "FirstName": "Harold",
+      "LastName": "Smith",
+      "Address": "3686 Village Dr Apt. D",
+      "City": "Franklin",
+      "State": "OH",
+      "ZipCode": "45005",
+      "Phone": "858-555-1212",
+      "Email": "sally@test.com",
+      "IsEnabled": true
+    },
+    {
+      "Id": "10000000-0000-0000-0000-000000000003",
+      "FirstName": "Harry",
+      "LastName": "Smith",
+      "Address": "P.O. Box 6",
+      "City": "Atlasburg",
+      "State": "PA",
+      "ZipCode": "15004",
+      "Phone": "602-515-1212",
+      "Email": "testentry@test.com",
+      "IsEnabled": true
+    },
+    {
+      "Id": "10000000-0000-0000-0000-000000000004",
+      "FirstName": "Mark",
+      "LastName": "Jackson",
+      "Address": "1020 Holland Ave",
+      "City": "Port Huron",
+      "State": "MI",
+      "ZipCode": "48060",
+      "Phone": "310-515-1212",
+      "Email": "mjtest@test.com",
+      "IsEnabled": true
+    }
+  ],
+  "ExistingMembers": [
+    {
+      "Id": "20000000-0000-0000-0000-000000000001",
+      "FirstName": "Ron",
+      "LastName": "Jones",
+      "Address": "3345 W. Auburn Rd, Apt 207",
+      "City": "Rochester Hills",
+      "State": "MI",
+      "ZipCode": "48309",
+      "Phone": "858-555-1212",
+      "Email": "michele@test.com",
+      "IsEnabled": true
+    },
+    {
+      "Id": "20000000-0000-0000-0000-000000000002",
+      "FirstName": "Diane/James",
+      "LastName": "Williams",
+      "Address": "8150 Priestley Dr",
+      "City": "Reynoldsburg",
+      "State": "OH",
+      "ZipCode": "43068",
+      "Phone": "619-555-1212",
+      "Email": "DandJ@test.com",
+      "IsEnabled": true
+    },
+    {
+      "Id": "20000000-0000-0000-0000-000000000003",
+      "FirstName": "Harry",
+      "LastName": "Jones",
+      "Address": "876 McDonald Ave",
+      "City": "Brooklyn",
+      "State": "NY",
+      "ZipCode": "11218",
+      "Phone": "619-555-1212",
+      "Email": "test@test.com",
+      "IsEnabled": true
+    }
+  ],
+  "IncreaseSustaining": [
+    {
+      "Id": "30000000-0000-0000-0000-000000000001",
+      "FirstName": "Alison",
+      "LastName": "DeRudder",
+      "Address": "2200 N Hillman Rd",
+      "City": "Stanton",
+      "State": "MI",
+      "ZipCode": "48888",
+      "Phone": "801-555-1212",
+      "Email": "TESTENTRY@TEST.COM",
+      "IsEnabled": true
+    },
+    {
+      "Id": "30000000-0000-0000-0000-000000000002",
+      "FirstName": "Sherri",
+      "LastName": "Testing",
+      "Address": "104 Newport Dr",
+      "City": "Boardman",
+      "State": "OH",
+      "ZipCode": "44512",
+      "Phone": "(801) 555-1217",
+      "Email": "TESTENTRY@TEST.COM",
+      "IsEnabled": true
+    }
+  ]
+}

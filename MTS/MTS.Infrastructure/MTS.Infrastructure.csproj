@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>MTS.Infrastructure</RootNamespace>
+    <AssemblyName>MTS.Infrastructure</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MTS.Core\MTS.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="LiteDB" Version="5.0.21" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- SeedData: user-editable defaults seeded on first run -->
+    <EmbeddedResource Include="Persistence\Json\SeedData\**\*.json" />
+    <!-- SystemData: system-owned content; never editable, never in Settings -->
+    <EmbeddedResource Include="Persistence\Json\SystemData\**\*.json" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,95 @@
+[
+  {
+    "Id": "a1000000-0000-0000-0000-000000000001",
+    "Label": "Show appreciation",
+    "IsOther": false,
+    "AppliesToCalls": true,
+    "AppliesToSupTransfers": false,
+    "SubItems": [
+      { "Id": "b1000000-0000-0000-0000-000000000001", "Label": "Thank the caller" },
+      { "Id": "b1000000-0000-0000-0000-000000000002", "Label": "Acknowledge gift" }
+    ]
+  },
+  {
+    "Id": "a1000000-0000-0000-0000-000000000002",
+    "Label": "Phonetics table provided",
+    "IsOther": false,
+    "AppliesToCalls": true,
+    "AppliesToSupTransfers": false,
+    "SubItems": []
+  },
+  {
+    "Id": "a1000000-0000-0000-0000-000000000003",
+    "Label": "Don't Ask, Just Verify",
+    "IsOther": false,
+    "AppliesToCalls": true,
+    "AppliesToSupTransfers": false,
+    "SubItems": []
+  },
+  {
+    "Id": "a1000000-0000-0000-0000-000000000004",
+    "Label": "Verification",
+    "IsOther": false,
+    "AppliesToCalls": true,
+    "AppliesToSupTransfers": true,
+    "SubItems": [
+      { "Id": "b1000000-0000-0000-0000-000000000010", "Label": "Name" },
+      { "Id": "b1000000-0000-0000-0000-000000000011", "Label": "Address" },
+      { "Id": "b1000000-0000-0000-0000-000000000012", "Label": "Phone" },
+      { "Id": "b1000000-0000-0000-0000-000000000013", "Label": "Email" },
+      { "Id": "b1000000-0000-0000-0000-000000000014", "Label": "Card/EFT" },
+      { "Id": "b1000000-0000-0000-0000-000000000015", "Label": "Phonetics" }
+    ]
+  },
+  {
+    "Id": "a1000000-0000-0000-0000-000000000005",
+    "Label": "Read script verbatim",
+    "IsOther": false,
+    "AppliesToCalls": true,
+    "AppliesToSupTransfers": false,
+    "SubItems": []
+  },
+  {
+    "Id": "a1000000-0000-0000-0000-000000000006",
+    "Label": "Use effective script navigation",
+    "IsOther": false,
+    "AppliesToCalls": true,
+    "AppliesToSupTransfers": false,
+    "SubItems": [
+      { "Id": "b1000000-0000-0000-0000-000000000020", "Label": "Objection handling" },
+      { "Id": "b1000000-0000-0000-0000-000000000021", "Label": "Smooth transitions" }
+    ]
+  },
+  {
+    "Id": "a1000000-0000-0000-0000-000000000007",
+    "Label": "Minimize dead air",
+    "IsOther": false,
+    "AppliesToCalls": false,
+    "AppliesToSupTransfers": true,
+    "SubItems": []
+  },
+  {
+    "Id": "a1000000-0000-0000-0000-000000000008",
+    "Label": "Queue Not Changed",
+    "IsOther": false,
+    "AppliesToCalls": false,
+    "AppliesToSupTransfers": true,
+    "SubItems": []
+  },
+  {
+    "Id": "a1000000-0000-0000-0000-000000000009",
+    "Label": "Screenshots/Discord Chat",
+    "IsOther": false,
+    "AppliesToCalls": false,
+    "AppliesToSupTransfers": true,
+    "SubItems": []
+  },
+  {
+    "Id": "a1000000-0000-0000-0000-000000000099",
+    "Label": "Other",
+    "IsOther": true,
+    "AppliesToCalls": true,
+    "AppliesToSupTransfers": true,
+    "SubItems": []
+  }
+]

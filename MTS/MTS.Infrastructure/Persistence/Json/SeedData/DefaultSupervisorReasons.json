@@ -1,0 +1,9 @@
+[
+  { "Id": "e1000000-0000-0000-0000-000000000001", "Label": "Hung up on",                         "IsEnabled": true },
+  { "Id": "e1000000-0000-0000-0000-000000000002", "Label": "Charged for a cancelled sustaining", "IsEnabled": true },
+  { "Id": "e1000000-0000-0000-0000-000000000003", "Label": "Double Charged",                     "IsEnabled": true },
+  { "Id": "e1000000-0000-0000-0000-000000000004", "Label": "Damaged Gift",                       "IsEnabled": true },
+  { "Id": "e1000000-0000-0000-0000-000000000005", "Label": "Didn't Receive Gift",                "IsEnabled": true },
+  { "Id": "e1000000-0000-0000-0000-000000000006", "Label": "Cancel Sustaining",                  "IsEnabled": true },
+  { "Id": "e1000000-0000-0000-0000-000000000007", "Label": "Use Own/Other",                      "IsEnabled": true }
+]

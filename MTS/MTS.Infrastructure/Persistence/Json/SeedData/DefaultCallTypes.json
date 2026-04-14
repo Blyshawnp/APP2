@@ -1,0 +1,32 @@
+[
+  {
+    "Id": "d1000000-0000-0000-0000-000000000001",
+    "Label": "New Donor - One Time Donation",
+    "Category": 0,
+    "IsEnabled": true
+  },
+  {
+    "Id": "d1000000-0000-0000-0000-000000000002",
+    "Label": "New Donor - New Sustaining Donation",
+    "Category": 0,
+    "IsEnabled": true
+  },
+  {
+    "Id": "d1000000-0000-0000-0000-000000000003",
+    "Label": "Existing Member - One Time Donation",
+    "Category": 1,
+    "IsEnabled": true
+  },
+  {
+    "Id": "d1000000-0000-0000-0000-000000000004",
+    "Label": "Existing Member - New Monthly Sustaining Donation",
+    "Category": 1,
+    "IsEnabled": true
+  },
+  {
+    "Id": "d1000000-0000-0000-0000-000000000005",
+    "Label": "Existing Member - Increase Current Sustaining Amount",
+    "Category": 2,
+    "IsEnabled": true
+  }
+]

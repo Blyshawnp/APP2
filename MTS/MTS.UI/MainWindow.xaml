@@ -1,0 +1,579 @@
+<Window x:Class="MTS.UI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:MTS.UI.ViewModels"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance vm:MainWindowViewModel}"
+        Title="Mock Testing Suite"
+        MinWidth="1100" MinHeight="700"
+        Width="1280" Height="800"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource AppBackgroundBrush}"
+        Loaded="OnWindowLoaded">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <!-- Scrolling ticker -->
+            <RowDefinition Height="28"/>
+            <!-- Main area: sidebar + content -->
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ================================================================
+             TICKER STRIP (full width)
+        ================================================================ -->
+        <Border Grid.Row="0"
+                Background="{StaticResource TickerBackgroundBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="0,0,0,1">
+            <Canvas x:Name="TickerCanvas" ClipToBounds="True">
+                <TextBlock x:Name="TickerText"
+                           Canvas.Top="5"
+                           Text="{Binding TickerMessage}"
+                           Foreground="{StaticResource TickerTextBrush}"
+                           FontSize="12" FontWeight="SemiBold"
+                           TextWrapping="NoWrap"/>
+            </Canvas>
+        </Border>
+
+        <!-- ================================================================
+             MAIN AREA
+        ================================================================ -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="155"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- ============================================================
+                 SIDEBAR
+            ============================================================ -->
+            <Border Grid.Column="0"
+                    Background="{StaticResource SidebarBrush}"
+                    BorderBrush="{StaticResource BorderBrush}"
+                    BorderThickness="0,0,1,0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>  <!-- Logo -->
+                        <RowDefinition Height="*"/>     <!-- Nav items -->
+                        <RowDefinition Height="Auto"/>  <!-- Bottom actions -->
+                    </Grid.RowDefinitions>
+
+                    <!-- Logo / Branding -->
+                    <Border Grid.Row="0"
+                            Padding="12,16,12,12"
+                            BorderBrush="{StaticResource BorderBrush}"
+                            BorderThickness="0,0,0,1">
+                        <StackPanel>
+                            <Border Background="{StaticResource AccentBrush}"
+                                    CornerRadius="4"
+                                    Padding="8,4"
+                                    HorizontalAlignment="Left"
+                                    Margin="0,0,0,8">
+                                <TextBlock Text="ACD"
+                                           FontSize="14" FontWeight="Bold"
+                                           Foreground="White"
+                                           TextWrapping="NoWrap"/>
+                            </Border>
+                            <TextBlock Text="Mock Testing Suite"
+                                       FontSize="12" FontWeight="Bold"
+                                       Foreground="{StaticResource TextPrimaryBrush}"/>
+                            <TextBlock Text="{Binding AppVersion, StringFormat='v{0}'}"
+                                       FontSize="10"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       Margin="0,2,0,0"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Nav Items -->
+                    <ScrollViewer Grid.Row="1"
+                                  VerticalScrollBarVisibility="Auto"
+                                  HorizontalScrollBarVisibility="Disabled"
+                                  Margin="0,8,0,8">
+                        <StackPanel>
+
+                            <!-- Home -->
+                            <Button Command="{Binding GoToDashboardCommand}"
+                                    Padding="0" Margin="4,1" Cursor="Hand"
+                                    BorderThickness="0">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border x:Name="Bd" CornerRadius="6"
+                                                            Background="{TemplateBinding Background}"
+                                                            Padding="10,8">
+                                                        <ContentPresenter/>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="Bd" Property="Background"
+                                                                    Value="{StaticResource NavHoverBrush}"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsDashboardActive}" Value="True">
+                                                <Setter Property="Background" Value="{StaticResource NavSelectedBrush}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="22"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="12"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="&#xE80F;"
+                                               FontFamily="Segoe MDL2 Assets" FontSize="13"
+                                               Foreground="{Binding IsDashboardActive, Converter={StaticResource NavIconBrushConverter}}"
+                                               VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="Home" FontSize="12"
+                                               Foreground="{Binding IsDashboardActive, Converter={StaticResource NavIconBrushConverter}}"
+                                               VerticalAlignment="Center" Margin="6,0,0,0"/>
+                                    <Ellipse Grid.Column="2" Width="6" Height="6"
+                                             Fill="White" VerticalAlignment="Center"
+                                             Visibility="{Binding IsDashboardActive, Converter={StaticResource BoolToVisibility}}"/>
+                                </Grid>
+                            </Button>
+
+                            <!-- The Basics -->
+                            <Button Command="{Binding GoToBasicsCommand}"
+                                    Padding="0" Margin="4,1" Cursor="Hand"
+                                    BorderThickness="0">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border x:Name="Bd" CornerRadius="6"
+                                                            Background="{TemplateBinding Background}"
+                                                            Padding="10,8">
+                                                        <ContentPresenter/>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="Bd" Property="Background"
+                                                                    Value="{StaticResource NavHoverBrush}"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsBasicsActive}" Value="True">
+                                                <Setter Property="Background" Value="{StaticResource NavSelectedBrush}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="22"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="12"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="&#xE8B8;"
+                                               FontFamily="Segoe MDL2 Assets" FontSize="13"
+                                               Foreground="{Binding IsBasicsActive, Converter={StaticResource NavIconBrushConverter}}"
+                                               VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="The Basics" FontSize="12"
+                                               Foreground="{Binding IsBasicsActive, Converter={StaticResource NavIconBrushConverter}}"
+                                               VerticalAlignment="Center" Margin="6,0,0,0"/>
+                                    <Ellipse Grid.Column="2" Width="6" Height="6"
+                                             Fill="White" VerticalAlignment="Center"
+                                             Visibility="{Binding IsBasicsActive, Converter={StaticResource BoolToVisibility}}"/>
+                                </Grid>
+                            </Button>
+
+                            <!-- Calls -->
+                            <Button Command="{Binding GoToCallsCommand}"
+                                    IsEnabled="{Binding IsSessionActive}"
+                                    Padding="0" Margin="4,1" Cursor="Hand"
+                                    BorderThickness="0">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border x:Name="Bd" CornerRadius="6"
+                                                            Background="{TemplateBinding Background}"
+                                                            Padding="10,8">
+                                                        <ContentPresenter/>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="Bd" Property="Background"
+                                                                    Value="{StaticResource NavHoverBrush}"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsEnabled" Value="False">
+                                                            <Setter TargetName="Bd" Property="Opacity" Value="0.4"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsCallsActive}" Value="True">
+                                                <Setter Property="Background" Value="{StaticResource NavSelectedBrush}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="22"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="12"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="&#xE717;"
+                                               FontFamily="Segoe MDL2 Assets" FontSize="13"
+                                               Foreground="{Binding IsCallsActive, Converter={StaticResource NavIconBrushConverter}}"
+                                               VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="Calls" FontSize="12"
+                                               Foreground="{Binding IsCallsActive, Converter={StaticResource NavIconBrushConverter}}"
+                                               VerticalAlignment="Center" Margin="6,0,0,0"/>
+                                    <Ellipse Grid.Column="2" Width="6" Height="6"
+                                             Fill="White" VerticalAlignment="Center"
+                                             Visibility="{Binding IsCallsActive, Converter={StaticResource BoolToVisibility}}"/>
+                                </Grid>
+                            </Button>
+
+                            <!-- Sup Transfer -->
+                            <Button Command="{Binding GoToSupTransferCommand}"
+                                    IsEnabled="{Binding IsSessionActive}"
+                                    Padding="0" Margin="4,1" Cursor="Hand"
+                                    BorderThickness="0">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border x:Name="Bd" CornerRadius="6"
+                                                            Background="{TemplateBinding Background}"
+                                                            Padding="10,8">
+                                                        <ContentPresenter/>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="Bd" Property="Background"
+                                                                    Value="{StaticResource NavHoverBrush}"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsEnabled" Value="False">
+                                                            <Setter TargetName="Bd" Property="Opacity" Value="0.4"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsSupTransferActive}" Value="True">
+                                                <Setter Property="Background" Value="{StaticResource NavSelectedBrush}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="22"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="12"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="&#xE77B;"
+                                               FontFamily="Segoe MDL2 Assets" FontSize="13"
+                                               Foreground="{Binding IsSupTransferActive, Converter={StaticResource NavIconBrushConverter}}"
+                                               VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="Sup Transfer" FontSize="12"
+                                               Foreground="{Binding IsSupTransferActive, Converter={StaticResource NavIconBrushConverter}}"
+                                               VerticalAlignment="Center" Margin="6,0,0,0"/>
+                                    <Ellipse Grid.Column="2" Width="6" Height="6"
+                                             Fill="White" VerticalAlignment="Center"
+                                             Visibility="{Binding IsSupTransferActive, Converter={StaticResource BoolToVisibility}}"/>
+                                </Grid>
+                            </Button>
+
+                            <!-- Review -->
+                            <Button Command="{Binding GoToReviewCommand}"
+                                    IsEnabled="{Binding IsSessionActive}"
+                                    Padding="0" Margin="4,1" Cursor="Hand"
+                                    BorderThickness="0">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border x:Name="Bd" CornerRadius="6"
+                                                            Background="{TemplateBinding Background}"
+                                                            Padding="10,8">
+                                                        <ContentPresenter/>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="Bd" Property="Background"
+                                                                    Value="{StaticResource NavHoverBrush}"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsEnabled" Value="False">
+                                                            <Setter TargetName="Bd" Property="Opacity" Value="0.4"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsReviewActive}" Value="True">
+                                                <Setter Property="Background" Value="{StaticResource NavSelectedBrush}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="22"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="12"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="&#xE8A5;"
+                                               FontFamily="Segoe MDL2 Assets" FontSize="13"
+                                               Foreground="{Binding IsReviewActive, Converter={StaticResource NavIconBrushConverter}}"
+                                               VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="Review" FontSize="12"
+                                               Foreground="{Binding IsReviewActive, Converter={StaticResource NavIconBrushConverter}}"
+                                               VerticalAlignment="Center" Margin="6,0,0,0"/>
+                                    <Ellipse Grid.Column="2" Width="6" Height="6"
+                                             Fill="White" VerticalAlignment="Center"
+                                             Visibility="{Binding IsReviewActive, Converter={StaticResource BoolToVisibility}}"/>
+                                </Grid>
+                            </Button>
+
+                            <!-- History -->
+                            <Button Command="{Binding GoToHistoryCommand}"
+                                    Padding="0" Margin="4,1" Cursor="Hand"
+                                    BorderThickness="0">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border x:Name="Bd" CornerRadius="6"
+                                                            Background="{TemplateBinding Background}"
+                                                            Padding="10,8">
+                                                        <ContentPresenter/>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="Bd" Property="Background"
+                                                                    Value="{StaticResource NavHoverBrush}"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsHistoryActive}" Value="True">
+                                                <Setter Property="Background" Value="{StaticResource NavSelectedBrush}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="22"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="12"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="&#xE81C;"
+                                               FontFamily="Segoe MDL2 Assets" FontSize="13"
+                                               Foreground="{Binding IsHistoryActive, Converter={StaticResource NavIconBrushConverter}}"
+                                               VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="History" FontSize="12"
+                                               Foreground="{Binding IsHistoryActive, Converter={StaticResource NavIconBrushConverter}}"
+                                               VerticalAlignment="Center" Margin="6,0,0,0"/>
+                                    <Ellipse Grid.Column="2" Width="6" Height="6"
+                                             Fill="White" VerticalAlignment="Center"
+                                             Visibility="{Binding IsHistoryActive, Converter={StaticResource BoolToVisibility}}"/>
+                                </Grid>
+                            </Button>
+
+                            <!-- Settings -->
+                            <Button Command="{Binding GoToSettingsCommand}"
+                                    Padding="0" Margin="4,1" Cursor="Hand"
+                                    BorderThickness="0">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border x:Name="Bd" CornerRadius="6"
+                                                            Background="{TemplateBinding Background}"
+                                                            Padding="10,8">
+                                                        <ContentPresenter/>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="Bd" Property="Background"
+                                                                    Value="{StaticResource NavHoverBrush}"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsSettingsActive}" Value="True">
+                                                <Setter Property="Background" Value="{StaticResource NavSelectedBrush}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="22"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="12"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="&#xE713;"
+                                               FontFamily="Segoe MDL2 Assets" FontSize="13"
+                                               Foreground="{Binding IsSettingsActive, Converter={StaticResource NavIconBrushConverter}}"
+                                               VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="Settings" FontSize="12"
+                                               Foreground="{Binding IsSettingsActive, Converter={StaticResource NavIconBrushConverter}}"
+                                               VerticalAlignment="Center" Margin="6,0,0,0"/>
+                                    <Ellipse Grid.Column="2" Width="6" Height="6"
+                                             Fill="White" VerticalAlignment="Center"
+                                             Visibility="{Binding IsSettingsActive, Converter={StaticResource BoolToVisibility}}"/>
+                                </Grid>
+                            </Button>
+
+                            <!-- Help -->
+                            <Button Command="{Binding GoToHelpCommand}"
+                                    Padding="0" Margin="4,1" Cursor="Hand"
+                                    BorderThickness="0">
+                                <Button.Style>
+                                    <Style TargetType="Button">
+                                        <Setter Property="Background" Value="Transparent"/>
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="Button">
+                                                    <Border x:Name="Bd" CornerRadius="6"
+                                                            Background="{TemplateBinding Background}"
+                                                            Padding="10,8">
+                                                        <ContentPresenter/>
+                                                    </Border>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="Bd" Property="Background"
+                                                                    Value="{StaticResource NavHoverBrush}"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsHelpActive}" Value="True">
+                                                <Setter Property="Background" Value="{StaticResource NavSelectedBrush}"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="22"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="12"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Grid.Column="0" Text="&#xE9CE;"
+                                               FontFamily="Segoe MDL2 Assets" FontSize="13"
+                                               Foreground="{Binding IsHelpActive, Converter={StaticResource NavIconBrushConverter}}"
+                                               VerticalAlignment="Center"/>
+                                    <TextBlock Grid.Column="1" Text="Help" FontSize="12"
+                                               Foreground="{Binding IsHelpActive, Converter={StaticResource NavIconBrushConverter}}"
+                                               VerticalAlignment="Center" Margin="6,0,0,0"/>
+                                    <Ellipse Grid.Column="2" Width="6" Height="6"
+                                             Fill="White" VerticalAlignment="Center"
+                                             Visibility="{Binding IsHelpActive, Converter={StaticResource BoolToVisibility}}"/>
+                                </Grid>
+                            </Button>
+
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- Bottom Actions -->
+                    <StackPanel Grid.Row="2"
+                                Margin="8,0,8,12">
+                        <Separator Margin="0,4,0,8"/>
+
+                        <!-- Discord Post -->
+                        <Button Command="{Binding GoToDiscordPostCommand}"
+                                Margin="0,2"
+                                Padding="10,8"
+                                Style="{StaticResource PrimaryButton}"
+                                HorizontalContentAlignment="Left">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xEC24;" FontFamily="Segoe MDL2 Assets" FontSize="12"
+                                           VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                <TextBlock Text="Discord Post" FontSize="11" FontWeight="SemiBold"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Cert Spreadsheet -->
+                        <Button Command="{Binding OpenCertSpreadsheetCommand}"
+                                Margin="0,2"
+                                Padding="10,8"
+                                Style="{StaticResource SuccessButton}"
+                                HorizontalContentAlignment="Left">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE9D2;" FontFamily="Segoe MDL2 Assets" FontSize="12"
+                                           VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                <TextBlock Text="Cert Spreadsheet" FontSize="11" FontWeight="SemiBold"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Separator Margin="0,6,0,4"/>
+
+                        <!-- Exit App -->
+                        <Button Command="{Binding ExitAppCommand}"
+                                Margin="0,2"
+                                Padding="10,8"
+                                Style="{StaticResource DangerButton}"
+                                HorizontalContentAlignment="Left">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="&#xE7E8;" FontFamily="Segoe MDL2 Assets" FontSize="12"
+                                           VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                <TextBlock Text="Exit App" FontSize="11" FontWeight="SemiBold"
+                                           VerticalAlignment="Center"/>
+                            </StackPanel>
+                        </Button>
+
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ============================================================
+                 MAIN CONTENT AREA
+            ============================================================ -->
+            <ScrollViewer Grid.Column="1"
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled"
+                          Background="{StaticResource AppBackgroundBrush}">
+                <ContentControl Content="{Binding CurrentViewModel}"
+                                Margin="0"/>
+            </ScrollViewer>
+
+        </Grid>
+    </Grid>
+
+</Window>
