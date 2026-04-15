@@ -279,7 +279,7 @@ public partial class CallRecordViewModel : ObservableObject
         var rng = Random.Shared;
 
         // AmEx: 15 digits, 4-6-5 grouping
-        static string AmexBlock(int len) =>
+        string AmexBlock(int len) =>
             string.Concat(Enumerable.Range(0, len).Select(_ => rng.Next(0, 10).ToString()));
 
         string card   = $"3{rng.Next(4, 8)} {AmexBlock(6)} {AmexBlock(5)}";
