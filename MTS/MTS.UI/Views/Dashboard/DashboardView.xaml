@@ -14,7 +14,7 @@
                  Header
             ================================================================ -->
             <TextBlock Margin="0,0,0,4">
-                <Run Text="Welcome, " Style="{StaticResource H1}"/>
+                <Run Text="Welcome, " FontSize="24" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
                 <Run Text="{Binding WelcomeName}" FontSize="24" FontWeight="SemiBold"
                      Foreground="{StaticResource AccentBrush}"/>
                 <Run Text="!" FontSize="24" FontWeight="SemiBold"
