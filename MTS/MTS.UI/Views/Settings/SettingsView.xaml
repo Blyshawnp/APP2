@@ -32,9 +32,7 @@
         ================================================================ -->
         <TabControl Grid.Row="2">
 
-            <!-- --------------------------------------------------------
-                 TAB: Shows
-            -------------------------------------------------------- -->
+            <!-- TAB: Shows -->
             <TabItem Header="Shows">
                 <lte:LookupTableEditorControl
                     Items="{Binding Shows}"
@@ -84,9 +82,7 @@
                 </lte:LookupTableEditorControl>
             </TabItem>
 
-            <!-- --------------------------------------------------------
-                 TAB: Call Types
-            -------------------------------------------------------- -->
+            <!-- TAB: Call Types -->
             <TabItem Header="Call Types">
                 <lte:LookupTableEditorControl
                     Items="{Binding CallTypes}"
@@ -115,9 +111,7 @@
                 </lte:LookupTableEditorControl>
             </TabItem>
 
-            <!-- --------------------------------------------------------
-                 TAB: Donors  (three sub-tabs, one per donor category)
-            -------------------------------------------------------- -->
+            <!-- TAB: Donors (three sub-tabs, one per donor category) -->
             <TabItem Header="Donors">
                 <TabItem.Resources>
                     <!-- Shared donor detail form used by all three sub-tabs -->
@@ -239,9 +233,7 @@
                 </TabControl>
             </TabItem>
 
-            <!-- --------------------------------------------------------
-                 TAB: Supervisor Reasons
-            -------------------------------------------------------- -->
+            <!-- TAB: Supervisor Reasons -->
             <TabItem Header="Supervisor Reasons">
                 <lte:LookupTableEditorControl
                     Items="{Binding SupervisorReasons}"
@@ -265,9 +257,7 @@
                 </lte:LookupTableEditorControl>
             </TabItem>
 
-            <!-- --------------------------------------------------------
-                 TAB: Fail Reasons
-            -------------------------------------------------------- -->
+            <!-- TAB: Fail Reasons -->
             <TabItem Header="Fail Reasons">
                 <lte:LookupTableEditorControl
                     Items="{Binding FailReasons}"
@@ -303,9 +293,7 @@
                 </lte:LookupTableEditorControl>
             </TabItem>
 
-            <!-- --------------------------------------------------------
-                 TAB: Coaching Categories
-            -------------------------------------------------------- -->
+            <!-- TAB: Coaching Categories -->
             <TabItem Header="Coaching">
                 <lte:LookupTableEditorControl
                     Items="{Binding CoachingCategories}"

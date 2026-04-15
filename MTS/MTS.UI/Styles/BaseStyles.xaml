@@ -71,7 +71,7 @@
         <Setter Property="FontSize"      Value="11"/>
         <Setter Property="FontWeight"    Value="SemiBold"/>
         <Setter Property="Foreground"    Value="{StaticResource TextSecondaryBrush}"/>
-        <Setter Property="CharacterSpacing" Value="80"/>
+        <!-- CharacterSpacing is UWP-only; achieve the spacing feel via FontSize + FontWeight -->
     </Style>
 
     <!-- ================================================================
@@ -222,12 +222,27 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="6">
-                        <ScrollViewer x:Name="PART_ContentHost" Padding="{TemplateBinding Padding}"/>
+                        <Grid>
+                            <ScrollViewer x:Name="PART_ContentHost" Padding="{TemplateBinding Padding}"/>
+                            <!-- Placeholder — shown when Tag is set and Text is empty -->
+                            <TextBlock x:Name="Placeholder"
+                                       Text="{TemplateBinding Tag}"
+                                       Padding="{TemplateBinding Padding}"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       FontSize="{TemplateBinding FontSize}"
+                                       IsHitTestVisible="False"
+                                       VerticalAlignment="Center"
+                                       Visibility="Collapsed"/>
+                        </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsFocused" Value="True">
                             <Setter TargetName="Bd" Property="BorderBrush"
                                     Value="{StaticResource InputFocusBrush}"/>
+                        </Trigger>
+                        <!-- Show placeholder when TextBox is empty -->
+                        <Trigger Property="Text" Value="">
+                            <Setter TargetName="Placeholder" Property="Visibility" Value="Visible"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
