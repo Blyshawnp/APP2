@@ -4,6 +4,14 @@
 .idea/
 .vscode/
 
+# .NET build artifacts
+**/bin/
+**/obj/
+
+# MTS publish output and installer artifacts
+MTS/publish/
+MTS/dist/
+
 # Dependencies
 node_modules/
 /node_modules
