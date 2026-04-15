@@ -16,16 +16,42 @@ public partial class App : Application
 
     protected override async void OnStartup(StartupEventArgs e)
     {
+        // Catch exceptions on all threads so they show a message instead of silently closing
+        DispatcherUnhandledException += (_, ex) =>
+        {
+            MessageBox.Show(ex.Exception.ToString(), "Unhandled UI Exception",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+            ex.Handled = true;
+        };
+        AppDomain.CurrentDomain.UnhandledException += (_, ex) =>
+            MessageBox.Show(ex.ExceptionObject?.ToString(), "Unhandled Exception",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+        TaskScheduler.UnobservedTaskException += (_, ex) =>
+        {
+            MessageBox.Show(ex.Exception.ToString(), "Unobserved Task Exception",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+            ex.SetObserved();
+        };
+
         base.OnStartup(e);
 
-        _host = Host.CreateDefaultBuilder()
-            .ConfigureServices(ConfigureServices)
-            .Build();
+        try
+        {
+            _host = Host.CreateDefaultBuilder()
+                .ConfigureServices(ConfigureServices)
+                .Build();
 
-        await _host.StartAsync();
+            await _host.StartAsync();
 
-        var mainWindow = _host.Services.GetRequiredService<MainWindow>();
-        mainWindow.Show();
+            var mainWindow = _host.Services.GetRequiredService<MainWindow>();
+            mainWindow.Show();
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show(ex.ToString(), "Startup Exception",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+            Shutdown(1);
+        }
     }
 
     private static void ConfigureServices(IServiceCollection services)
@@ -67,3 +93,4 @@ public partial class App : Application
         base.OnExit(e);
     }
 }
+
