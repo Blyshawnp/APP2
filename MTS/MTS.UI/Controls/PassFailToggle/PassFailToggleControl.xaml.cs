@@ -92,7 +92,9 @@ public partial class PassFailToggleControl : UserControl
     // Simple inline relay command (avoids CommunityToolkit ref in code-behind)
     private sealed class RelayCommand(Action execute) : ICommand
     {
+#pragma warning disable CS0067  // ICommand requires the event; it is intentionally never raised
         public event EventHandler? CanExecuteChanged;
+#pragma warning restore CS0067
         public bool CanExecute(object? parameter) => true;
         public void Execute(object? parameter) => execute();
     }
