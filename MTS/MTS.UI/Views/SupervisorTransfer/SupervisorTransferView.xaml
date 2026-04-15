@@ -53,7 +53,7 @@
                         <StackPanel>
                             <TextBlock Text="SUPERVISOR TRANSFER LINE"
                                        FontSize="10" FontWeight="SemiBold"
-                                       Foreground="#B0C4FF" CharacterSpacing="80"/>
+                                       Foreground="#B0C4FF"/>
                             <TextBlock Text="{Binding SupTransferPhoneNumber}"
                                        FontSize="20" FontWeight="Bold" Foreground="White"/>
                         </StackPanel>
