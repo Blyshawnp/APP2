@@ -47,8 +47,20 @@ public partial class CallsViewModel : ViewModelBase
     private CallRecordViewModel? _call3;
 
     // -------------------------------------------------------------------------
-    // Visibility / state
+    // Active call (one-at-a-time display)
     // -------------------------------------------------------------------------
+    [ObservableProperty]
+    private CallRecordViewModel? _activeCall;
+
+    [ObservableProperty]
+    private int _activeCallNumber = 1;
+
+    /// <summary>True when Call 1 is submitted (used by step indicator).</summary>
+    public bool IsCall1Done => Call1?.IsCompleted == true;
+    /// <summary>True when Call 2 is submitted.</summary>
+    public bool IsCall2Done => Call2?.IsCompleted == true;
+    /// <summary>True when Call 3 is submitted.</summary>
+    public bool IsCall3Done => Call3?.IsCompleted == true;
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(ProgressPercent))]
     private bool _isCall2Visible;
@@ -115,6 +127,9 @@ public partial class CallsViewModel : ViewModelBase
 
         IsCall2Visible = false;
         IsCall3Visible = false;
+
+        ActiveCall       = Call1;
+        ActiveCallNumber = 1;
 
         RefreshProgress();
     }
@@ -230,10 +245,16 @@ public partial class CallsViewModel : ViewModelBase
         // Reveal next call or apply BR-03
         int completedCount = completedCalls.Count;
 
+        OnPropertyChanged(nameof(IsCall1Done));
+        OnPropertyChanged(nameof(IsCall2Done));
+        OnPropertyChanged(nameof(IsCall3Done));
+
         if (completedCount == 1)
         {
-            IsCall2Visible = true;
+            IsCall2Visible   = true;
             Call2!.IsVisible = true;
+            ActiveCall       = Call2;
+            ActiveCallNumber = 2;
         }
         else if (completedCount >= 2)
         {
@@ -247,7 +268,9 @@ public partial class CallsViewModel : ViewModelBase
 
             if (!hide3 && completedCount < 3)
             {
-                Call3.IsVisible = true;
+                Call3.IsVisible  = true;
+                ActiveCall       = Call3;
+                ActiveCallNumber = 3;
             }
 
             // Warn about pass type mismatch

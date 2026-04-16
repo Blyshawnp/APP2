@@ -336,25 +336,126 @@
                     </StackPanel>
                 </Grid>
 
+                <!-- Step indicator -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,20">
+                    <!-- Step 1 -->
+                    <Border CornerRadius="16" Padding="14,6" Margin="0,0,6,0">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="{StaticResource SurfaceElevatedBrush}"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ActiveCallNumber}" Value="1">
+                                        <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsCall1Done}" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource PassSurfaceBrush}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <TextBlock FontSize="12" FontWeight="SemiBold">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Text"       Value="Call 1"/>
+                                    <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ActiveCallNumber}" Value="1">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsCall1Done}" Value="True">
+                                            <Setter Property="Text"       Value="✓ Call 1"/>
+                                            <Setter Property="Foreground" Value="{StaticResource PassBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Border>
+
+                    <TextBlock Text="›" Foreground="{StaticResource TextSecondaryBrush}"
+                               VerticalAlignment="Center" Margin="0,0,6,0"/>
+
+                    <!-- Step 2 -->
+                    <Border CornerRadius="16" Padding="14,6" Margin="0,0,6,0">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="{StaticResource SurfaceElevatedBrush}"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ActiveCallNumber}" Value="2">
+                                        <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsCall2Done}" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource PassSurfaceBrush}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <TextBlock FontSize="12" FontWeight="SemiBold">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Text"       Value="Call 2"/>
+                                    <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ActiveCallNumber}" Value="2">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsCall2Done}" Value="True">
+                                            <Setter Property="Text"       Value="✓ Call 2"/>
+                                            <Setter Property="Foreground" Value="{StaticResource PassBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Border>
+
+                    <TextBlock Text="›" Foreground="{StaticResource TextSecondaryBrush}"
+                               VerticalAlignment="Center" Margin="0,0,6,0"
+                               Visibility="{Binding IsCall3Visible, Converter={StaticResource BoolToVisibility}}"/>
+
+                    <!-- Step 3 (only visible when Call 3 is needed) -->
+                    <Border CornerRadius="16" Padding="14,6"
+                            Visibility="{Binding IsCall3Visible, Converter={StaticResource BoolToVisibility}}">
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="{StaticResource SurfaceElevatedBrush}"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ActiveCallNumber}" Value="3">
+                                        <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsCall3Done}" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource PassSurfaceBrush}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <TextBlock FontSize="12" FontWeight="SemiBold">
+                            <TextBlock.Style>
+                                <Style TargetType="TextBlock">
+                                    <Setter Property="Text"       Value="Call 3"/>
+                                    <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding ActiveCallNumber}" Value="3">
+                                            <Setter Property="Foreground" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding IsCall3Done}" Value="True">
+                                            <Setter Property="Text"       Value="✓ Call 3"/>
+                                            <Setter Property="Foreground" Value="{StaticResource PassBrush}"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </Border>
+                </StackPanel>
+
                 <!-- Page warnings -->
                 <wb:WarningBannerControl Warnings="{Binding PageWarnings}" Margin="0,0,0,16"/>
 
-                <!-- Call 1 -->
-                <ContentPresenter Content="{Binding Call1}"
+                <!-- Active call only — one card at a time -->
+                <ContentPresenter Content="{Binding ActiveCall}"
                                   ContentTemplate="{StaticResource CallCardTemplate}"
                                   Margin="0,0,0,16"/>
-
-                <!-- Call 2 -->
-                <ContentPresenter Content="{Binding Call2}"
-                                  ContentTemplate="{StaticResource CallCardTemplate}"
-                                  Margin="0,0,0,16"
-                                  Visibility="{Binding IsCall2Visible, Converter={StaticResource BoolToVisibility}}"/>
-
-                <!-- Call 3 -->
-                <ContentPresenter Content="{Binding Call3}"
-                                  ContentTemplate="{StaticResource CallCardTemplate}"
-                                  Margin="0,0,0,16"
-                                  Visibility="{Binding IsCall3Visible, Converter={StaticResource BoolToVisibility}}"/>
 
             </StackPanel>
         </ScrollViewer>

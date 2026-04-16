@@ -259,16 +259,20 @@ public partial class CallRecordViewModel : ObservableObject
 
     partial void OnSelectedCallTypeChanged(CallType? value)
     {
-        // Clear caller selection when type changes so stale data isn't submitted
         SelectedCaller = null;
         OnPropertyChanged(nameof(AvailableCallers));
+        if (SelectedShow != null)
+            DonationAmount = IsMonthlyCallType(value) ? SelectedShow.MonthlyAmount : SelectedShow.OneTimeAmount;
     }
 
     partial void OnSelectedShowChanged(Show? value)
     {
         if (value != null)
-            DonationAmount = value.OneTimeAmount;
+            DonationAmount = IsMonthlyCallType(SelectedCallType) ? value.MonthlyAmount : value.OneTimeAmount;
     }
+
+    private static bool IsMonthlyCallType(CallType? ct)
+        => ct?.Category == CallTypeCategory.IncreaseSustaining;
 
     // -------------------------------------------------------------------------
     // Payment simulation generator
