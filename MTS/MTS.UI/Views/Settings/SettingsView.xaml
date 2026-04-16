@@ -623,27 +623,79 @@
                  TAB: Discord
             ============================================================ -->
             <TabItem Header="Discord">
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <StackPanel Margin="24,20" MaxWidth="600">
+                <TabControl>
 
-                        <TextBlock Text="Discord Integration" Style="{StaticResource H2}" Margin="0,0,0,8"/>
-                        <TextBlock Text="Discord message templates and screenshots are managed via the Discord Post button on the sidebar. Click it from any screen to access templates and images."
-                                   Style="{StaticResource Muted}" TextWrapping="Wrap" Margin="0,0,0,20"/>
+                    <!-- Sub-tab: Templates -->
+                    <TabItem Header="Message Templates">
+                        <lte:LookupTableEditorControl
+                            Items="{Binding DataContext.DiscordTemplates,
+                                   RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            SelectedItem="{Binding DataContext.SelectedDiscordTemplate, Mode=TwoWay,
+                                          RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            AddCommand="{Binding DataContext.AddDiscordTemplateCommand,
+                                        RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            RemoveCommand="{Binding DataContext.RemoveDiscordTemplateCommand,
+                                           RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            MoveUpCommand="{Binding DataContext.MoveDiscordTemplateUpCommand,
+                                           RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            MoveDownCommand="{Binding DataContext.MoveDiscordTemplateDownCommand,
+                                             RelativeSource={RelativeSource AncestorType=UserControl}}">
+                            <lte:LookupTableEditorControl.DetailTemplate>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <TextBlock Text="Trigger / Name" Style="{StaticResource Label}" Margin="0,0,0,4"/>
+                                        <TextBlock Text="A short label for this template (e.g. Pass, Fail, Sup Transfer)"
+                                                   Style="{StaticResource Muted}" FontSize="11" Margin="0,0,0,6"/>
+                                        <TextBox Text="{Binding Trigger, UpdateSourceTrigger=PropertyChanged}"
+                                                 Margin="0,0,0,16"/>
 
-                        <Border Background="{StaticResource SurfaceElevatedBrush}"
-                                BorderBrush="{StaticResource BorderBrush}"
-                                BorderThickness="1" CornerRadius="6" Padding="16">
-                            <StackPanel>
-                                <TextBlock Text="Available in Discord Post:" Style="{StaticResource Label}" Margin="0,0,0,8"/>
-                                <TextBlock Text="• Message Templates (Pass, Fail, Fail Final, Incomplete, NC/NS, Sup messages, etc.)"
-                                           Style="{StaticResource Muted}" TextWrapping="Wrap" Margin="0,0,0,4"/>
-                                <TextBlock Text="• Screenshots (Welcome New Agent, Stars, etc.)"
-                                           Style="{StaticResource Muted}" TextWrapping="Wrap"/>
-                            </StackPanel>
-                        </Border>
+                                        <TextBlock Text="Message" Style="{StaticResource Label}" Margin="0,0,0,4"/>
+                                        <TextBox Text="{Binding Message, UpdateSourceTrigger=PropertyChanged}"
+                                                 TextWrapping="Wrap"
+                                                 MinHeight="100"
+                                                 AcceptsReturn="True"
+                                                 VerticalScrollBarVisibility="Auto"
+                                                 Margin="0,0,0,0"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </lte:LookupTableEditorControl.DetailTemplate>
+                        </lte:LookupTableEditorControl>
+                    </TabItem>
 
-                    </StackPanel>
-                </ScrollViewer>
+                    <!-- Sub-tab: Screenshots -->
+                    <TabItem Header="Screenshots">
+                        <lte:LookupTableEditorControl
+                            Items="{Binding DataContext.DiscordScreenshots,
+                                   RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            SelectedItem="{Binding DataContext.SelectedDiscordScreenshot, Mode=TwoWay,
+                                          RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            AddCommand="{Binding DataContext.AddDiscordScreenshotCommand,
+                                        RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            RemoveCommand="{Binding DataContext.RemoveDiscordScreenshotCommand,
+                                           RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            MoveUpCommand="{Binding DataContext.MoveDiscordScreenshotUpCommand,
+                                           RelativeSource={RelativeSource AncestorType=UserControl}}"
+                            MoveDownCommand="{Binding DataContext.MoveDiscordScreenshotDownCommand,
+                                             RelativeSource={RelativeSource AncestorType=UserControl}}">
+                            <lte:LookupTableEditorControl.DetailTemplate>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <TextBlock Text="Title" Style="{StaticResource Label}" Margin="0,0,0,4"/>
+                                        <TextBox Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
+                                                 Margin="0,0,0,16"/>
+
+                                        <TextBlock Text="Image URL" Style="{StaticResource Label}" Margin="0,0,0,4"/>
+                                        <TextBlock Text="Full URL to the image (https://...)"
+                                                   Style="{StaticResource Muted}" FontSize="11" Margin="0,0,0,6"/>
+                                        <TextBox Text="{Binding ImageUrl, UpdateSourceTrigger=PropertyChanged}"
+                                                 Margin="0,0,0,0"/>
+                                    </StackPanel>
+                                </DataTemplate>
+                            </lte:LookupTableEditorControl.DetailTemplate>
+                        </lte:LookupTableEditorControl>
+                    </TabItem>
+
+                </TabControl>
             </TabItem>
 
         </TabControl>

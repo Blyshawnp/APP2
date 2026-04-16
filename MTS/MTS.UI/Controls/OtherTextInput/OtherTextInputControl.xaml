@@ -3,8 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Name="Root">
 
-    <!-- Collapsed when IsOtherSelected = false via code-behind DP -->
+    <!-- Default Collapsed; code-behind sets Visible only when IsOtherSelected=true -->
     <Border x:Name="Container"
+            Visibility="Collapsed"
             Background="{StaticResource SurfaceElevatedBrush}"
             BorderBrush="{StaticResource InputBorderBrush}"
             BorderThickness="1"

@@ -262,6 +262,25 @@
         <Setter Property="FontSize"        Value="13"/>
     </Style>
 
+    <!-- ComboBoxItem — ensures dropdown list items are readable in dark theme -->
+    <Style TargetType="ComboBoxItem">
+        <Setter Property="Background"               Value="{StaticResource InputBackgroundBrush}"/>
+        <Setter Property="Foreground"               Value="{StaticResource TextPrimaryBrush}"/>
+        <Setter Property="Padding"                  Value="10,6"/>
+        <Setter Property="FontSize"                 Value="13"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Style.Triggers>
+            <Trigger Property="IsHighlighted" Value="True">
+                <Setter Property="Background" Value="{StaticResource NavSelectedBrush}"/>
+                <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+            </Trigger>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
+                <Setter Property="Foreground" Value="White"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
     <!-- ================================================================
          CheckBox
     ================================================================ -->
@@ -301,7 +320,7 @@
     </Style>
 
     <!-- ================================================================
-         TabControl — underline-style tabs
+         TabControl — pill/button-style tabs with visible background strip
     ================================================================ -->
     <Style TargetType="TabControl">
         <Setter Property="Background"      Value="{StaticResource AppBackgroundBrush}"/>
@@ -315,14 +334,17 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
+                        <!-- Tab strip with visible background so tabs don't look like floating words -->
                         <Border Grid.Row="0"
+                                Background="{StaticResource SurfaceElevatedBrush}"
                                 BorderBrush="{StaticResource BorderBrush}"
-                                BorderThickness="0,0,0,1">
+                                BorderThickness="0,0,0,1"
+                                Padding="4,0">
                             <TabPanel IsItemsHost="True"
                                       Background="Transparent"
                                       HorizontalAlignment="Left"/>
                         </Border>
-                        <Border Grid.Row="1" Margin="0,16,0,0">
+                        <Border Grid.Row="1" Margin="0,12,0,0">
                             <ContentPresenter ContentSource="SelectedContent"/>
                         </Border>
                     </Grid>
@@ -342,26 +364,31 @@
                 <ControlTemplate TargetType="TabItem">
                     <Border x:Name="Bd"
                             Background="Transparent"
-                            Padding="16,10"
-                            BorderThickness="0,0,0,2"
+                            Padding="14,10"
+                            BorderThickness="0,0,0,3"
                             BorderBrush="Transparent"
-                            Margin="0,0,4,0">
+                            Margin="0,0,2,0">
                         <ContentPresenter ContentSource="Header"
                                           TextBlock.FontSize="13"
+                                          TextBlock.FontWeight="SemiBold"
                                           TextBlock.Foreground="{TemplateBinding Foreground}"/>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="Bd" Property="BorderBrush"
                                     Value="{StaticResource AccentBrush}"/>
+                            <Setter TargetName="Bd" Property="Background"
+                                    Value="{StaticResource SurfaceBrush}"/>
                             <Setter Property="Foreground"
-                                    Value="{StaticResource TextPrimaryBrush}"/>
+                                    Value="{StaticResource AccentBrush}"/>
                         </Trigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsMouseOver" Value="True"/>
                                 <Condition Property="IsSelected"  Value="False"/>
                             </MultiTrigger.Conditions>
+                            <Setter TargetName="Bd" Property="Background"
+                                    Value="{StaticResource SurfaceBrush}"/>
                             <Setter Property="Foreground"
                                     Value="{StaticResource TextPrimaryBrush}"/>
                         </MultiTrigger>

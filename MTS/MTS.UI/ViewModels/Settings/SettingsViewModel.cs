@@ -106,6 +106,18 @@ public partial class SettingsViewModel : ViewModelBase
     [ObservableProperty] private CoachingCategoryRowViewModel? _selectedCoachingCategory;
 
     // ================================================================
+    // Discord — Templates
+    // ================================================================
+    [ObservableProperty] private ObservableCollection<DiscordTemplateRowViewModel> _discordTemplates = new();
+    [ObservableProperty] private DiscordTemplateRowViewModel? _selectedDiscordTemplate;
+
+    // ================================================================
+    // Discord — Screenshots
+    // ================================================================
+    [ObservableProperty] private ObservableCollection<DiscordScreenshotRowViewModel> _discordScreenshots = new();
+    [ObservableProperty] private DiscordScreenshotRowViewModel? _selectedDiscordScreenshot;
+
+    // ================================================================
     // Status
     // ================================================================
     [ObservableProperty] private bool _isDirty;
@@ -204,6 +216,14 @@ public partial class SettingsViewModel : ViewModelBase
         foreach (var cc in settings.CoachingCategories)
             CoachingCategories.Add(CoachingCategoryRowViewModel.FromDomain(cc));
 
+        DiscordTemplates.Clear();
+        foreach (var t in settings.Discord.Templates)
+            DiscordTemplates.Add(DiscordTemplateRowViewModel.FromDomain(t));
+
+        DiscordScreenshots.Clear();
+        foreach (var s in settings.Discord.Screenshots)
+            DiscordScreenshots.Add(DiscordScreenshotRowViewModel.FromDomain(s));
+
         // Clear selections
         SelectedShow                = null;
         SelectedCallType            = null;
@@ -213,6 +233,8 @@ public partial class SettingsViewModel : ViewModelBase
         SelectedSupervisorReason    = null;
         SelectedFailReason          = null;
         SelectedCoachingCategory    = null;
+        SelectedDiscordTemplate     = null;
+        SelectedDiscordScreenshot   = null;
     }
 
     private void ApplyToSettings(AppSettings settings)
@@ -245,6 +267,10 @@ public partial class SettingsViewModel : ViewModelBase
         settings.Payment.CcCvv        = PaymentCcCvv.Trim();
         settings.Payment.EftRouting   = PaymentEftRouting.Trim();
         settings.Payment.EftAccount   = PaymentEftAccount.Trim();
+
+        // Discord
+        settings.Discord.Templates   = DiscordTemplates.Select(vm => vm.ToDomain()).ToList();
+        settings.Discord.Screenshots = DiscordScreenshots.Select(vm => vm.ToDomain()).ToList();
 
         // Lookup tables
         settings.Shows                     = Shows.Select(vm => vm.ToDomain()).ToList();
@@ -549,6 +575,62 @@ public partial class SettingsViewModel : ViewModelBase
 
     [RelayCommand]
     private void MoveCoachingCategoryDown(CoachingCategoryRowViewModel? item) { MoveDown(CoachingCategories, item); IsDirty = true; }
+
+    // ================================================================
+    // Discord Templates commands
+    // ================================================================
+
+    [RelayCommand]
+    private void AddDiscordTemplate()
+    {
+        var vm = new DiscordTemplateRowViewModel();
+        DiscordTemplates.Add(vm);
+        SelectedDiscordTemplate = vm;
+        IsDirty = true;
+    }
+
+    [RelayCommand]
+    private void RemoveDiscordTemplate(DiscordTemplateRowViewModel? item)
+    {
+        if (item is null) return;
+        DiscordTemplates.Remove(item);
+        SelectedDiscordTemplate = DiscordTemplates.FirstOrDefault();
+        IsDirty = true;
+    }
+
+    [RelayCommand]
+    private void MoveDiscordTemplateUp(DiscordTemplateRowViewModel? item) { MoveUp(DiscordTemplates, item); IsDirty = true; }
+
+    [RelayCommand]
+    private void MoveDiscordTemplateDown(DiscordTemplateRowViewModel? item) { MoveDown(DiscordTemplates, item); IsDirty = true; }
+
+    // ================================================================
+    // Discord Screenshots commands
+    // ================================================================
+
+    [RelayCommand]
+    private void AddDiscordScreenshot()
+    {
+        var vm = new DiscordScreenshotRowViewModel();
+        DiscordScreenshots.Add(vm);
+        SelectedDiscordScreenshot = vm;
+        IsDirty = true;
+    }
+
+    [RelayCommand]
+    private void RemoveDiscordScreenshot(DiscordScreenshotRowViewModel? item)
+    {
+        if (item is null) return;
+        DiscordScreenshots.Remove(item);
+        SelectedDiscordScreenshot = DiscordScreenshots.FirstOrDefault();
+        IsDirty = true;
+    }
+
+    [RelayCommand]
+    private void MoveDiscordScreenshotUp(DiscordScreenshotRowViewModel? item) { MoveUp(DiscordScreenshots, item); IsDirty = true; }
+
+    [RelayCommand]
+    private void MoveDiscordScreenshotDown(DiscordScreenshotRowViewModel? item) { MoveDown(DiscordScreenshots, item); IsDirty = true; }
 
     // ================================================================
     // Shared helpers
