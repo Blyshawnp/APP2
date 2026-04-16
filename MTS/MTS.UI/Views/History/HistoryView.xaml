@@ -14,13 +14,24 @@
         </Grid.RowDefinitions>
 
         <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
-            <StackPanel Margin="32,24" MaxWidth="960">
+            <StackPanel Margin="32,24" MaxWidth="1040">
 
                 <!-- Header -->
-                <TextBlock Text="History" Style="{StaticResource H1}" Margin="0,0,0,4"/>
-                <TextBlock Text="All completed sessions." Style="{StaticResource Muted}" Margin="0,0,0,24"/>
+                <Grid Margin="0,0,0,24">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Session History" Style="{StaticResource H1}" Margin="0,0,0,4"/>
+                    </StackPanel>
+                    <Button Grid.Column="1" Content="Clear All History"
+                            Style="{StaticResource DangerButton}"
+                            Command="{Binding ClearAllHistoryCommand}"
+                            VerticalAlignment="Center"/>
+                </Grid>
 
-                <!-- Stats row -->
+                <!-- Stats row: Total | Passed | Failed | NC/NS | Incomplete | Pass Rate -->
                 <Grid Margin="0,0,0,24">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -36,7 +47,7 @@
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- Total Sessions -->
+                    <!-- Total -->
                     <Border Style="{StaticResource Card}" Grid.Column="0">
                         <StackPanel HorizontalAlignment="Center">
                             <TextBlock Text="{Binding Stats.TotalSessions}" Style="{StaticResource H2}"
@@ -46,42 +57,30 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- Pass -->
+                    <!-- Passed -->
                     <Border Style="{StaticResource Card}" Grid.Column="2">
                         <StackPanel HorizontalAlignment="Center">
                             <TextBlock Text="{Binding Stats.TotalPass}" Style="{StaticResource H2}"
                                        Foreground="{StaticResource PassBrush}"
                                        HorizontalAlignment="Center"/>
-                            <TextBlock Text="Pass" Style="{StaticResource Muted}"
+                            <TextBlock Text="Passed" Style="{StaticResource Muted}"
                                        HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Border>
 
-                    <!-- Fail -->
+                    <!-- Failed -->
                     <Border Style="{StaticResource Card}" Grid.Column="4">
                         <StackPanel HorizontalAlignment="Center">
                             <TextBlock Text="{Binding Stats.TotalFail}" Style="{StaticResource H2}"
                                        Foreground="{StaticResource FailBrush}"
                                        HorizontalAlignment="Center"/>
-                            <TextBlock Text="Fail" Style="{StaticResource Muted}"
-                                       HorizontalAlignment="Center"/>
-                        </StackPanel>
-                    </Border>
-
-                    <!-- Pass Rate -->
-                    <Border Style="{StaticResource Card}" Grid.Column="6">
-                        <StackPanel HorizontalAlignment="Center">
-                            <TextBlock Style="{StaticResource H2}" HorizontalAlignment="Center"
-                                       Foreground="{StaticResource AccentBrush}">
-                                <Run Text="{Binding Stats.PassRate, Mode=OneWay}"/><Run Text="%"/>
-                            </TextBlock>
-                            <TextBlock Text="Pass Rate" Style="{StaticResource Muted}"
+                            <TextBlock Text="Failed" Style="{StaticResource Muted}"
                                        HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Border>
 
                     <!-- NC/NS -->
-                    <Border Style="{StaticResource Card}" Grid.Column="8">
+                    <Border Style="{StaticResource Card}" Grid.Column="6">
                         <StackPanel HorizontalAlignment="Center">
                             <TextBlock Text="{Binding Stats.TotalNcNs}" Style="{StaticResource H2}"
                                        Foreground="{StaticResource WarningBrush}"
@@ -91,38 +90,44 @@
                         </StackPanel>
                     </Border>
 
-                    <!-- NC/NS Rate -->
+                    <!-- Incomplete -->
+                    <Border Style="{StaticResource Card}" Grid.Column="8">
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="{Binding Stats.TotalIncomplete}" Style="{StaticResource H2}"
+                                       Foreground="{StaticResource WarningBrush}"
+                                       HorizontalAlignment="Center"/>
+                            <TextBlock Text="Incomplete" Style="{StaticResource Muted}"
+                                       HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Pass Rate -->
                     <Border Style="{StaticResource Card}" Grid.Column="10">
                         <StackPanel HorizontalAlignment="Center">
                             <TextBlock Style="{StaticResource H2}" HorizontalAlignment="Center"
-                                       Foreground="{StaticResource WarningBrush}">
-                                <Run Text="{Binding Stats.NcNsRate, Mode=OneWay}"/><Run Text="%"/>
+                                       Foreground="{StaticResource PassBrush}">
+                                <Run Text="{Binding Stats.PassRate, Mode=OneWay}"/><Run Text="%"/>
                             </TextBlock>
-                            <TextBlock Text="NC/NS Rate" Style="{StaticResource Muted}"
+                            <TextBlock Text="Pass Rate" Style="{StaticResource Muted}"
                                        HorizontalAlignment="Center"/>
                         </StackPanel>
                     </Border>
                 </Grid>
 
-                <!-- Search + Clear All -->
-                <Grid Margin="0,0,0,12">
+                <!-- Search bar -->
+                <Grid Margin="0,0,0,16">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="8"/>
-                        <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition Width="8"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
 
                     <TextBox Grid.Column="0"
                              Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
-                             Tag="Search by candidate or tester name…"/>
+                             Tag="Search by candidate name…"/>
                     <Button Grid.Column="2" Content="Search"
                             Style="{StaticResource SecondaryButton}"
                             Command="{Binding SearchCommand}"/>
-                    <Button Grid.Column="4" Content="Clear All History"
-                            Style="{StaticResource DangerButton}"
-                            Command="{Binding ClearAllHistoryCommand}"/>
                 </Grid>
 
                 <!-- Empty state -->
@@ -138,17 +143,17 @@
                         <!-- Table header -->
                         <Grid Margin="0,0,0,8">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="160"/>
+                                <ColumnDefinition Width="180"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="120"/>
-                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="80"/>
                             </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0" Text="DATE"       Style="{StaticResource SectionHeader}"/>
-                            <TextBlock Grid.Column="1" Text="CANDIDATE"  Style="{StaticResource SectionHeader}"/>
-                            <TextBlock Grid.Column="2" Text="TESTER"     Style="{StaticResource SectionHeader}"/>
-                            <TextBlock Grid.Column="3" Text="STATUS"     Style="{StaticResource SectionHeader}"/>
-                            <TextBlock Grid.Column="4" Text=""            Style="{StaticResource SectionHeader}"/>
+                            <TextBlock Grid.Column="0" Text="DATE"      Style="{StaticResource SectionHeader}"/>
+                            <TextBlock Grid.Column="1" Text="CANDIDATE" Style="{StaticResource SectionHeader}"/>
+                            <TextBlock Grid.Column="2" Text="TESTER"    Style="{StaticResource SectionHeader}"/>
+                            <TextBlock Grid.Column="3" Text="STATUS"    Style="{StaticResource SectionHeader}"/>
+                            <TextBlock Grid.Column="4" Text=""           Style="{StaticResource SectionHeader}"/>
                         </Grid>
 
                         <Separator Margin="0,0,0,8"/>
@@ -159,35 +164,25 @@
                                 <DataTemplate>
                                     <Grid Margin="0,6">
                                         <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="160"/>
+                                            <ColumnDefinition Width="180"/>
                                             <ColumnDefinition Width="*"/>
                                             <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="120"/>
-                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="140"/>
+                                            <ColumnDefinition Width="80"/>
                                         </Grid.ColumnDefinitions>
 
                                         <TextBlock Grid.Column="0"
-                                                   Text="{Binding CreatedAt, StringFormat='MMM d, yyyy'}"
-                                                   Style="{StaticResource Muted}"/>
-                                        <TextBlock Grid.Column="1" Text="{Binding CandidateName}"/>
+                                                   Text="{Binding CreatedAt, StringFormat='yyyy-MM-dd h:mm tt'}"
+                                                   Style="{StaticResource Muted}" FontSize="12"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding CandidateName}"
+                                                   FontWeight="SemiBold" VerticalAlignment="Center"/>
                                         <TextBlock Grid.Column="2" Text="{Binding TesterName}"
-                                                   Style="{StaticResource Muted}"/>
+                                                   Style="{StaticResource Muted}" VerticalAlignment="Center"/>
                                         <TextBlock Grid.Column="3" Text="{Binding Status}"
-                                                   Foreground="{Binding Status, Converter={StaticResource SessionStatusToBrush}}"/>
-                                        <TextBlock Grid.Column="4" Text="NC/NS"
-                                                   Foreground="{StaticResource WarningBrush}"
-                                                   FontSize="11" FontWeight="SemiBold">
-                                            <TextBlock.Style>
-                                                <Style TargetType="TextBlock">
-                                                    <Setter Property="Visibility" Value="Collapsed"/>
-                                                    <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding AutoFailReason}" Value="NcNs">
-                                                            <Setter Property="Visibility" Value="Visible"/>
-                                                        </DataTrigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </TextBlock.Style>
-                                        </TextBlock>
+                                                   Foreground="{Binding Status, Converter={StaticResource SessionStatusToBrush}}"
+                                                   FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                        <!-- No-op View placeholder — full session detail view coming later -->
+                                        <TextBlock Grid.Column="4" Text="" VerticalAlignment="Center"/>
                                     </Grid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>

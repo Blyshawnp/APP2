@@ -23,7 +23,7 @@
         ================================================================ -->
         <StackPanel Grid.Row="0">
             <TextBlock Text="Settings" Style="{StaticResource H1}"/>
-            <TextBlock Text="Manage shows, call types, donors, and evaluation criteria. Changes are not applied until you click Save."
+            <TextBlock Text="Configure your profile, integrations, and lookup tables. Changes are not applied until you click Save."
                        Style="{StaticResource Muted}" Margin="0,4,0,0"/>
         </StackPanel>
 
@@ -32,7 +32,258 @@
         ================================================================ -->
         <TabControl Grid.Row="2">
 
-            <!-- TAB: Shows -->
+            <!-- ============================================================
+                 TAB: General
+            ============================================================ -->
+            <TabItem Header="General">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="24,20" MaxWidth="600">
+
+                        <!-- Profile -->
+                        <TextBlock Text="Profile" Style="{StaticResource H2}" Margin="0,0,0,16"/>
+
+                        <TextBlock Text="Tester Name" Style="{StaticResource Label}" Margin="0,0,0,4"/>
+                        <TextBox Text="{Binding TesterName, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,0,0,16"/>
+
+                        <TextBlock Text="Display Name" Style="{StaticResource Label}" Margin="0,0,0,4"/>
+                        <TextBox Text="{Binding DisplayName, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,0,0,24"/>
+
+                        <Separator Margin="0,0,0,24"/>
+
+                        <!-- URLs -->
+                        <TextBlock Text="URLs" Style="{StaticResource H2}" Margin="0,0,0,16"/>
+
+                        <TextBlock Text="Cert Form URL" Style="{StaticResource Label}" Margin="0,0,0,4"/>
+                        <TextBox Text="{Binding FormUrl, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,0,0,16"/>
+
+                        <TextBlock Text="Cert Sheet URL" Style="{StaticResource Label}" Margin="0,0,0,4"/>
+                        <TextBox Text="{Binding CertSheetUrl, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,0,0,24"/>
+
+                        <Separator Margin="0,0,0,24"/>
+
+                        <!-- Theme -->
+                        <TextBlock Text="Theme" Style="{StaticResource H2}" Margin="0,0,0,16"/>
+                        <TextBlock Text="Restart the application after changing the theme for full effect."
+                                   Style="{StaticResource Muted}" Margin="0,0,0,12"/>
+                        <Button Content="Toggle Light / Dark"
+                                Style="{StaticResource SecondaryButton}"
+                                Command="{Binding ToggleThemeCommand}"
+                                HorizontalAlignment="Left"
+                                Padding="20,10"/>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ============================================================
+                 TAB: Gemini AI
+            ============================================================ -->
+            <TabItem Header="Gemini AI">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="24,20" MaxWidth="600">
+
+                        <TextBlock Text="Gemini AI — Smart Summaries" Style="{StaticResource H2}" Margin="0,0,0,8"/>
+                        <TextBlock Text="Rewrites coaching and fail summaries into clean, professional language using Google's Gemini AI."
+                                   Style="{StaticResource Muted}" TextWrapping="Wrap" Margin="0,0,0,20"/>
+
+                        <CheckBox Content="Enable Gemini AI Summaries"
+                                  IsChecked="{Binding GeminiEnabled}"
+                                  FontWeight="SemiBold"
+                                  Margin="0,0,0,20"/>
+
+                        <TextBlock Text="API Key" Style="{StaticResource Label}" Margin="0,0,0,4"/>
+                        <TextBox Text="{Binding GeminiApiKey, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,0,0,20"/>
+
+                        <TextBlock Text="Coaching Summary Prompt" Style="{StaticResource Label}" Margin="0,0,0,4"/>
+                        <TextBlock Text="Used to rewrite coaching notes into professional language."
+                                   Style="{StaticResource Muted}" FontSize="11" Margin="0,0,0,6"/>
+                        <TextBox Text="{Binding GeminiCoachingPrompt, UpdateSourceTrigger=PropertyChanged}"
+                                 TextWrapping="Wrap"
+                                 MinHeight="80"
+                                 AcceptsReturn="True"
+                                 VerticalScrollBarVisibility="Auto"
+                                 Margin="0,0,0,20"/>
+
+                        <TextBlock Text="Reason for Fail Prompt" Style="{StaticResource Label}" Margin="0,0,0,4"/>
+                        <TextBlock Text="Used to rewrite fail reason notes into professional language."
+                                   Style="{StaticResource Muted}" FontSize="11" Margin="0,0,0,6"/>
+                        <TextBox Text="{Binding GeminiFailPrompt, UpdateSourceTrigger=PropertyChanged}"
+                                 TextWrapping="Wrap"
+                                 MinHeight="80"
+                                 AcceptsReturn="True"
+                                 VerticalScrollBarVisibility="Auto"
+                                 Margin="0,0,0,0"/>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ============================================================
+                 TAB: Google Sheets
+            ============================================================ -->
+            <TabItem Header="Google Sheets">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="24,20" MaxWidth="600">
+
+                        <TextBlock Text="Google Sheets — Auto Backup" Style="{StaticResource H2}" Margin="0,0,0,8"/>
+                        <TextBlock Text="Automatically logs every completed session to a Google Spreadsheet."
+                                   Style="{StaticResource Muted}" TextWrapping="Wrap" Margin="0,0,0,20"/>
+
+                        <CheckBox Content="Enable Google Sheets Backup"
+                                  IsChecked="{Binding SheetsEnabled}"
+                                  FontWeight="SemiBold"
+                                  Margin="0,0,0,20"/>
+
+                        <TextBlock Text="Spreadsheet ID" Style="{StaticResource Label}" Margin="0,0,0,4"/>
+                        <TextBlock Text="The long string between /d/ and /edit in the sheet URL."
+                                   Style="{StaticResource Muted}" FontSize="11" Margin="0,0,0,6"/>
+                        <TextBox Text="{Binding SheetsSheetId, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,0,0,16"/>
+
+                        <TextBlock Text="Worksheet / Tab Name" Style="{StaticResource Label}" Margin="0,0,0,4"/>
+                        <TextBox Text="{Binding SheetsWorksheet, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,0,0,16"/>
+
+                        <TextBlock Text="Service Account JSON Path" Style="{StaticResource Label}" Margin="0,0,0,4"/>
+                        <TextBlock Text="Full path to your service_account.json file."
+                                   Style="{StaticResource Muted}" FontSize="11" Margin="0,0,0,6"/>
+                        <TextBox Text="{Binding SheetsServiceAccountPath, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,0,0,0"/>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ============================================================
+                 TAB: Calendar
+            ============================================================ -->
+            <TabItem Header="Calendar">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="24,20" MaxWidth="600">
+
+                        <TextBlock Text="Google Calendar" Style="{StaticResource H2}" Margin="0,0,0,8"/>
+                        <TextBlock Text="The &quot;Add to Google Calendar&quot; button on the Newbie Shift screen creates a calendar event using a URL template. No API key required."
+                                   Style="{StaticResource Muted}" TextWrapping="Wrap" Margin="0,0,0,20"/>
+
+                        <CheckBox Content="Enable Google Calendar Integration"
+                                  IsChecked="{Binding CalendarEnabled}"
+                                  FontWeight="SemiBold"
+                                  Margin="0,0,0,0"/>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ============================================================
+                 TAB: Payment
+            ============================================================ -->
+            <TabItem Header="Payment">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="24,20" MaxWidth="600">
+
+                        <TextBlock Text="Payment Simulation" Style="{StaticResource H2}" Margin="0,0,0,8"/>
+                        <TextBlock Text="These values are displayed during call grading as simulated payment data for the candidate to process."
+                                   Style="{StaticResource Muted}" TextWrapping="Wrap" Margin="0,0,0,20"/>
+
+                        <!-- Credit Card -->
+                        <TextBlock Text="CREDIT CARD" Style="{StaticResource SectionHeader}" Margin="0,0,0,12"/>
+
+                        <Grid Margin="0,0,0,12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="12"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Card Type" Style="{StaticResource Label}" Margin="0,0,0,4"/>
+                                <TextBox Text="{Binding PaymentCcType, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Card Number" Style="{StaticResource Label}" Margin="0,0,0,4"/>
+                                <TextBox Text="{Binding PaymentCcNumber, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Margin="0,0,0,24">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="12"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Expiration" Style="{StaticResource Label}" Margin="0,0,0,4"/>
+                                <TextBox Text="{Binding PaymentCcExpiration, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="CVV" Style="{StaticResource Label}" Margin="0,0,0,4"/>
+                                <TextBox Text="{Binding PaymentCcCvv, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Separator Margin="0,0,0,24"/>
+
+                        <!-- EFT / Bank -->
+                        <TextBlock Text="EFT / BANK ACCOUNT" Style="{StaticResource SectionHeader}" Margin="0,0,0,12"/>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="12"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Routing Number" Style="{StaticResource Label}" Margin="0,0,0,4"/>
+                                <TextBox Text="{Binding PaymentEftRouting, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Account Number" Style="{StaticResource Label}" Margin="0,0,0,4"/>
+                                <TextBox Text="{Binding PaymentEftAccount, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+                        </Grid>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <!-- ============================================================
+                 TAB: Call Types
+            ============================================================ -->
+            <TabItem Header="Call Types">
+                <lte:LookupTableEditorControl
+                    Items="{Binding CallTypes}"
+                    SelectedItem="{Binding SelectedCallType, Mode=TwoWay}"
+                    AddCommand="{Binding AddCallTypeCommand}"
+                    RemoveCommand="{Binding RemoveCallTypeCommand}"
+                    MoveUpCommand="{Binding MoveCallTypeUpCommand}"
+                    MoveDownCommand="{Binding MoveCallTypeDownCommand}">
+                    <lte:LookupTableEditorControl.DetailTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock Text="Label" Style="{StaticResource Label}"/>
+                                <TextBox Text="{Binding Label, UpdateSourceTrigger=PropertyChanged}"
+                                         Margin="0,4,0,16"/>
+
+                                <TextBlock Text="Category" Style="{StaticResource Label}"/>
+                                <ComboBox ItemsSource="{Binding CategoryOptions}"
+                                          SelectedItem="{Binding Category}"
+                                          Margin="0,4,0,16"/>
+
+                                <CheckBox Content="Enabled"
+                                          IsChecked="{Binding IsEnabled}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </lte:LookupTableEditorControl.DetailTemplate>
+                </lte:LookupTableEditorControl>
+            </TabItem>
+
+            <!-- ============================================================
+                 TAB: Shows
+            ============================================================ -->
             <TabItem Header="Shows">
                 <lte:LookupTableEditorControl
                     Items="{Binding Shows}"
@@ -82,39 +333,11 @@
                 </lte:LookupTableEditorControl>
             </TabItem>
 
-            <!-- TAB: Call Types -->
-            <TabItem Header="Call Types">
-                <lte:LookupTableEditorControl
-                    Items="{Binding CallTypes}"
-                    SelectedItem="{Binding SelectedCallType, Mode=TwoWay}"
-                    AddCommand="{Binding AddCallTypeCommand}"
-                    RemoveCommand="{Binding RemoveCallTypeCommand}"
-                    MoveUpCommand="{Binding MoveCallTypeUpCommand}"
-                    MoveDownCommand="{Binding MoveCallTypeDownCommand}">
-                    <lte:LookupTableEditorControl.DetailTemplate>
-                        <DataTemplate>
-                            <StackPanel>
-                                <TextBlock Text="Label" Style="{StaticResource Label}"/>
-                                <TextBox Text="{Binding Label, UpdateSourceTrigger=PropertyChanged}"
-                                         Margin="0,4,0,16"/>
-
-                                <TextBlock Text="Category" Style="{StaticResource Label}"/>
-                                <ComboBox ItemsSource="{Binding CategoryOptions}"
-                                          SelectedItem="{Binding Category}"
-                                          Margin="0,4,0,16"/>
-
-                                <CheckBox Content="Enabled"
-                                          IsChecked="{Binding IsEnabled}"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </lte:LookupTableEditorControl.DetailTemplate>
-                </lte:LookupTableEditorControl>
-            </TabItem>
-
-            <!-- TAB: Donors (three sub-tabs, one per donor category) -->
-            <TabItem Header="Donors">
+            <!-- ============================================================
+                 TAB: Callers (was Donors)
+            ============================================================ -->
+            <TabItem Header="Callers">
                 <TabItem.Resources>
-                    <!-- Shared donor detail form used by all three sub-tabs -->
                     <DataTemplate x:Key="DonorDetailTemplate">
                         <StackPanel>
                             <Grid Margin="0,0,0,12">
@@ -178,7 +401,6 @@
                     </DataTemplate>
                 </TabItem.Resources>
 
-                <!-- Sub-tabs for the three donor categories -->
                 <TabControl>
                     <TabItem Header="New Donors">
                         <lte:LookupTableEditorControl
@@ -233,8 +455,10 @@
                 </TabControl>
             </TabItem>
 
-            <!-- TAB: Supervisor Reasons -->
-            <TabItem Header="Supervisor Reasons">
+            <!-- ============================================================
+                 TAB: Sup Reasons (was Supervisor Reasons)
+            ============================================================ -->
+            <TabItem Header="Sup Reasons">
                 <lte:LookupTableEditorControl
                     Items="{Binding SupervisorReasons}"
                     SelectedItem="{Binding SelectedSupervisorReason, Mode=TwoWay}"
@@ -257,7 +481,9 @@
                 </lte:LookupTableEditorControl>
             </TabItem>
 
-            <!-- TAB: Fail Reasons -->
+            <!-- ============================================================
+                 TAB: Fail Reasons
+            ============================================================ -->
             <TabItem Header="Fail Reasons">
                 <lte:LookupTableEditorControl
                     Items="{Binding FailReasons}"
@@ -293,7 +519,9 @@
                 </lte:LookupTableEditorControl>
             </TabItem>
 
-            <!-- TAB: Coaching Categories -->
+            <!-- ============================================================
+                 TAB: Coaching
+            ============================================================ -->
             <TabItem Header="Coaching">
                 <lte:LookupTableEditorControl
                     Items="{Binding CoachingCategories}"
@@ -323,7 +551,6 @@
 
                                 <Separator Margin="0,4,0,12"/>
 
-                                <!-- Sub-items section -->
                                 <TextBlock Text="Sub-Items" Style="{StaticResource H3}" Margin="0,0,0,8"/>
                                 <TextBlock Text="Sub-items appear as checkboxes under this category during grading."
                                            Style="{StaticResource Muted}" Margin="0,0,0,10"/>
@@ -350,7 +577,6 @@
                                             Padding="8,5"/>
                                 </StackPanel>
 
-                                <!-- Sub-item list -->
                                 <ListBox ItemsSource="{Binding SubItems}"
                                          SelectedItem="{Binding SelectedSubItem, Mode=TwoWay}"
                                          MinHeight="72" MaxHeight="150"
@@ -376,7 +602,6 @@
                                     </ListBox.ItemContainerStyle>
                                 </ListBox>
 
-                                <!-- Inline edit for selected sub-item label -->
                                 <StackPanel Visibility="{Binding SelectedSubItem,
                                                         Converter={StaticResource NullToVisibility}}">
                                     <TextBlock Text="Sub-Item Label" Style="{StaticResource Label}"/>
@@ -394,6 +619,33 @@
                 </lte:LookupTableEditorControl>
             </TabItem>
 
+            <!-- ============================================================
+                 TAB: Discord
+            ============================================================ -->
+            <TabItem Header="Discord">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="24,20" MaxWidth="600">
+
+                        <TextBlock Text="Discord Integration" Style="{StaticResource H2}" Margin="0,0,0,8"/>
+                        <TextBlock Text="Discord message templates and screenshots are managed via the Discord Post button on the sidebar. Click it from any screen to access templates and images."
+                                   Style="{StaticResource Muted}" TextWrapping="Wrap" Margin="0,0,0,20"/>
+
+                        <Border Background="{StaticResource SurfaceElevatedBrush}"
+                                BorderBrush="{StaticResource BorderBrush}"
+                                BorderThickness="1" CornerRadius="6" Padding="16">
+                            <StackPanel>
+                                <TextBlock Text="Available in Discord Post:" Style="{StaticResource Label}" Margin="0,0,0,8"/>
+                                <TextBlock Text="• Message Templates (Pass, Fail, Fail Final, Incomplete, NC/NS, Sup messages, etc.)"
+                                           Style="{StaticResource Muted}" TextWrapping="Wrap" Margin="0,0,0,4"/>
+                                <TextBlock Text="• Screenshots (Welcome New Agent, Stars, etc.)"
+                                           Style="{StaticResource Muted}" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
         </TabControl>
 
         <!-- ================================================================
@@ -406,14 +658,12 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Back -->
             <Button Grid.Column="0"
                     Content="← Back"
                     Command="{Binding NavigateBackCommand}"
                     Style="{StaticResource GhostButton}"
                     Padding="16,10"/>
 
-            <!-- Unsaved-changes indicator (centre) -->
             <TextBlock Grid.Column="1"
                        Text="● Unsaved changes"
                        Foreground="{StaticResource WarningBrush}"
@@ -423,7 +673,6 @@
                        Visibility="{Binding IsDirty,
                                    Converter={StaticResource BoolToVisibility}}"/>
 
-            <!-- Save + Reset -->
             <StackPanel Grid.Column="2" Orientation="Horizontal">
                 <Button Content="Reset to Defaults"
                         Command="{Binding ResetToDefaultsCommand}"
