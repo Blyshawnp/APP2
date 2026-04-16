@@ -73,7 +73,7 @@
                         <StackPanel HorizontalAlignment="Center">
                             <TextBlock Style="{StaticResource H2}" HorizontalAlignment="Center"
                                        Foreground="{StaticResource AccentBrush}">
-                                <Run Text="{Binding Stats.PassRate}"/><Run Text="%"/>
+                                <Run Text="{Binding Stats.PassRate, Mode=OneWay}"/><Run Text="%"/>
                             </TextBlock>
                             <TextBlock Text="Pass Rate" Style="{StaticResource Muted}"
                                        HorizontalAlignment="Center"/>
@@ -96,7 +96,7 @@
                         <StackPanel HorizontalAlignment="Center">
                             <TextBlock Style="{StaticResource H2}" HorizontalAlignment="Center"
                                        Foreground="{StaticResource WarningBrush}">
-                                <Run Text="{Binding Stats.NcNsRate}"/><Run Text="%"/>
+                                <Run Text="{Binding Stats.NcNsRate, Mode=OneWay}"/><Run Text="%"/>
                             </TextBlock>
                             <TextBlock Text="NC/NS Rate" Style="{StaticResource Muted}"
                                        HorizontalAlignment="Center"/>

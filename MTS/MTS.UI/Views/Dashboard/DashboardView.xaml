@@ -49,7 +49,7 @@
                         <TextBlock Text="PASS RATE" Style="{StaticResource SectionHeader}" Margin="0,0,0,6"/>
                         <TextBlock FontSize="36" FontWeight="Bold"
                                    Foreground="{StaticResource PassBrush}">
-                            <Run Text="{Binding Stats.PassRate}"/><Run Text="%"/>
+                            <Run Text="{Binding Stats.PassRate, Mode=OneWay}"/><Run Text="%"/>
                         </TextBlock>
                     </StackPanel>
                 </Border>
@@ -59,7 +59,7 @@
                         <TextBlock Text="NC/NS RATE" Style="{StaticResource SectionHeader}" Margin="0,0,0,6"/>
                         <TextBlock FontSize="36" FontWeight="Bold"
                                    Foreground="{StaticResource WarningBrush}">
-                            <Run Text="{Binding Stats.NcNsRate}"/><Run Text="%"/>
+                            <Run Text="{Binding Stats.NcNsRate, Mode=OneWay}"/><Run Text="%"/>
                         </TextBlock>
                     </StackPanel>
                 </Border>

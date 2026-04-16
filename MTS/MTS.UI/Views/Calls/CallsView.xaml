@@ -11,104 +11,8 @@
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance vm:CallsViewModel}">
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-
-        <!-- ================================================================
-             CALL CARDS (scrollable)
-        ================================================================ -->
-        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
-            <StackPanel Margin="32,24" MaxWidth="1000">
-
-                <!-- Header -->
-                <Grid Margin="0,0,0,4">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
-                    </Grid.ColumnDefinitions>
-                    <StackPanel Grid.Column="0">
-                        <TextBlock Text="Calls" Style="{StaticResource H1}"/>
-                        <TextBlock Text="Grade each mock call. Calls 1 and 2 are always required."
-                                   Style="{StaticResource Muted}" Margin="0,4,0,0"/>
-                    </StackPanel>
-                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Width="180">
-                        <TextBlock Text="{Binding ProgressPercent, StringFormat='Progress: {0}%'}"
-                                   Style="{StaticResource Label}" HorizontalAlignment="Right"
-                                   Margin="0,0,0,4"/>
-                        <ProgressBar Value="{Binding ProgressPercent}" Maximum="100" Height="8"
-                                     Background="{StaticResource SurfaceElevatedBrush}"
-                                     Foreground="{StaticResource AccentBrush}"
-                                     BorderThickness="0"/>
-                    </StackPanel>
-                </Grid>
-
-                <!-- Page warnings -->
-                <wb:WarningBannerControl Warnings="{Binding PageWarnings}" Margin="0,0,0,16"/>
-
-                <!-- Call 1 -->
-                <ContentPresenter Content="{Binding Call1}"
-                                  ContentTemplate="{StaticResource CallCardTemplate}"
-                                  Margin="0,0,0,16"/>
-
-                <!-- Call 2 -->
-                <ContentPresenter Content="{Binding Call2}"
-                                  ContentTemplate="{StaticResource CallCardTemplate}"
-                                  Margin="0,0,0,16"
-                                  Visibility="{Binding IsCall2Visible, Converter={StaticResource BoolToVisibility}}"/>
-
-                <!-- Call 3 -->
-                <ContentPresenter Content="{Binding Call3}"
-                                  ContentTemplate="{StaticResource CallCardTemplate}"
-                                  Margin="0,0,0,16"
-                                  Visibility="{Binding IsCall3Visible, Converter={StaticResource BoolToVisibility}}"/>
-
-            </StackPanel>
-        </ScrollViewer>
-
-        <!-- ================================================================
-             FOOTER
-        ================================================================ -->
-        <Border Grid.Row="1"
-                Background="{StaticResource SurfaceBrush}"
-                BorderBrush="{StaticResource BorderBrush}"
-                BorderThickness="0,1,0,0"
-                Padding="32,12">
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="8"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="8"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
-
-                <Button Grid.Column="0" Content="← Back"
-                        Style="{StaticResource SecondaryButton}"
-                        Command="{Binding BackCommand}"/>
-
-                <Button Grid.Column="2" Content="⚠ Stopped Responding"
-                        Style="{StaticResource WarningButton}"
-                        Command="{Binding StoppedRespondingCommand}"/>
-
-                <Button Grid.Column="4" Content="Tech Issue"
-                        Style="{StaticResource GhostButton}"
-                        Command="{Binding TechIssueCommand}"/>
-
-                <Button Grid.Column="6" Content="Continue →"
-                        Style="{StaticResource PrimaryButton}"
-                        Command="{Binding ProceedCommand}"
-                        IsEnabled="{Binding CanProceed}"/>
-            </Grid>
-        </Border>
-    </Grid>
-
     <!-- ================================================================
-         DATA TEMPLATE: One call card
+         Resources must be declared first so StaticResource lookups work
     ================================================================ -->
     <UserControl.Resources>
         <DataTemplate x:Key="CallCardTemplate" DataType="{x:Type vm:CallRecordViewModel}">
@@ -150,7 +54,7 @@
                     <wb:WarningBannerControl Warnings="{Binding ValidationErrors}" Margin="0,0,0,12"/>
 
                     <!-- Two-column layout: Setup (left) | Scenario (right) -->
-                    <Grid IsEnabled="{Binding IsCompleted, Converter={StaticResource InverseBoolToVisibility}}">
+                    <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="16"/>
@@ -320,8 +224,7 @@
                     <Separator Margin="0,16"/>
 
                     <!-- PASS / FAIL buttons -->
-                    <StackPanel IsEnabled="{Binding IsCompleted, Converter={StaticResource InverseBoolToVisibility}}"
-                                Margin="0,0,0,12">
+                    <StackPanel Margin="0,0,0,12">
                         <TextBlock Text="Result" Style="{StaticResource Label}" Margin="0,0,0,8"/>
                         <StackPanel Orientation="Horizontal">
                             <Button Content="✓  PASS"
@@ -362,7 +265,6 @@
 
                     <!-- Coaching section -->
                     <Grid Visibility="{Binding Result, Converter={StaticResource NullToVisibility}}"
-                          IsEnabled="{Binding IsCompleted, Converter={StaticResource InverseBoolToVisibility}}"
                           Margin="0,0,0,12">
                         <StackPanel>
                             <TextBlock Text="COACHING" Style="{StaticResource SectionHeader}" Margin="0,0,0,8"/>
@@ -376,7 +278,6 @@
                             Background="{StaticResource FailSurfaceBrush}"
                             BorderBrush="{StaticResource FailBrush}"
                             BorderThickness="1" CornerRadius="6" Padding="12"
-                            IsEnabled="{Binding IsCompleted, Converter={StaticResource InverseBoolToVisibility}}"
                             Margin="0,0,0,12">
                         <StackPanel>
                             <TextBlock Text="FAIL REASONS" Style="{StaticResource SectionHeader}"
@@ -394,12 +295,107 @@
                             Content="Submit Call"
                             HorizontalAlignment="Left"
                             Padding="20,9"
-                            IsEnabled="{Binding IsCompleted, Converter={StaticResource InverseBoolToVisibility}}"
                             Visibility="{Binding Result, Converter={StaticResource NullToVisibility}}"/>
 
                 </StackPanel>
             </Border>
         </DataTemplate>
     </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- ================================================================
+             CALL CARDS (scrollable)
+        ================================================================ -->
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="32,24" MaxWidth="1000">
+
+                <!-- Header -->
+                <Grid Margin="0,0,0,4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <StackPanel Grid.Column="0">
+                        <TextBlock Text="Calls" Style="{StaticResource H1}"/>
+                        <TextBlock Text="Grade each mock call. Calls 1 and 2 are always required."
+                                   Style="{StaticResource Muted}" Margin="0,4,0,0"/>
+                    </StackPanel>
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Width="180">
+                        <TextBlock Text="{Binding ProgressPercent, StringFormat='Progress: {0}%'}"
+                                   Style="{StaticResource Label}" HorizontalAlignment="Right"
+                                   Margin="0,0,0,4"/>
+                        <ProgressBar Value="{Binding ProgressPercent}" Maximum="100" Height="8"
+                                     Background="{StaticResource SurfaceElevatedBrush}"
+                                     Foreground="{StaticResource AccentBrush}"
+                                     BorderThickness="0"/>
+                    </StackPanel>
+                </Grid>
+
+                <!-- Page warnings -->
+                <wb:WarningBannerControl Warnings="{Binding PageWarnings}" Margin="0,0,0,16"/>
+
+                <!-- Call 1 -->
+                <ContentPresenter Content="{Binding Call1}"
+                                  ContentTemplate="{StaticResource CallCardTemplate}"
+                                  Margin="0,0,0,16"/>
+
+                <!-- Call 2 -->
+                <ContentPresenter Content="{Binding Call2}"
+                                  ContentTemplate="{StaticResource CallCardTemplate}"
+                                  Margin="0,0,0,16"
+                                  Visibility="{Binding IsCall2Visible, Converter={StaticResource BoolToVisibility}}"/>
+
+                <!-- Call 3 -->
+                <ContentPresenter Content="{Binding Call3}"
+                                  ContentTemplate="{StaticResource CallCardTemplate}"
+                                  Margin="0,0,0,16"
+                                  Visibility="{Binding IsCall3Visible, Converter={StaticResource BoolToVisibility}}"/>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- ================================================================
+             FOOTER
+        ================================================================ -->
+        <Border Grid.Row="1"
+                Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="0,1,0,0"
+                Padding="32,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="8"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="8"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+
+                <Button Grid.Column="0" Content="← Back"
+                        Style="{StaticResource SecondaryButton}"
+                        Command="{Binding BackCommand}"/>
+
+                <Button Grid.Column="2" Content="⚠ Stopped Responding"
+                        Style="{StaticResource WarningButton}"
+                        Command="{Binding StoppedRespondingCommand}"/>
+
+                <Button Grid.Column="4" Content="Tech Issue"
+                        Style="{StaticResource GhostButton}"
+                        Command="{Binding TechIssueCommand}"/>
+
+                <Button Grid.Column="6" Content="Continue →"
+                        Style="{StaticResource PrimaryButton}"
+                        Command="{Binding ProceedCommand}"
+                        IsEnabled="{Binding CanProceed}"/>
+            </Grid>
+        </Border>
+    </Grid>
 
 </UserControl>
