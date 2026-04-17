@@ -5,9 +5,6 @@
         <ResourceDictionary Source="/Styles/Colors.xaml"/>
     </ResourceDictionary.MergedDictionaries>
 
-    <!-- ================================================================
-         Typography
-    ================================================================ -->
     <Style x:Key="H1" TargetType="TextBlock">
         <Setter Property="FontSize"   Value="24"/>
         <Setter Property="FontWeight" Value="SemiBold"/>
@@ -43,9 +40,6 @@
         <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}"/>
     </Style>
 
-    <!-- ================================================================
-         Base TextBlock (implicit)
-    ================================================================ -->
     <Style TargetType="TextBlock">
         <Setter Property="Foreground"   Value="{StaticResource TextPrimaryBrush}"/>
         <Setter Property="FontFamily"   Value="Segoe UI"/>
@@ -53,9 +47,6 @@
         <Setter Property="TextWrapping" Value="Wrap"/>
     </Style>
 
-    <!-- ================================================================
-         Card Border
-    ================================================================ -->
     <Style x:Key="Card" TargetType="Border">
         <Setter Property="Background"      Value="{StaticResource SurfaceBrush}"/>
         <Setter Property="BorderBrush"     Value="{StaticResource BorderBrush}"/>
@@ -64,19 +55,12 @@
         <Setter Property="Padding"         Value="16"/>
     </Style>
 
-    <!-- ================================================================
-         Section Header (small label caps style used on Calls/Sup screens)
-    ================================================================ -->
     <Style x:Key="SectionHeader" TargetType="TextBlock">
         <Setter Property="FontSize"      Value="11"/>
         <Setter Property="FontWeight"    Value="SemiBold"/>
         <Setter Property="Foreground"    Value="{StaticResource TextSecondaryBrush}"/>
-        <Setter Property="CharacterSpacing" Value="80"/>
     </Style>
 
-    <!-- ================================================================
-         Buttons — shared template base
-    ================================================================ -->
     <Style x:Key="PrimaryButton" TargetType="Button">
         <Setter Property="Background"      Value="{StaticResource AccentBrush}"/>
         <Setter Property="Foreground"      Value="{StaticResource TextOnAccentBrush}"/>
@@ -121,7 +105,6 @@
         <Setter Property="Background" Value="{StaticResource FailBrush}"/>
     </Style>
 
-    <!-- Green "Success" button — for Pass results, Start New Session, etc. -->
     <Style x:Key="SuccessButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
         <Setter Property="Background" Value="{StaticResource SuccessBrush}"/>
         <Setter Property="Template">
@@ -151,7 +134,6 @@
         </Setter>
     </Style>
 
-    <!-- Orange "Warning" button — Stopped Responding -->
     <Style x:Key="WarningButton" TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
         <Setter Property="Background" Value="{StaticResource WarningButtonBrush}"/>
         <Setter Property="Template">
@@ -203,9 +185,6 @@
         </Setter>
     </Style>
 
-    <!-- ================================================================
-         TextBox
-    ================================================================ -->
     <Style TargetType="TextBox">
         <Setter Property="Background"      Value="{StaticResource InputBackgroundBrush}"/>
         <Setter Property="Foreground"      Value="{StaticResource TextPrimaryBrush}"/>
@@ -222,12 +201,25 @@
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
                             CornerRadius="6">
-                        <ScrollViewer x:Name="PART_ContentHost" Padding="{TemplateBinding Padding}"/>
+                        <Grid>
+                            <ScrollViewer x:Name="PART_ContentHost" Padding="{TemplateBinding Padding}"/>
+                            <TextBlock x:Name="Placeholder"
+                                       Text="{TemplateBinding Tag}"
+                                       Padding="{TemplateBinding Padding}"
+                                       Foreground="{StaticResource TextMutedBrush}"
+                                       FontSize="{TemplateBinding FontSize}"
+                                       IsHitTestVisible="False"
+                                       VerticalAlignment="Center"
+                                       Visibility="Collapsed"/>
+                        </Grid>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsFocused" Value="True">
                             <Setter TargetName="Bd" Property="BorderBrush"
                                     Value="{StaticResource InputFocusBrush}"/>
+                        </Trigger>
+                        <Trigger Property="Text" Value="">
+                            <Setter TargetName="Placeholder" Property="Visibility" Value="Visible"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -235,9 +227,6 @@
         </Setter>
     </Style>
 
-    <!-- ================================================================
-         ComboBox
-    ================================================================ -->
     <Style TargetType="ComboBox">
         <Setter Property="Background"      Value="{StaticResource InputBackgroundBrush}"/>
         <Setter Property="Foreground"      Value="{StaticResource TextPrimaryBrush}"/>
@@ -247,9 +236,24 @@
         <Setter Property="FontSize"        Value="13"/>
     </Style>
 
-    <!-- ================================================================
-         CheckBox
-    ================================================================ -->
+    <Style TargetType="ComboBoxItem">
+        <Setter Property="Background"               Value="{StaticResource InputBackgroundBrush}"/>
+        <Setter Property="Foreground"               Value="{StaticResource TextPrimaryBrush}"/>
+        <Setter Property="Padding"                  Value="10,6"/>
+        <Setter Property="FontSize"                 Value="13"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Style.Triggers>
+            <Trigger Property="IsHighlighted" Value="True">
+                <Setter Property="Background" Value="{StaticResource NavSelectedBrush}"/>
+                <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+            </Trigger>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Background" Value="{StaticResource AccentBrush}"/>
+                <Setter Property="Foreground" Value="White"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
     <Style TargetType="CheckBox">
         <Setter Property="Foreground"               Value="{StaticResource TextPrimaryBrush}"/>
         <Setter Property="FontSize"                 Value="13"/>
@@ -258,9 +262,6 @@
         <Setter Property="Cursor"                   Value="Hand"/>
     </Style>
 
-    <!-- ================================================================
-         RadioButton
-    ================================================================ -->
     <Style TargetType="RadioButton">
         <Setter Property="Foreground"               Value="{StaticResource TextPrimaryBrush}"/>
         <Setter Property="FontSize"                 Value="13"/>
@@ -268,26 +269,17 @@
         <Setter Property="Cursor"                   Value="Hand"/>
     </Style>
 
-    <!-- ================================================================
-         ScrollBar (minimal)
-    ================================================================ -->
     <Style TargetType="ScrollBar">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Width"      Value="6"/>
     </Style>
 
-    <!-- ================================================================
-         Separator
-    ================================================================ -->
     <Style TargetType="Separator">
         <Setter Property="Background"  Value="{StaticResource BorderBrush}"/>
         <Setter Property="Height"      Value="1"/>
         <Setter Property="Margin"      Value="0,8"/>
     </Style>
 
-    <!-- ================================================================
-         TabControl — underline-style tabs
-    ================================================================ -->
     <Style TargetType="TabControl">
         <Setter Property="Background"      Value="{StaticResource AppBackgroundBrush}"/>
         <Setter Property="BorderThickness" Value="0"/>
@@ -301,13 +293,15 @@
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         <Border Grid.Row="0"
+                                Background="{StaticResource SurfaceElevatedBrush}"
                                 BorderBrush="{StaticResource BorderBrush}"
-                                BorderThickness="0,0,0,1">
+                                BorderThickness="0,0,0,1"
+                                Padding="4,0">
                             <TabPanel IsItemsHost="True"
                                       Background="Transparent"
                                       HorizontalAlignment="Left"/>
                         </Border>
-                        <Border Grid.Row="1" Margin="0,16,0,0">
+                        <Border Grid.Row="1" Margin="0,12,0,0">
                             <ContentPresenter ContentSource="SelectedContent"/>
                         </Border>
                     </Grid>
@@ -327,26 +321,31 @@
                 <ControlTemplate TargetType="TabItem">
                     <Border x:Name="Bd"
                             Background="Transparent"
-                            Padding="16,10"
-                            BorderThickness="0,0,0,2"
+                            Padding="14,10"
+                            BorderThickness="0,0,0,3"
                             BorderBrush="Transparent"
-                            Margin="0,0,4,0">
+                            Margin="0,0,2,0">
                         <ContentPresenter ContentSource="Header"
                                           TextBlock.FontSize="13"
+                                          TextBlock.FontWeight="SemiBold"
                                           TextBlock.Foreground="{TemplateBinding Foreground}"/>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsSelected" Value="True">
                             <Setter TargetName="Bd" Property="BorderBrush"
                                     Value="{StaticResource AccentBrush}"/>
+                            <Setter TargetName="Bd" Property="Background"
+                                    Value="{StaticResource SurfaceBrush}"/>
                             <Setter Property="Foreground"
-                                    Value="{StaticResource TextPrimaryBrush}"/>
+                                    Value="{StaticResource AccentBrush}"/>
                         </Trigger>
                         <MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsMouseOver" Value="True"/>
                                 <Condition Property="IsSelected"  Value="False"/>
                             </MultiTrigger.Conditions>
+                            <Setter TargetName="Bd" Property="Background"
+                                    Value="{StaticResource SurfaceBrush}"/>
                             <Setter Property="Foreground"
                                     Value="{StaticResource TextPrimaryBrush}"/>
                         </MultiTrigger>
