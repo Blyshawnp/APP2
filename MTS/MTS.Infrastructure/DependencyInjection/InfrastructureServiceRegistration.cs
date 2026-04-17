@@ -3,7 +3,6 @@ using MTS.Core.Interfaces.Repositories;
 using MTS.Core.Interfaces.Services;
 using MTS.Core.Rules;
 using MTS.Core.Services;
-using MTS.Core.Interfaces.Services;
 using MTS.Infrastructure.ExternalServices;
 using MTS.Infrastructure.Persistence.Json;
 using MTS.Infrastructure.Persistence.LiteDb;
