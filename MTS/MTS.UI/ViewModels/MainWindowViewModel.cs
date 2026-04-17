@@ -204,5 +204,5 @@ public partial class MainWindowViewModel : ViewModelBase
                                ?? string.Empty;
     }
 
-    public override void OnNavigatedFrom() { }
+    public virtual void OnNavigatedFrom() { }
 }

@@ -35,7 +35,7 @@ public partial class BasicsViewModel : ViewModelBase
     private Pronoun _pronoun = Pronoun.They;
 
     [ObservableProperty]
-    private bool? _isFinalAttempt;
+    private bool _isFinalAttempt;
 
     [ObservableProperty]
     private bool _isSupervisorOnly;
@@ -189,7 +189,7 @@ public partial class BasicsViewModel : ViewModelBase
             {
                 CandidateName = CandidateName.Trim(),
                 Pronoun       = Pronoun,
-                IsFinalAttempt = IsFinalAttempt == true
+                IsFinalAttempt = IsFinalAttempt
             };
 
             var session = await _sessionService.CreateSessionAsync(candidate, IsSupervisorOnly);
@@ -241,7 +241,7 @@ public partial class BasicsViewModel : ViewModelBase
             {
                 CandidateName  = string.IsNullOrWhiteSpace(CandidateName) ? "Unknown" : CandidateName.Trim(),
                 Pronoun        = Pronoun,
-                IsFinalAttempt = IsFinalAttempt == true
+                IsFinalAttempt = IsFinalAttempt
             };
 
             await _sessionService.CreateSessionAsync(candidate, IsSupervisorOnly);

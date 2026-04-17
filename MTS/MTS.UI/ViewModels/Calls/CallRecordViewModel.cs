@@ -259,20 +259,16 @@ public partial class CallRecordViewModel : ObservableObject
 
     partial void OnSelectedCallTypeChanged(CallType? value)
     {
+        // Clear caller selection when type changes so stale data isn't submitted
         SelectedCaller = null;
         OnPropertyChanged(nameof(AvailableCallers));
-        if (SelectedShow != null)
-            DonationAmount = IsMonthlyCallType(value) ? SelectedShow.MonthlyAmount : SelectedShow.OneTimeAmount;
     }
 
     partial void OnSelectedShowChanged(Show? value)
     {
         if (value != null)
-            DonationAmount = IsMonthlyCallType(SelectedCallType) ? value.MonthlyAmount : value.OneTimeAmount;
+            DonationAmount = value.OneTimeAmount;
     }
-
-    private static bool IsMonthlyCallType(CallType? ct)
-        => ct?.Category == CallTypeCategory.IncreaseSustaining;
 
     // -------------------------------------------------------------------------
     // Payment simulation generator
@@ -283,7 +279,7 @@ public partial class CallRecordViewModel : ObservableObject
         var rng = Random.Shared;
 
         // AmEx: 15 digits, 4-6-5 grouping
-        string AmexBlock(int len) =>
+        static string AmexBlock(int len) =>
             string.Concat(Enumerable.Range(0, len).Select(_ => rng.Next(0, 10).ToString()));
 
         string card   = $"3{rng.Next(4, 8)} {AmexBlock(6)} {AmexBlock(5)}";

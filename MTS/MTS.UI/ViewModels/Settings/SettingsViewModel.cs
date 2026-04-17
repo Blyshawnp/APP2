@@ -9,59 +9,28 @@ using MTS.UI.ViewModels.Base;
 
 namespace MTS.UI.ViewModels.Settings;
 
+/// <summary>
+/// Drives the Settings screen.
+///
+/// Responsibilities:
+///   – Loads all editable lookup tables from ISettingsService on navigate.
+///   – Exposes per-section ObservableCollections + SelectedXxx properties.
+///   – Provides Add / Remove / MoveUp / MoveDown commands for every section.
+///   – On Save: maps row VMs back to domain models, writes via ISettingsService.
+///   – On ResetToDefaults: reloads from embedded seed defaults (with confirmation).
+///   – IsDirty tracks structural changes (add/remove/reorder); individual field edits
+///     are always persisted on the next explicit Save.
+///
+/// NOT in this ViewModel:
+///   – Discord messages (system-owned, never editable)
+///   – Help or Tutorial content
+/// </summary>
 public partial class SettingsViewModel : ViewModelBase
 {
     private readonly ISettingsService    _settingsService;
     private readonly IDialogService      _dialog;
     private readonly INotificationService _notification;
     private readonly INavigationService  _nav;
-
-    // ================================================================
-    // General — Profile
-    // ================================================================
-    [ObservableProperty] private string _testerName = string.Empty;
-    [ObservableProperty] private string _displayName = string.Empty;
-
-    // ================================================================
-    // General — URLs
-    // ================================================================
-    [ObservableProperty] private string _formUrl = string.Empty;
-    [ObservableProperty] private string _certSheetUrl = string.Empty;
-
-    // ================================================================
-    // Gemini AI
-    // ================================================================
-    [ObservableProperty] private bool   _geminiEnabled;
-    [ObservableProperty] private string _geminiApiKey = string.Empty;
-    [ObservableProperty] private string _geminiCoachingPrompt = string.Empty;
-    [ObservableProperty] private string _geminiFailPrompt = string.Empty;
-
-    // ================================================================
-    // Google Sheets
-    // ================================================================
-    [ObservableProperty] private bool   _sheetsEnabled;
-    [ObservableProperty] private string _sheetsSheetId = string.Empty;
-    [ObservableProperty] private string _sheetsWorksheet = string.Empty;
-    [ObservableProperty] private string _sheetsServiceAccountPath = string.Empty;
-
-    // ================================================================
-    // Calendar
-    // ================================================================
-    [ObservableProperty] private bool _calendarEnabled;
-
-    // ================================================================
-    // Payment — Credit Card
-    // ================================================================
-    [ObservableProperty] private string _paymentCcType = string.Empty;
-    [ObservableProperty] private string _paymentCcNumber = string.Empty;
-    [ObservableProperty] private string _paymentCcExpiration = string.Empty;
-    [ObservableProperty] private string _paymentCcCvv = string.Empty;
-
-    // ================================================================
-    // Payment — EFT / Bank
-    // ================================================================
-    [ObservableProperty] private string _paymentEftRouting = string.Empty;
-    [ObservableProperty] private string _paymentEftAccount = string.Empty;
 
     // ================================================================
     // Shows
@@ -106,18 +75,6 @@ public partial class SettingsViewModel : ViewModelBase
     [ObservableProperty] private CoachingCategoryRowViewModel? _selectedCoachingCategory;
 
     // ================================================================
-    // Discord — Templates
-    // ================================================================
-    [ObservableProperty] private ObservableCollection<DiscordTemplateRowViewModel> _discordTemplates = new();
-    [ObservableProperty] private DiscordTemplateRowViewModel? _selectedDiscordTemplate;
-
-    // ================================================================
-    // Discord — Screenshots
-    // ================================================================
-    [ObservableProperty] private ObservableCollection<DiscordScreenshotRowViewModel> _discordScreenshots = new();
-    [ObservableProperty] private DiscordScreenshotRowViewModel? _selectedDiscordScreenshot;
-
-    // ================================================================
     // Status
     // ================================================================
     [ObservableProperty] private bool _isDirty;
@@ -155,35 +112,6 @@ public partial class SettingsViewModel : ViewModelBase
 
     private void LoadFromSettings(AppSettings settings)
     {
-        // General
-        TesterName   = settings.TesterProfile.TesterName;
-        DisplayName  = settings.TesterProfile.DisplayName;
-        FormUrl      = settings.Urls.FormUrl;
-        CertSheetUrl = settings.Urls.CertSheetUrl;
-
-        // Gemini AI
-        GeminiEnabled        = settings.Gemini.Enabled;
-        GeminiApiKey         = settings.Gemini.ApiKey;
-        GeminiCoachingPrompt = settings.Gemini.CoachingPrompt;
-        GeminiFailPrompt     = settings.Gemini.FailPrompt;
-
-        // Google Sheets
-        SheetsEnabled            = settings.Sheets.Enabled;
-        SheetsSheetId            = settings.Sheets.SheetId;
-        SheetsWorksheet          = settings.Sheets.Worksheet;
-        SheetsServiceAccountPath = settings.Sheets.ServiceAccountPath;
-
-        // Calendar
-        CalendarEnabled = settings.Calendar.Enabled;
-
-        // Payment
-        PaymentCcType       = settings.Payment.CcType;
-        PaymentCcNumber     = settings.Payment.CcNumber;
-        PaymentCcExpiration = settings.Payment.CcExpiration;
-        PaymentCcCvv        = settings.Payment.CcCvv;
-        PaymentEftRouting   = settings.Payment.EftRouting;
-        PaymentEftAccount   = settings.Payment.EftAccount;
-
         Shows.Clear();
         foreach (var s in settings.Shows)
             Shows.Add(ShowRowViewModel.FromDomain(s));
@@ -216,14 +144,6 @@ public partial class SettingsViewModel : ViewModelBase
         foreach (var cc in settings.CoachingCategories)
             CoachingCategories.Add(CoachingCategoryRowViewModel.FromDomain(cc));
 
-        DiscordTemplates.Clear();
-        foreach (var t in settings.Discord.Templates)
-            DiscordTemplates.Add(DiscordTemplateRowViewModel.FromDomain(t));
-
-        DiscordScreenshots.Clear();
-        foreach (var s in settings.Discord.Screenshots)
-            DiscordScreenshots.Add(DiscordScreenshotRowViewModel.FromDomain(s));
-
         // Clear selections
         SelectedShow                = null;
         SelectedCallType            = null;
@@ -233,54 +153,18 @@ public partial class SettingsViewModel : ViewModelBase
         SelectedSupervisorReason    = null;
         SelectedFailReason          = null;
         SelectedCoachingCategory    = null;
-        SelectedDiscordTemplate     = null;
-        SelectedDiscordScreenshot   = null;
     }
 
     private void ApplyToSettings(AppSettings settings)
     {
-        // General
-        settings.TesterProfile.TesterName  = TesterName.Trim();
-        settings.TesterProfile.DisplayName = DisplayName.Trim();
-        settings.Urls.FormUrl              = FormUrl.Trim();
-        settings.Urls.CertSheetUrl         = CertSheetUrl.Trim();
-
-        // Gemini AI
-        settings.Gemini.Enabled        = GeminiEnabled;
-        settings.Gemini.ApiKey         = GeminiApiKey.Trim();
-        settings.Gemini.CoachingPrompt = GeminiCoachingPrompt;
-        settings.Gemini.FailPrompt     = GeminiFailPrompt;
-
-        // Google Sheets
-        settings.Sheets.Enabled            = SheetsEnabled;
-        settings.Sheets.SheetId            = SheetsSheetId.Trim();
-        settings.Sheets.Worksheet          = SheetsWorksheet.Trim();
-        settings.Sheets.ServiceAccountPath = SheetsServiceAccountPath.Trim();
-
-        // Calendar
-        settings.Calendar.Enabled = CalendarEnabled;
-
-        // Payment
-        settings.Payment.CcType       = PaymentCcType.Trim();
-        settings.Payment.CcNumber     = PaymentCcNumber.Trim();
-        settings.Payment.CcExpiration = PaymentCcExpiration.Trim();
-        settings.Payment.CcCvv        = PaymentCcCvv.Trim();
-        settings.Payment.EftRouting   = PaymentEftRouting.Trim();
-        settings.Payment.EftAccount   = PaymentEftAccount.Trim();
-
-        // Discord
-        settings.Discord.Templates   = DiscordTemplates.Select(vm => vm.ToDomain()).ToList();
-        settings.Discord.Screenshots = DiscordScreenshots.Select(vm => vm.ToDomain()).ToList();
-
-        // Lookup tables
-        settings.Shows                     = Shows.Select(vm => vm.ToDomain()).ToList();
-        settings.CallTypes                 = CallTypes.Select(vm => vm.ToDomain()).ToList();
-        settings.Donors.NewDonors          = NewDonors.Select(vm => vm.ToDomain()).ToList();
-        settings.Donors.ExistingMembers    = ExistingMembers.Select(vm => vm.ToDomain()).ToList();
-        settings.Donors.IncreaseSustaining = IncreaseSustaining.Select(vm => vm.ToDomain()).ToList();
-        settings.SupervisorReasons         = SupervisorReasons.Select(vm => vm.ToSupervisorReason()).ToList();
-        settings.FailReasons               = FailReasons.Select(vm => vm.ToDomain()).ToList();
-        settings.CoachingCategories        = CoachingCategories.Select(vm => vm.ToDomain()).ToList();
+        settings.Shows                    = Shows.Select(vm => vm.ToDomain()).ToList();
+        settings.CallTypes                = CallTypes.Select(vm => vm.ToDomain()).ToList();
+        settings.Donors.NewDonors         = NewDonors.Select(vm => vm.ToDomain()).ToList();
+        settings.Donors.ExistingMembers   = ExistingMembers.Select(vm => vm.ToDomain()).ToList();
+        settings.Donors.IncreaseSustaining= IncreaseSustaining.Select(vm => vm.ToDomain()).ToList();
+        settings.SupervisorReasons        = SupervisorReasons.Select(vm => vm.ToSupervisorReason()).ToList();
+        settings.FailReasons              = FailReasons.Select(vm => vm.ToDomain()).ToList();
+        settings.CoachingCategories       = CoachingCategories.Select(vm => vm.ToDomain()).ToList();
     }
 
     // ================================================================
@@ -318,20 +202,6 @@ public partial class SettingsViewModel : ViewModelBase
             IsDirty = true;
             _notification.ShowSuccess("Lookup tables reset to defaults. Click Save to apply.");
         }, "Resetting...");
-    }
-
-    [RelayCommand]
-    private async Task ToggleTheme()
-    {
-        await ExecuteBusyAsync(async () =>
-        {
-            var settings = await _settingsService.LoadAsync();
-            settings.UiPreferences.Theme = settings.UiPreferences.Theme == MTS.Core.Enums.AppTheme.Dark
-                ? MTS.Core.Enums.AppTheme.Light
-                : MTS.Core.Enums.AppTheme.Dark;
-            await _settingsService.SaveAsync(settings);
-            _notification.ShowSuccess($"Theme set to {settings.UiPreferences.Theme}. Restart to apply.");
-        });
     }
 
     [RelayCommand]
@@ -575,62 +445,6 @@ public partial class SettingsViewModel : ViewModelBase
 
     [RelayCommand]
     private void MoveCoachingCategoryDown(CoachingCategoryRowViewModel? item) { MoveDown(CoachingCategories, item); IsDirty = true; }
-
-    // ================================================================
-    // Discord Templates commands
-    // ================================================================
-
-    [RelayCommand]
-    private void AddDiscordTemplate()
-    {
-        var vm = new DiscordTemplateRowViewModel();
-        DiscordTemplates.Add(vm);
-        SelectedDiscordTemplate = vm;
-        IsDirty = true;
-    }
-
-    [RelayCommand]
-    private void RemoveDiscordTemplate(DiscordTemplateRowViewModel? item)
-    {
-        if (item is null) return;
-        DiscordTemplates.Remove(item);
-        SelectedDiscordTemplate = DiscordTemplates.FirstOrDefault();
-        IsDirty = true;
-    }
-
-    [RelayCommand]
-    private void MoveDiscordTemplateUp(DiscordTemplateRowViewModel? item) { MoveUp(DiscordTemplates, item); IsDirty = true; }
-
-    [RelayCommand]
-    private void MoveDiscordTemplateDown(DiscordTemplateRowViewModel? item) { MoveDown(DiscordTemplates, item); IsDirty = true; }
-
-    // ================================================================
-    // Discord Screenshots commands
-    // ================================================================
-
-    [RelayCommand]
-    private void AddDiscordScreenshot()
-    {
-        var vm = new DiscordScreenshotRowViewModel();
-        DiscordScreenshots.Add(vm);
-        SelectedDiscordScreenshot = vm;
-        IsDirty = true;
-    }
-
-    [RelayCommand]
-    private void RemoveDiscordScreenshot(DiscordScreenshotRowViewModel? item)
-    {
-        if (item is null) return;
-        DiscordScreenshots.Remove(item);
-        SelectedDiscordScreenshot = DiscordScreenshots.FirstOrDefault();
-        IsDirty = true;
-    }
-
-    [RelayCommand]
-    private void MoveDiscordScreenshotUp(DiscordScreenshotRowViewModel? item) { MoveUp(DiscordScreenshots, item); IsDirty = true; }
-
-    [RelayCommand]
-    private void MoveDiscordScreenshotDown(DiscordScreenshotRowViewModel? item) { MoveDown(DiscordScreenshots, item); IsDirty = true; }
 
     // ================================================================
     // Shared helpers
