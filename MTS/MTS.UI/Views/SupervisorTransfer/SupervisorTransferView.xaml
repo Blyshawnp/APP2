@@ -4,6 +4,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:MTS.UI.ViewModels.SupervisorTransfer"
+             xmlns:pf="clr-namespace:MTS.UI.Controls.PassFailToggle"
              xmlns:cg="clr-namespace:MTS.UI.Controls.CoachingGrid"
              xmlns:fg="clr-namespace:MTS.UI.Controls.FailReasonsGrid"
              xmlns:wb="clr-namespace:MTS.UI.Controls.WarningBanner"
@@ -16,6 +17,7 @@
             <Border Style="{StaticResource Card}" Margin="0,0,0,4">
                 <StackPanel>
 
+                    <!-- Card header -->
                     <Grid Margin="0,0,0,16">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
@@ -41,8 +43,10 @@
                         </Border>
                     </Grid>
 
+                    <!-- Validation errors -->
                     <wb:WarningBannerControl Warnings="{Binding ValidationErrors}" Margin="0,0,0,12"/>
 
+                    <!-- Two-column: setup (left) + caller demographics (right) -->
                     <Grid>
                         <Grid.Style>
                             <Style TargetType="Grid">
@@ -60,6 +64,7 @@
                             <ColumnDefinition Width="240"/>
                         </Grid.ColumnDefinitions>
 
+                        <!-- Left: Show / Caller / Reason -->
                         <StackPanel Grid.Column="0">
                             <Grid Margin="0,0,0,12">
                                 <Grid.ColumnDefinitions>
@@ -79,6 +84,7 @@
                                               SelectedItem="{Binding SelectedReason, Mode=TwoWay}"/>
                                 </StackPanel>
                             </Grid>
+
                             <StackPanel Margin="0,0,0,12">
                                 <TextBlock Text="Caller" Style="{StaticResource Label}" Margin="0,0,0,4"/>
                                 <ComboBox ItemsSource="{Binding AllDonors}"
@@ -87,23 +93,28 @@
                             </StackPanel>
                         </StackPanel>
 
+                        <!-- Right: Caller demographics -->
                         <Border Grid.Column="2"
                                 Background="{StaticResource SurfaceElevatedBrush}"
                                 CornerRadius="6" Padding="12,10">
                             <StackPanel>
                                 <TextBlock Text="CALLER INFO" Style="{StaticResource SectionHeader}" Margin="0,0,0,8"/>
                                 <TextBlock Text="Address" Style="{StaticResource Label}" Margin="0,0,0,2"/>
-                                <TextBlock Text="{Binding SelectedCaller.FullAddress}" Style="{StaticResource Muted}" FontSize="12" TextWrapping="Wrap"/>
+                                <TextBlock Text="{Binding SelectedCaller.FullAddress}"
+                                           Style="{StaticResource Muted}" FontSize="12" TextWrapping="Wrap"/>
                                 <TextBlock Text="Phone" Style="{StaticResource Label}" Margin="0,8,0,2"/>
-                                <TextBlock Text="{Binding SelectedCaller.Phone}" Style="{StaticResource Muted}" FontSize="12"/>
+                                <TextBlock Text="{Binding SelectedCaller.Phone}"
+                                           Style="{StaticResource Muted}" FontSize="12"/>
                                 <TextBlock Text="Email" Style="{StaticResource Label}" Margin="0,6,0,2"/>
-                                <TextBlock Text="{Binding SelectedCaller.Email}" Style="{StaticResource Muted}" FontSize="12"/>
+                                <TextBlock Text="{Binding SelectedCaller.Email}"
+                                           Style="{StaticResource Muted}" FontSize="12"/>
                             </StackPanel>
                         </Border>
                     </Grid>
 
                     <Separator Margin="0,16"/>
 
+                    <!-- PASS / FAIL buttons -->
                     <StackPanel Margin="0,0,0,12">
                         <StackPanel.Style>
                             <Style TargetType="StackPanel">
@@ -117,8 +128,10 @@
                         </StackPanel.Style>
                         <TextBlock Text="Result" Style="{StaticResource Label}" Margin="0,0,0,8"/>
                         <StackPanel Orientation="Horizontal">
-                            <Button Content="&#x2713;  PASS" Command="{Binding SelectPassCommand}"
-                                    Padding="28,10" FontSize="14" FontWeight="Bold" Margin="0,0,12,0">
+                            <Button Content="&#x2713;  PASS"
+                                    Command="{Binding SelectPassCommand}"
+                                    Padding="28,10" FontSize="14" FontWeight="Bold"
+                                    Margin="0,0,12,0">
                                 <Button.Style>
                                     <Style TargetType="Button" BasedOn="{StaticResource SuccessButton}">
                                         <Style.Triggers>
@@ -129,7 +142,8 @@
                                     </Style>
                                 </Button.Style>
                             </Button>
-                            <Button Content="&#x2717;  FAIL" Command="{Binding SelectFailCommand}"
+                            <Button Content="&#x2717;  FAIL"
+                                    Command="{Binding SelectFailCommand}"
                                     Padding="28,10" FontSize="14" FontWeight="Bold">
                                 <Button.Style>
                                     <Style TargetType="Button" BasedOn="{StaticResource DangerButton}">
@@ -144,7 +158,9 @@
                         </StackPanel>
                     </StackPanel>
 
-                    <Grid Visibility="{Binding HasResult, Converter={StaticResource BoolToVisibility}}" Margin="0,0,0,12">
+                    <!-- Coaching (shown after result selected) -->
+                    <Grid Visibility="{Binding HasResult, Converter={StaticResource BoolToVisibility}}"
+                          Margin="0,0,0,12">
                         <Grid.Style>
                             <Style TargetType="Grid">
                                 <Style.Triggers>
@@ -157,14 +173,17 @@
                         </Grid.Style>
                         <StackPanel>
                             <TextBlock Text="COACHING" Style="{StaticResource SectionHeader}" Margin="0,0,0,8"/>
-                            <cg:CoachingGrid Items="{Binding CoachingItems}" ShowCoachingWarning="{Binding HasCoachingSkippedWarning}"/>
+                            <cg:CoachingGrid Items="{Binding CoachingItems}"
+                                             ShowCoachingWarning="{Binding HasCoachingSkippedWarning}"/>
                         </StackPanel>
                     </Grid>
 
+                    <!-- Fail reasons (Fail only) -->
                     <Border Visibility="{Binding ShowFollowUpSection, Converter={StaticResource BoolToVisibility}}"
                             Background="{StaticResource FailSurfaceBrush}"
                             BorderBrush="{StaticResource FailBrush}"
-                            BorderThickness="1" CornerRadius="6" Padding="12" Margin="0,0,0,12">
+                            BorderThickness="1" CornerRadius="6" Padding="12"
+                            Margin="0,0,0,12">
                         <Border.Style>
                             <Style TargetType="Border">
                                 <Style.Triggers>
@@ -178,15 +197,18 @@
                         <StackPanel>
                             <TextBlock Text="FAIL REASONS" Style="{StaticResource SectionHeader}"
                                        Foreground="{StaticResource FailBrush}" Margin="0,0,0,8"/>
-                            <fg:FailReasonsGrid Items="{Binding FailItems}" ShowRequiredError="{Binding HasOtherFail}"/>
+                            <fg:FailReasonsGrid Items="{Binding FailItems}"
+                                                ShowRequiredError="{Binding HasOtherFail}"/>
                         </StackPanel>
                     </Border>
 
-                    <Button Style="{StaticResource PrimaryButton}"
-                            Command="{Binding DataContext.SubmitTransferCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                    <!-- Submit -->
+                    <Button Command="{Binding DataContext.SubmitTransferCommand,
+                                     RelativeSource={RelativeSource AncestorType=UserControl}}"
                             CommandParameter="{Binding}"
                             Content="Submit Transfer"
-                            HorizontalAlignment="Left" Padding="20,9"
+                            HorizontalAlignment="Left"
+                            Padding="20,9"
                             Visibility="{Binding HasResult, Converter={StaticResource BoolToVisibility}}">
                         <Button.Style>
                             <Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
@@ -211,9 +233,11 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
+        <!-- Scrollable content -->
         <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
             <StackPanel Margin="32,24" MaxWidth="1000">
 
+                <!-- Header -->
                 <Grid Margin="0,0,0,4">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
@@ -233,20 +257,26 @@
                     </StackPanel>
                 </Grid>
 
-                <Border Background="{StaticResource AccentBrush}" CornerRadius="8" Padding="16,10" Margin="0,8,0,16">
+                <!-- Transfer phone header bar -->
+                <Border Background="{StaticResource AccentBrush}"
+                        CornerRadius="8" Padding="16,10"
+                        Margin="0,8,0,16">
                     <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="&#xE717;" FontFamily="Segoe MDL2 Assets"
+                        <TextBlock Text="&#xE717;"
+                                   FontFamily="Segoe MDL2 Assets"
                                    FontSize="18" Foreground="White"
                                    VerticalAlignment="Center" Margin="0,0,10,0"/>
                         <StackPanel>
                             <TextBlock Text="SUPERVISOR TRANSFER LINE"
-                                       FontSize="10" FontWeight="SemiBold" Foreground="#B0C4FF"/>
+                                       FontSize="10" FontWeight="SemiBold"
+                                       Foreground="#B0C4FF"/>
                             <TextBlock Text="{Binding SupTransferPhoneNumber}"
                                        FontSize="20" FontWeight="Bold" Foreground="White"/>
                         </StackPanel>
                     </StackPanel>
                 </Border>
 
+                <!-- Discord Post section -->
                 <Border Style="{StaticResource Card}" Margin="0,0,0,16">
                     <StackPanel>
                         <TextBlock Text="DISCORD POST FOR STARS" Style="{StaticResource SectionHeader}" Margin="0,0,0,8"/>
@@ -260,7 +290,8 @@
                                     Background="{StaticResource InputBackgroundBrush}"
                                     BorderBrush="{StaticResource InputBorderBrush}"
                                     BorderThickness="1" CornerRadius="6" Padding="10,8">
-                                <TextBlock Text="{Binding DiscordPostText}" TextWrapping="Wrap" FontSize="12"
+                                <TextBlock Text="{Binding DiscordPostText}"
+                                           TextWrapping="Wrap" FontSize="12"
                                            Foreground="{StaticResource TextSecondaryBrush}"/>
                             </Border>
                             <Button Grid.Column="2" Content="Copy"
@@ -271,30 +302,44 @@
                     </StackPanel>
                 </Border>
 
+                <!-- Page warnings -->
                 <wb:WarningBannerControl Warnings="{Binding PageWarnings}" Margin="0,0,0,16"/>
 
-                <ContentPresenter Content="{Binding Transfer1}" ContentTemplate="{StaticResource TransferCardTemplate}" Margin="0,0,0,16"/>
+                <!-- Transfer 1 -->
+                <ContentPresenter Content="{Binding Transfer1}"
+                                  ContentTemplate="{StaticResource TransferCardTemplate}"
+                                  Margin="0,0,0,16"/>
 
-                <ContentPresenter Content="{Binding Transfer2}" ContentTemplate="{StaticResource TransferCardTemplate}" Margin="0,0,0,16"
+                <!-- Transfer 2 (hidden until T1 fails) -->
+                <ContentPresenter Content="{Binding Transfer2}"
+                                  ContentTemplate="{StaticResource TransferCardTemplate}"
+                                  Margin="0,0,0,16"
                                   Visibility="{Binding IsTransfer2Visible, Converter={StaticResource BoolToVisibility}}"/>
 
+                <!-- Newbie shift notice -->
                 <Border Visibility="{Binding RequiresNewbieShift, Converter={StaticResource BoolToVisibility}}"
                         Background="{StaticResource IncompleteSurfaceBrush}"
                         BorderBrush="{StaticResource IncompleteBrush}"
                         BorderThickness="1" CornerRadius="6" Padding="16,12">
                     <StackPanel>
-                        <TextBlock Text="&#x26A0; Newbie Shift Required" FontWeight="SemiBold" FontSize="14"
+                        <TextBlock Text="&#x26A0; Newbie Shift Required"
+                                   FontWeight="SemiBold" FontSize="14"
                                    Foreground="{StaticResource IncompleteBrush}"/>
                         <TextBlock Text="Both transfers failed. You will need to schedule a newbie shift before finishing the review."
-                                   Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4,0,0" TextWrapping="Wrap"/>
+                                   Foreground="{StaticResource TextSecondaryBrush}"
+                                   Margin="0,4,0,0" TextWrapping="Wrap"/>
                     </StackPanel>
                 </Border>
 
             </StackPanel>
         </ScrollViewer>
 
-        <Border Grid.Row="1" Background="{StaticResource SurfaceBrush}"
-                BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" Padding="32,12">
+        <!-- Footer -->
+        <Border Grid.Row="1"
+                Background="{StaticResource SurfaceBrush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="0,1,0,0"
+                Padding="32,12">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -305,11 +350,25 @@
                     <ColumnDefinition Width="8"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                <Button Grid.Column="0" Content="Back" Style="{StaticResource SecondaryButton}" Command="{Binding BackCommand}"/>
-                <Button Grid.Column="2" Content="&#x26A0; Stopped Responding" Style="{StaticResource WarningButton}" Command="{Binding StoppedRespondingCommand}"/>
-                <Button Grid.Column="4" Content="Tech Issue" Style="{StaticResource GhostButton}" Command="{Binding TechIssueCommand}"/>
-                <Button Grid.Column="6" Style="{StaticResource PrimaryButton}" Command="{Binding ProceedCommand}"
-                        IsEnabled="{Binding CanProceed}" Content="Continue" Padding="24,10" FontSize="14"/>
+
+                <Button Grid.Column="0" Content="&#x2190; Back"
+                        Style="{StaticResource SecondaryButton}"
+                        Command="{Binding BackCommand}"/>
+
+                <Button Grid.Column="2" Content="&#x26A0; Stopped Responding"
+                        Style="{StaticResource WarningButton}"
+                        Command="{Binding StoppedRespondingCommand}"/>
+
+                <Button Grid.Column="4" Content="Tech Issue"
+                        Style="{StaticResource GhostButton}"
+                        Command="{Binding TechIssueCommand}"/>
+
+                <Button Grid.Column="6"
+                        Style="{StaticResource PrimaryButton}"
+                        Command="{Binding ProceedCommand}"
+                        IsEnabled="{Binding CanProceed}"
+                        Content="Continue &#x2192;"
+                        Padding="24,10" FontSize="14"/>
             </Grid>
         </Border>
     </Grid>
