@@ -3,9 +3,6 @@ using MTS.Core.Models.Settings;
 
 namespace MTS.UI.ViewModels.Settings;
 
-/// <summary>
-/// Observable wrapper for a DiscordScreenshot (Title + ImageUrl).
-/// </summary>
 public partial class DiscordScreenshotRowViewModel : ObservableObject
 {
     public Guid Id { get; set; } = Guid.NewGuid();

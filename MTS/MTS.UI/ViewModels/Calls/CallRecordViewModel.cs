@@ -65,10 +65,10 @@ public partial class CallRecordViewModel : ObservableObject
     /// <summary>Callers filtered to the current call type category.</summary>
     public IEnumerable<Donor> AvailableCallers => SelectedCallType?.Category switch
     {
-        CallTypeCategory.NewDonor         => NewDonors,
-        CallTypeCategory.ExistingMember   => ExistingMembers,
+        CallTypeCategory.NewDonor           => NewDonors,
+        CallTypeCategory.ExistingMember     => ExistingMembers,
         CallTypeCategory.IncreaseSustaining => IncreaseSustaining,
-        _                                 => NewDonors
+        _                                   => NewDonors
     };
 
     // -------------------------------------------------------------------------
@@ -145,7 +145,6 @@ public partial class CallRecordViewModel : ObservableObject
         _validation = validation;
         _sound      = sound;
 
-        // Populate lookup collections from settings — only enabled items surface in the UI
         foreach (var ct in settings.CallTypes.Where(x => x.IsEnabled))
             AvailableCallTypes.Add(ct);
         foreach (var s in settings.Shows.Where(x => x.IsEnabled))
@@ -157,11 +156,9 @@ public partial class CallRecordViewModel : ObservableObject
         foreach (var d in settings.Donors.IncreaseSustaining.Where(x => x.IsEnabled))
             IncreaseSustaining.Add(d);
 
-        // Coaching categories applicable to calls (enabled only)
         foreach (var c in settings.CoachingCategories.Where(c => c.AppliesToCalls && c.IsEnabled))
             CoachingItems.Add(new CoachingItemViewModel(c));
 
-        // Fail reasons applicable to calls (enabled only)
         foreach (var r in settings.FailReasons.Where(r => r.AppliesToCalls && r.IsEnabled))
             FailItems.Add(new FailItemViewModel(r));
 
@@ -197,10 +194,6 @@ public partial class CallRecordViewModel : ObservableObject
     // Validation
     // -------------------------------------------------------------------------
 
-    /// <summary>
-    /// Runs full validation and returns true when the call is ready to submit.
-    /// Populates ValidationErrors and HasCoachingSkippedWarning.
-    /// </summary>
     public bool Validate()
     {
         var record  = BuildDomainRecord();
@@ -217,7 +210,7 @@ public partial class CallRecordViewModel : ObservableObject
 
     private void ValidateAndRefresh()
     {
-        if (IsCompleted) return;  // don't re-validate already-submitted calls
+        if (IsCompleted) return;
         Validate();
     }
 
@@ -225,31 +218,30 @@ public partial class CallRecordViewModel : ObservableObject
     // Domain conversion
     // -------------------------------------------------------------------------
 
-    /// <summary>Builds the immutable domain record for persistence.</summary>
     public CallRecord BuildDomainRecord()
     {
         return new CallRecord
         {
-            CallNumber      = CallNumber,
-            CallTypeCategory = SelectedCallType?.Category ?? CallTypeCategory.NewDonor,
-            CallTypeLabel   = SelectedCallType?.Label ?? string.Empty,
-            ShowId          = SelectedShow?.Id ?? Guid.Empty,
-            ShowName        = SelectedShow?.Name ?? string.Empty,
-            CallerId        = SelectedCaller?.Id ?? Guid.Empty,
+            CallNumber        = CallNumber,
+            CallTypeCategory  = SelectedCallType?.Category ?? CallTypeCategory.NewDonor,
+            CallTypeLabel     = SelectedCallType?.Label ?? string.Empty,
+            ShowId            = SelectedShow?.Id ?? Guid.Empty,
+            ShowName          = SelectedShow?.Name ?? string.Empty,
+            CallerId          = SelectedCaller?.Id ?? Guid.Empty,
             CallerDisplayName = SelectedCaller?.DisplayName ?? string.Empty,
-            DonationAmount  = DonationAmount,
-            ScenarioFlags   = ScenarioFlags,
-            Result          = Result,
-            CoachingItems   = CoachingItems
+            DonationAmount    = DonationAmount,
+            ScenarioFlags     = ScenarioFlags,
+            Result            = Result,
+            CoachingItems     = CoachingItems
                 .Where(c => c.IsSelected)
                 .Select(c => c.ToSelection())
                 .ToList(),
-            CoachingNotes   = CoachingNotes,
-            FailItems       = FailItems
+            CoachingNotes     = CoachingNotes,
+            FailItems         = FailItems
                 .Where(f => f.IsSelected)
                 .Select(f => f.ToSelection())
                 .ToList(),
-            FailNotes       = FailNotes
+            FailNotes         = FailNotes
         };
     }
 
@@ -259,16 +251,20 @@ public partial class CallRecordViewModel : ObservableObject
 
     partial void OnSelectedCallTypeChanged(CallType? value)
     {
-        // Clear caller selection when type changes so stale data isn't submitted
         SelectedCaller = null;
         OnPropertyChanged(nameof(AvailableCallers));
+        if (SelectedShow != null)
+            DonationAmount = IsMonthlyCallType(value) ? SelectedShow.MonthlyAmount : SelectedShow.OneTimeAmount;
     }
 
     partial void OnSelectedShowChanged(Show? value)
     {
         if (value != null)
-            DonationAmount = value.OneTimeAmount;
+            DonationAmount = IsMonthlyCallType(SelectedCallType) ? value.MonthlyAmount : value.OneTimeAmount;
     }
+
+    private static bool IsMonthlyCallType(CallType? ct)
+        => ct?.Category == CallTypeCategory.IncreaseSustaining;
 
     // -------------------------------------------------------------------------
     // Payment simulation generator
@@ -278,15 +274,12 @@ public partial class CallRecordViewModel : ObservableObject
     {
         var rng = Random.Shared;
 
-        // AmEx: 15 digits, 4-6-5 grouping
-        static string AmexBlock(int len) =>
+        string AmexBlock(int len) =>
             string.Concat(Enumerable.Range(0, len).Select(_ => rng.Next(0, 10).ToString()));
 
-        string card   = $"3{rng.Next(4, 8)} {AmexBlock(6)} {AmexBlock(5)}";
-        string expiry = $"{rng.Next(1, 13):D2}/{rng.Next(26, 30)}";
-        string cvv    = $"{rng.Next(1000, 9999)}";
-
-        // Bank draft
+        string card    = $"3{rng.Next(4, 8)} {AmexBlock(6)} {AmexBlock(5)}";
+        string expiry  = $"{rng.Next(1, 13):D2}/{rng.Next(26, 30)}";
+        string cvv     = $"{rng.Next(1000, 9999)}";
         string routing = string.Concat(Enumerable.Range(0, 9).Select(_ => rng.Next(0, 10).ToString()));
         string account = string.Concat(Enumerable.Range(0, rng.Next(8, 13)).Select(_ => rng.Next(0, 10).ToString()));
 

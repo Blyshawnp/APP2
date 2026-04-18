@@ -3,9 +3,6 @@ using MTS.Core.Models.Settings;
 
 namespace MTS.UI.ViewModels.Settings;
 
-/// <summary>
-/// Observable wrapper for a DiscordTemplate (Trigger + Message).
-/// </summary>
 public partial class DiscordTemplateRowViewModel : ObservableObject
 {
     public Guid Id { get; set; } = Guid.NewGuid();

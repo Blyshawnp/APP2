@@ -203,6 +203,4 @@ public partial class MainWindowViewModel : ViewModelBase
         SessionCandidateName = _sessionState.CurrentSession?.Candidate.CandidateName
                                ?? string.Empty;
     }
-
-    public virtual void OnNavigatedFrom() { }
 }
