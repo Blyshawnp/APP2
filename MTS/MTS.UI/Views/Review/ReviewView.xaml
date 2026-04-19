@@ -4,8 +4,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:MTS.UI.ViewModels"
-             xmlns:sp="clr-namespace:MTS.UI.Controls.SummaryPanel"
-             xmlns:wb="clr-namespace:MTS.UI.Controls.WarningBanner"
              mc:Ignorable="d"
              d:DataContext="{d:DesignInstance vm:ReviewViewModel}">
 
@@ -18,164 +16,213 @@
         <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
             <StackPanel Margin="32,24" MaxWidth="960">
 
-                <!-- Header -->
-                <TextBlock Text="Session Review" Style="{StaticResource H1}" Margin="0,0,0,4"/>
-                <TextBlock Text="Review and edit the summary before saving. Nothing is recorded until you click Save."
-                           Style="{StaticResource Muted}" Margin="0,0,0,20"/>
+                <!-- Title -->
+                <TextBlock Text="Session Review &amp; Summary" Style="{StaticResource H1}" Margin="0,0,0,16"/>
 
                 <!-- ============================================================
-                     STATUS BANNER
+                     STATUS BANNER — full width, color-coded
                 ============================================================ -->
-                <Border CornerRadius="8" Padding="20,16" Margin="0,0,0,16">
+                <Border CornerRadius="6" Padding="24,18" Margin="0,0,0,16">
                     <Border.Style>
                         <Style TargetType="Border">
-                            <Setter Property="Background" Value="{StaticResource FailSurfaceBrush}"/>
-                            <Setter Property="BorderBrush" Value="{StaticResource FailBrush}"/>
+                            <Setter Property="Background" Value="{StaticResource PassSurfaceBrush}"/>
+                            <Setter Property="BorderBrush"    Value="{StaticResource PassBrush}"/>
                             <Setter Property="BorderThickness" Value="1"/>
                             <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsPass}" Value="True">
-                                    <Setter Property="Background" Value="{StaticResource PassSurfaceBrush}"/>
-                                    <Setter Property="BorderBrush"  Value="{StaticResource PassBrush}"/>
+                                <DataTrigger Binding="{Binding IsFail}" Value="True">
+                                    <Setter Property="Background"    Value="{StaticResource FailSurfaceBrush}"/>
+                                    <Setter Property="BorderBrush"   Value="{StaticResource FailBrush}"/>
                                 </DataTrigger>
                                 <DataTrigger Binding="{Binding IsIncomplete}" Value="True">
-                                    <Setter Property="Background" Value="{StaticResource IncompleteSurfaceBrush}"/>
-                                    <Setter Property="BorderBrush"  Value="{StaticResource IncompleteBrush}"/>
+                                    <Setter Property="Background"    Value="{StaticResource IncompleteSurfaceBrush}"/>
+                                    <Setter Property="BorderBrush"   Value="{StaticResource IncompleteBrush}"/>
                                 </DataTrigger>
                             </Style.Triggers>
                         </Style>
                     </Border.Style>
-
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="Auto"/>
-                        </Grid.ColumnDefinitions>
-
-                        <StackPanel Grid.Column="0">
-                            <TextBlock Text="{Binding StatusLabel}"
-                                       FontSize="24" FontWeight="Bold"
-                                       Foreground="{Binding ComputedStatus,
-                                                   Converter={StaticResource SessionStatusToBrush}}"/>
-                            <TextBlock Text="{Binding CandidateName}"
-                                       FontSize="15" FontWeight="SemiBold"
-                                       Foreground="{StaticResource TextPrimaryBrush}"
-                                       Margin="0,4,0,0"/>
-
-                            <!-- Auto-fail badge -->
-                            <Border Background="{StaticResource FailBrush}"
-                                    CornerRadius="4" Padding="8,3"
-                                    HorizontalAlignment="Left"
-                                    Margin="0,8,0,0"
-                                    Visibility="{Binding HasAutoFail, Converter={StaticResource BoolToVisibility}}">
-                                <TextBlock Text="{Binding AutoFailReason, StringFormat='AUTO-FAIL: {0}'}"
-                                           FontSize="11" FontWeight="Bold" Foreground="White"/>
-                            </Border>
-                        </StackPanel>
-
-                        <!-- Quick stats -->
-                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center"
-                                    Visibility="{Binding HasAutoFail, Converter={StaticResource InverseBoolToVisibility}}">
-                            <StackPanel Margin="0,0,28,0" HorizontalAlignment="Center">
-                                <TextBlock Text="{Binding CallsPassed}"
-                                           FontSize="32" FontWeight="Bold"
-                                           Foreground="{StaticResource PassBrush}"
-                                           HorizontalAlignment="Center"/>
-                                <TextBlock Text="Calls Passed" Style="{StaticResource Muted}"
-                                           HorizontalAlignment="Center"/>
-                            </StackPanel>
-                            <StackPanel HorizontalAlignment="Center">
-                                <TextBlock Text="{Binding SupsPassed}"
-                                           FontSize="32" FontWeight="Bold"
-                                           Foreground="{StaticResource AccentBrush}"
-                                           HorizontalAlignment="Center"/>
-                                <TextBlock Text="Sups Passed" Style="{StaticResource Muted}"
-                                           HorizontalAlignment="Center"/>
-                            </StackPanel>
-                        </StackPanel>
-                    </Grid>
+                    <TextBlock HorizontalAlignment="Center"
+                               FontSize="22" FontWeight="Bold"
+                               Foreground="{Binding ComputedStatus, Converter={StaticResource SessionStatusToBrush}}">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Text" Value="SESSION PASSED"/>
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding IsFail}" Value="True">
+                                        <Setter Property="Text" Value="SESSION FAILED"/>
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding IsIncomplete}" Value="True">
+                                        <Setter Property="Text" Value="SESSION INCOMPLETE"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
                 </Border>
 
-                <!-- Readiness warnings -->
-                <wb:WarningBannerControl Warnings="{Binding ReadinessWarnings}" Margin="0,0,0,16"/>
+                <!-- ============================================================
+                     CANDIDATE INFO CARD
+                ============================================================ -->
+                <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+                    <StackPanel>
+
+                        <TextBlock FontSize="16" FontWeight="SemiBold"
+                                   Foreground="{StaticResource AccentBrush}"
+                                   Margin="0,0,0,10">
+                            <Run Text="Candidate: "/>
+                            <Run Text="{Binding CandidateName}"/>
+                        </TextBlock>
+
+                        <TextBlock Margin="0,0,0,14">
+                            <Run Text="Skills: " FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                            <Run Text="{Binding SkillsLabel}" Foreground="{StaticResource TextSecondaryBrush}"/>
+                        </TextBlock>
+
+                        <!-- Auto-fail badge -->
+                        <Border Background="{StaticResource FailBrush}"
+                                CornerRadius="4" Padding="10,4"
+                                HorizontalAlignment="Left"
+                                Margin="0,0,0,12"
+                                Visibility="{Binding HasAutoFail, Converter={StaticResource BoolToVisibility}}">
+                            <TextBlock Text="{Binding AutoFailReason, StringFormat='AUTO-FAIL: {0}'}"
+                                       FontSize="11" FontWeight="Bold" Foreground="White"/>
+                        </Border>
+
+                        <!-- Call results -->
+                        <TextBlock Text="— CALL RESULTS —"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextMutedBrush}"
+                                   FontSize="11" Margin="0,0,0,8"
+                                   Visibility="{Binding IsSupervisorOnly, Converter={StaticResource InverseBoolToVisibility}}"/>
+
+                        <StackPanel Margin="0,0,0,12"
+                                    Visibility="{Binding IsSupervisorOnly, Converter={StaticResource InverseBoolToVisibility}}">
+                            <TextBlock Margin="0,2">
+                                <Run Text="Call 1: " FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                                <Run Text="{Binding Call1Result}"
+                                     Foreground="{Binding Call1Passed, Converter={StaticResource BoolToPassFailBrush}}"/>
+                            </TextBlock>
+                            <TextBlock Margin="0,2">
+                                <Run Text="Call 2: " FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                                <Run Text="{Binding Call2Result}"
+                                     Foreground="{Binding Call2Passed, Converter={StaticResource BoolToPassFailBrush}}"/>
+                            </TextBlock>
+                            <TextBlock Margin="0,2">
+                                <Run Text="Call 3: " FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                                <Run Text="{Binding Call3Result}"
+                                     Foreground="{StaticResource TextMutedBrush}"/>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <!-- Sup transfer results -->
+                        <TextBlock Text="— SUP TRANSFER RESULTS —"
+                                   FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextMutedBrush}"
+                                   FontSize="11" Margin="0,0,0,8"/>
+
+                        <StackPanel>
+                            <TextBlock Margin="0,2">
+                                <Run Text="Transfer 1: " FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                                <Run Text="{Binding Transfer1Result}"
+                                     Foreground="{Binding Transfer1Passed, Converter={StaticResource BoolToPassFailBrush}}"/>
+                            </TextBlock>
+                            <TextBlock Margin="0,2">
+                                <Run Text="Transfer 2: " FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                                <Run Text="{Binding Transfer2Result}"
+                                     Foreground="{StaticResource TextMutedBrush}"/>
+                            </TextBlock>
+                        </StackPanel>
+
+                    </StackPanel>
+                </Border>
 
                 <!-- ============================================================
-                     SESSION DETAIL + SUMMARIES
+                     COACHING SUMMARY
                 ============================================================ -->
-                <Grid Margin="0,0,0,16">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="220"/>
-                        <ColumnDefinition Width="16"/>
-                        <ColumnDefinition Width="*"/>
-                    </Grid.ColumnDefinitions>
+                <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+                    <StackPanel>
+                        <TextBlock Text="Coaching Summary"
+                                   FontSize="16" FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                   Margin="0,0,0,10"/>
 
-                    <!-- Session Detail (left card) -->
-                    <Border Grid.Column="0" Style="{StaticResource Card}">
-                        <StackPanel>
-                            <TextBlock Text="SESSION DETAIL" Style="{StaticResource SectionHeader}" Margin="0,0,0,12"/>
+                        <TextBox Text="{Binding CoachingSummary, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 AcceptsReturn="True" TextWrapping="Wrap"
+                                 MinHeight="90" MaxHeight="200"
+                                 VerticalScrollBarVisibility="Auto"
+                                 Margin="0,0,0,10"/>
 
-                            <TextBlock Text="Candidate" Style="{StaticResource Label}" Margin="0,0,0,2"/>
-                            <TextBlock Text="{Binding CandidateName}" Margin="0,0,0,10" TextWrapping="Wrap"/>
-
-                            <TextBlock Text="Type" Style="{StaticResource Label}" Margin="0,0,0,2"/>
-                            <TextBlock Margin="0,0,0,10">
-                                <TextBlock.Style>
-                                    <Style TargetType="TextBlock">
-                                        <Setter Property="Text" Value="Standard"/>
-                                        <Style.Triggers>
-                                            <DataTrigger Binding="{Binding IsSupervisorOnly}" Value="True">
-                                                <Setter Property="Text" Value="Sup Only"/>
-                                            </DataTrigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </TextBlock.Style>
-                            </TextBlock>
-
-                            <TextBlock Text="Calls Passed" Style="{StaticResource Label}" Margin="0,0,0,2"/>
-                            <TextBlock Text="{Binding CallsPassed}"
-                                       Foreground="{StaticResource PassBrush}"
-                                       FontWeight="SemiBold" Margin="0,0,0,10"/>
-
-                            <TextBlock Text="Sups Passed" Style="{StaticResource Label}" Margin="0,0,0,2"/>
-                            <TextBlock Text="{Binding SupsPassed}"
-                                       Foreground="{StaticResource AccentBrush}"
-                                       FontWeight="SemiBold" Margin="0,0,0,10"/>
-
-                            <!-- Newbie shift badge -->
-                            <Border Background="{StaticResource IncompleteSurfaceBrush}"
-                                    BorderBrush="{StaticResource IncompleteBrush}"
-                                    BorderThickness="1" CornerRadius="4" Padding="8,4"
-                                    Margin="0,4,0,0"
-                                    Visibility="{Binding HasNewbieShift, Converter={StaticResource BoolToVisibility}}">
-                                <TextBlock Text="⏰ Newbie Shift Scheduled"
-                                           Foreground="{StaticResource IncompleteBrush}"
-                                           FontSize="11" FontWeight="SemiBold"/>
-                            </Border>
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="Copy"
+                                    Style="{StaticResource PrimaryButton}"
+                                    Padding="14,7" Margin="0,0,8,0"
+                                    Command="{Binding CopyCoachingSummaryCommand}"/>
+                            <Button Style="{StaticResource SecondaryButton}"
+                                    Padding="14,7"
+                                    Command="{Binding RegenerateCoachingSummaryCommand}"
+                                    IsEnabled="{Binding IsAiEnabled}">
+                                <TextBlock>
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Text" Value="Regenerate"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsGeneratingCoachingSummary}" Value="True">
+                                                    <Setter Property="Text" Value="Generating…"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Button>
                         </StackPanel>
-                    </Border>
-
-                    <!-- Summaries (right) -->
-                    <StackPanel Grid.Column="2">
-                        <sp:SummaryPanelControl
-                            Title="Coaching Summary"
-                            RegenerateLabel="Regenerate"
-                            EmptyHint="No coaching notes generated. Type manually or click Regenerate."
-                            SummaryText="{Binding CoachingSummary, Mode=TwoWay}"
-                            IsGenerating="{Binding IsGeneratingCoachingSummary}"
-                            IsAiEnabled="{Binding IsAiEnabled}"
-                            RegenerateCommand="{Binding RegenerateCoachingSummaryCommand}"
-                            Margin="0,0,0,12"/>
-
-                        <sp:SummaryPanelControl
-                            Title="Fail Summary"
-                            RegenerateLabel="Regenerate"
-                            EmptyHint="No fail notes generated. Type manually or click Regenerate."
-                            SummaryText="{Binding FailSummary, Mode=TwoWay}"
-                            IsGenerating="{Binding IsGeneratingFailSummary}"
-                            IsAiEnabled="{Binding IsAiEnabled}"
-                            RegenerateCommand="{Binding RegenerateFailSummaryCommand}"
-                            Visibility="{Binding IsFail, Converter={StaticResource BoolToVisibility}}"/>
                     </StackPanel>
-                </Grid>
+                </Border>
+
+                <!-- ============================================================
+                     FAIL SUMMARY (always shown, N/A for passes)
+                ============================================================ -->
+                <Border Style="{StaticResource Card}" Margin="0,0,0,16">
+                    <StackPanel>
+                        <TextBlock Text="Fail Summary"
+                                   FontSize="16" FontWeight="SemiBold"
+                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                   Margin="0,0,0,10"/>
+
+                        <TextBox AcceptsReturn="True" TextWrapping="Wrap"
+                                 MinHeight="90" MaxHeight="200"
+                                 VerticalScrollBarVisibility="Auto"
+                                 Margin="0,0,0,10">
+                            <TextBox.Style>
+                                <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                                    <Setter Property="Text" Value="{Binding FailSummary, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
+                                </Style>
+                            </TextBox.Style>
+                        </TextBox>
+
+                        <StackPanel Orientation="Horizontal">
+                            <Button Content="Copy"
+                                    Style="{StaticResource PrimaryButton}"
+                                    Padding="14,7" Margin="0,0,8,0"
+                                    Command="{Binding CopyFailSummaryCommand}"/>
+                            <Button Style="{StaticResource SecondaryButton}"
+                                    Padding="14,7"
+                                    Command="{Binding RegenerateFailSummaryCommand}"
+                                    IsEnabled="{Binding IsAiEnabled}">
+                                <TextBlock>
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Text" Value="Regenerate"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsGeneratingFailSummary}" Value="True">
+                                                    <Setter Property="Text" Value="Generating…"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+                            </Button>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
 
             </StackPanel>
         </ScrollViewer>
@@ -190,37 +237,39 @@
                 Padding="32,12">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="8"/>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="8"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0" Content="← Back"
-                        Style="{StaticResource SecondaryButton}"
-                        Command="{Binding BackCommand}"/>
+                <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                    <!-- intentionally blank left side -->
+                </StackPanel>
 
-                <TextBlock Grid.Column="2"
-                           Text="Review the summary above before saving."
-                           Style="{StaticResource Muted}"
-                           VerticalAlignment="Center"/>
+                <!-- Fill Form (amber/orange) -->
+                <Button Grid.Column="1"
+                        Content="Fill Form"
+                        Command="{Binding FillFormCommand}"
+                        Padding="20,10" FontSize="14" FontWeight="SemiBold">
+                    <Button.Style>
+                        <Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+                            <Setter Property="Background" Value="#D97706"/>
+                            <Setter Property="BorderBrush" Value="#D97706"/>
+                        </Style>
+                    </Button.Style>
+                </Button>
 
-                <Button Grid.Column="4" Content="Copy Review"
-                        Style="{StaticResource GhostButton}"
-                        Command="{Binding CopyReviewCommand}"/>
-
-                <Button Grid.Column="6"
+                <!-- Save & Finish (green) -->
+                <Button Grid.Column="3"
                         Style="{StaticResource SuccessButton}"
                         Command="{Binding FinishSessionCommand}"
                         IsEnabled="{Binding CanFinish}"
-                        Padding="20,10" FontSize="14">
+                        Padding="20,10" FontSize="14" FontWeight="SemiBold">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="Finishing…" Foreground="White"
                                    Visibility="{Binding IsFinishing, Converter={StaticResource BoolToVisibility}}"/>
-                        <TextBlock Text="Save &amp; Finish Session ✓" Foreground="White"
+                        <TextBlock Text="Save &amp; Finish Session" Foreground="White"
                                    Visibility="{Binding IsFinishing, Converter={StaticResource InverseBoolToVisibility}}"/>
                     </StackPanel>
                 </Button>

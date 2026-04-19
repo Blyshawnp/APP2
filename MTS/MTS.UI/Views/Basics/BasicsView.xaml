@@ -2,7 +2,6 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:MTS.UI.ViewModels"
-             xmlns:enums="clr-namespace:MTS.Core.Enums;assembly=MTS.Core"
              d:DataContext="{d:DesignInstance Type=vm:BasicsViewModel}"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -30,51 +29,42 @@
             ============================================================ -->
             <Border Style="{StaticResource Card}" Margin="0,0,0,16">
                 <StackPanel>
-                    <TextBlock Text="SESSION INFO" Style="{StaticResource SectionHeader}" Margin="0,0,0,12"/>
+                    <TextBlock Text="Session Information" Style="{StaticResource H2}" Margin="0,0,0,16"/>
 
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="16"/>
-                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="24"/>
+                            <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="Auto"/>
-                            <RowDefinition Height="12"/>
-                            <RowDefinition Height="Auto"/>
-                        </Grid.RowDefinitions>
-
-                        <!-- Tester Name (read-only) -->
-                        <StackPanel Grid.Column="0" Grid.Row="0">
-                            <TextBlock Text="Tester Name" Style="{StaticResource Label}" Margin="0,0,0,4"/>
-                            <TextBox Text="{Binding TesterName}" IsReadOnly="True" Opacity="0.6"/>
-                        </StackPanel>
 
                         <!-- Candidate Name -->
-                        <StackPanel Grid.Column="2" Grid.Row="0">
-                            <TextBlock Text="Candidate Name *" Style="{StaticResource Label}" Margin="0,0,0,4"/>
-                            <TextBox Text="{Binding CandidateName, UpdateSourceTrigger=PropertyChanged}"/>
+                        <StackPanel Grid.Column="0">
+                            <TextBlock Text="Candidate Name" Style="{StaticResource Label}" Margin="0,0,0,4"/>
+                            <TextBox Text="{Binding CandidateName, UpdateSourceTrigger=PropertyChanged}"
+                                     Tag="Required"/>
                         </StackPanel>
 
-                        <!-- Pronouns -->
-                        <StackPanel Grid.Column="0" Grid.Row="2">
-                            <TextBlock Text="Pronouns" Style="{StaticResource Label}" Margin="0,0,0,6"/>
+                        <!-- Final Attempt -->
+                        <StackPanel Grid.Column="2">
+                            <TextBlock Text="Final Attempt"
+                                       Foreground="{StaticResource FailBrush}"
+                                       FontWeight="SemiBold" FontSize="12"
+                                       Margin="0,0,0,6"/>
                             <StackPanel Orientation="Horizontal">
-                                <RadioButton Content="She/Her"
-                                             IsChecked="{Binding Pronoun, Converter={StaticResource EnumEquality}, ConverterParameter={x:Static enums:Pronoun.She}}"
+                                <RadioButton Content="Yes"
+                                             GroupName="FinalAttempt"
+                                             IsChecked="{Binding IsFinalAttempt}"
                                              Margin="0,0,16,0"/>
-                                <RadioButton Content="He/Him"
-                                             IsChecked="{Binding Pronoun, Converter={StaticResource EnumEquality}, ConverterParameter={x:Static enums:Pronoun.He}}"
-                                             Margin="0,0,16,0"/>
-                                <RadioButton Content="They/Them"
-                                             IsChecked="{Binding Pronoun, Converter={StaticResource EnumEquality}, ConverterParameter={x:Static enums:Pronoun.They}}"/>
+                                <RadioButton Content="No"
+                                             GroupName="FinalAttempt"
+                                             IsChecked="{Binding IsFinalAttemptNo}"/>
                             </StackPanel>
-                        </StackPanel>
-
-                        <!-- Options -->
-                        <StackPanel Grid.Column="2" Grid.Row="2" Orientation="Horizontal">
-                            <CheckBox Content="Final Attempt" IsChecked="{Binding IsFinalAttempt}" Margin="0,0,24,0"/>
-                            <CheckBox Content="Supervisor Only" IsChecked="{Binding IsSupervisorOnly}"/>
+                            <TextBlock Text="Select Yes only if this is the candidate's&#x0a;last allowed attempt."
+                                       Foreground="{StaticResource FailBrush}"
+                                       FontSize="11" Margin="0,6,0,0"
+                                       TextWrapping="Wrap"
+                                       Visibility="{Binding IsFinalAttempt, Converter={StaticResource BoolToVisibility}}"/>
                         </StackPanel>
                     </Grid>
                 </StackPanel>
@@ -211,7 +201,7 @@
                         </Grid.ColumnDefinitions>
 
                         <StackPanel Grid.Column="0">
-                            <TextBlock Text="Chrome is default?" Style="{StaticResource Label}" Margin="0,0,0,6"/>
+                            <TextBlock Text="Default browser?" Style="{StaticResource Label}" Margin="0,0,0,6"/>
                             <StackPanel Orientation="Horizontal">
                                 <RadioButton Content="Yes"
                                              IsChecked="{Binding IsChromeDefault, Converter={StaticResource NullableBool}, ConverterParameter=true}"
@@ -259,7 +249,7 @@
                                 </Style.Triggers>
                             </Style>
                         </Border.Style>
-                        <TextBlock Text="⚠ Chrome is not the default browser — session will AUTO-FAIL."
+                        <TextBlock Text="⚠ Browser is not set as default — session will AUTO-FAIL."
                                    Foreground="{StaticResource FailBrush}" FontSize="12"/>
                     </Border>
                 </StackPanel>
@@ -293,11 +283,11 @@
                         Style="{StaticResource DangerButton}"
                         Command="{Binding NotReadyCommand}"/>
 
-                <Button Grid.Column="6" Content="⚠ Stopped Responding"
-                        Style="{StaticResource WarningButton}"
+                <Button Grid.Column="6" Content="Stopped Responding"
+                        Style="{StaticResource DangerButton}"
                         Command="{Binding StoppedRespondingCommand}"/>
 
-                <Button Grid.Column="8" Content="Continue →"
+                <Button Grid.Column="8" Content="Continue"
                         Style="{StaticResource PrimaryButton}"
                         Command="{Binding ContinueCommand}"/>
             </Grid>

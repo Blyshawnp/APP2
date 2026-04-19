@@ -27,12 +27,15 @@ public partial class ReviewViewModel : ViewModelBase
     private readonly ISessionService _sessionService;
     private readonly ISessionStateService _sessionState;
     private readonly ISummaryService _summaryService;
+    private readonly ISettingsService _settingsService;
     private readonly EvaluationRulesService _rules;
     private readonly INavigationService _nav;
     private readonly IDialogService _dialog;
     private readonly IClipboardService _clipboard;
     private readonly INotificationService _notification;
     private readonly ISoundService _sound;
+
+    private string _formUrl = string.Empty;
 
     // -------------------------------------------------------------------------
     // Session data (loaded on navigate)
@@ -53,6 +56,37 @@ public partial class ReviewViewModel : ViewModelBase
     public bool HasNewbieShift    => Session?.NewbieShift != null;
     public bool HasAutoFail       => Session?.HasAutoFail ?? false;
     public string AutoFailReason  => Session?.AutoFailReason?.ToString() ?? string.Empty;
+
+    // Skills label
+    public string SkillsLabel => IsSupervisorOnly
+        ? "Supervisor Transfer Only"
+        : "Mock Calls + Supervisor Transfer";
+
+    // Per-call results
+    public string Call1Result      => GetCallResult(0);
+    public bool   Call1Passed      => Session?.Calls.Count > 0 && Session.Calls[0].IsPassed;
+    public string Call2Result      => GetCallResult(1);
+    public bool   Call2Passed      => Session?.Calls.Count > 1 && Session.Calls[1].IsPassed;
+    public string Call3Result      => GetCallResult(2);
+
+    // Per-transfer results
+    public string Transfer1Result  => GetTransferResult(0);
+    public bool   Transfer1Passed  => Session?.SupTransfers.Count > 0 && Session.SupTransfers[0].IsPassed;
+    public string Transfer2Result  => GetTransferResult(1);
+
+    private string GetCallResult(int idx)
+    {
+        if (Session?.Calls.Count > idx)
+            return Session.Calls[idx].IsPassed ? "PASS" : "FAIL";
+        return "Did Not Take";
+    }
+
+    private string GetTransferResult(int idx)
+    {
+        if (Session?.SupTransfers.Count > idx)
+            return Session.SupTransfers[idx].IsPassed ? "PASS" : "FAIL";
+        return "Did Not Take";
+    }
 
     // -------------------------------------------------------------------------
     // Computed final status
@@ -99,6 +133,7 @@ public partial class ReviewViewModel : ViewModelBase
         ISessionService sessionService,
         ISessionStateService sessionState,
         ISummaryService summaryService,
+        ISettingsService settingsService,
         EvaluationRulesService rules,
         INavigationService nav,
         IDialogService dialog,
@@ -109,6 +144,7 @@ public partial class ReviewViewModel : ViewModelBase
         _sessionService  = sessionService;
         _sessionState    = sessionState;
         _summaryService  = summaryService;
+        _settingsService = settingsService;
         _rules           = rules;
         _nav             = nav;
         _dialog          = dialog;
@@ -124,6 +160,9 @@ public partial class ReviewViewModel : ViewModelBase
     {
         await ExecuteBusyAsync(async () =>
         {
+            var appSettings = await _settingsService.LoadAsync();
+            _formUrl        = appSettings.Urls.FormUrl;
+
             Session         = _sessionState.CurrentSession;
             IsAiEnabled     = _summaryService.IsEnabled;
             ComputedStatus  = Session != null ? _rules.ComputeFinalStatus(Session) : SessionStatus.Draft;
@@ -261,6 +300,51 @@ public partial class ReviewViewModel : ViewModelBase
 
         _clipboard.SetText(sb.ToString());
         _notification.ShowSuccess("Review copied to clipboard.");
+    }
+
+    // -------------------------------------------------------------------------
+    // Copy individual summaries
+    // -------------------------------------------------------------------------
+
+    [RelayCommand]
+    private void CopyCoachingSummary()
+    {
+        if (!string.IsNullOrWhiteSpace(CoachingSummary))
+            _clipboard.SetText(CoachingSummary);
+    }
+
+    [RelayCommand]
+    private void CopyFailSummary()
+    {
+        if (!string.IsNullOrWhiteSpace(FailSummary))
+            _clipboard.SetText(FailSummary);
+    }
+
+    // -------------------------------------------------------------------------
+    // Fill cert form
+    // -------------------------------------------------------------------------
+
+    [RelayCommand]
+    private void FillForm()
+    {
+        if (string.IsNullOrWhiteSpace(_formUrl))
+        {
+            _notification.ShowError("No cert form URL configured. Add it in Settings → General.");
+            return;
+        }
+
+        try
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName        = _formUrl,
+                UseShellExecute = true
+            });
+        }
+        catch
+        {
+            _notification.ShowError("Could not open the cert form. Check the URL in Settings.");
+        }
     }
 
     // -------------------------------------------------------------------------

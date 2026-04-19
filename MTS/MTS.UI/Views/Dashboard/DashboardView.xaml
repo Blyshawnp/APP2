@@ -66,7 +66,7 @@
             </Grid>
 
             <!-- ================================================================
-                 Stats row
+                 Stats row — 3 cards matching Electron
             ================================================================ -->
             <Grid Margin="0,0,0,28">
                 <Grid.ColumnDefinitions>
@@ -171,7 +171,7 @@
                 </StackPanel>
             </Border>
 
-            <!-- Sessions table -->
+            <!-- Sessions list -->
             <Border Style="{StaticResource Card}"
                     Padding="0"
                     Visibility="{Binding HasHistory, Converter={StaticResource BoolToVisibility}}">

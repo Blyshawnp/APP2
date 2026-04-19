@@ -5,6 +5,7 @@ using MTS.Core.Interfaces.Services;
 using MTS.Core.Models.History;
 using MTS.UI.Services;
 using MTS.UI.ViewModels.Base;
+using MTS.UI.ViewModels.SupervisorTransfer;
 
 namespace MTS.UI.ViewModels;
 
@@ -53,11 +54,60 @@ public partial class DashboardViewModel : ViewModelBase
     private void StartSession() => _nav.NavigateTo<BasicsViewModel>();
 
     [RelayCommand]
-    private void StartSupervisorOnly()
+    private async Task StartSupervisorOnly()
     {
-        // Navigate to The Basics with supervisor-only flag
-        _nav.NavigateTo<BasicsViewModel>();
-        // The BasicsViewModel will handle supervisor-only via its own checkbox
+        bool conductedMockCalls = await _dialog.ShowConfirmAsync(
+            "Supervisor Transfer Only",
+            "Did you conduct this candidate's initial mock call session?",
+            "Yes, I did");
+
+        if (!conductedMockCalls)
+        {
+            _nav.NavigateTo<BasicsViewModel>("supervisorOnly");
+            return;
+        }
+
+        // Smart Resume: find sessions with calls done but no supervisor transfers
+        var appSettings = await _settings.LoadAsync();
+        var testerName  = appSettings.TesterProfile?.TesterName ?? string.Empty;
+        var resumable   = await _history.GetResumableAsync(testerName);
+
+        if (resumable.Count == 0)
+        {
+            await _dialog.ShowAlertAsync(
+                "No Resumable Sessions",
+                "No prior sessions found with completed mock calls and no supervisor transfers.\n\nStarting a fresh session.");
+            _nav.NavigateTo<BasicsViewModel>("supervisorOnly");
+            return;
+        }
+
+        var picked = await _dialog.ShowPickerAsync(
+            "Resume Candidate",
+            "Select the candidate whose supervisor transfers you are completing:",
+            resumable,
+            s => $"{s.CandidateName}  —  {s.CreatedAt:MMM d, yyyy}");
+
+        if (picked == null)
+            return;
+
+        bool sameSettings = await _dialog.ShowConfirmAsync(
+            "Candidate Setup",
+            $"Is {picked.CandidateName}'s headset and browser settings the same as their last session?",
+            "Yes, same settings");
+
+        if (sameSettings)
+        {
+            // Load the full session from history and restore it into session state
+            var fullSession = await _history.GetByIdAsync(picked.Id);
+            if (fullSession != null)
+            {
+                _nav.NavigateTo<SupervisorTransferViewModel>(fullSession);
+                return;
+            }
+        }
+
+        // Settings changed — go through Basics with candidate name pre-filled
+        _nav.NavigateTo<BasicsViewModel>(picked.CandidateName);
     }
 
     [RelayCommand]

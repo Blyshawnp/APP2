@@ -42,7 +42,7 @@ public partial class MainWindow : Window
         {
             From           = canvasWidth,
             To             = -textWidth,
-            Duration       = new Duration(TimeSpan.FromSeconds(Math.Max(20, (textWidth + canvasWidth) / 80))),
+            Duration       = new Duration(TimeSpan.FromSeconds(Math.Max(25, (textWidth + canvasWidth) / 60))),
             RepeatBehavior = RepeatBehavior.Forever
         };
 

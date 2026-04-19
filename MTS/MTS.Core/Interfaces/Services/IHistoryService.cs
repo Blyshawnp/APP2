@@ -10,4 +10,5 @@ public interface IHistoryService
     Task<HistoryStats> GetStatsAsync();
     Task<List<SessionSummary>> SearchAsync(string query);
     Task DeleteAllAsync();
+    Task<List<SessionSummary>> GetResumableAsync(string testerName);
 }
