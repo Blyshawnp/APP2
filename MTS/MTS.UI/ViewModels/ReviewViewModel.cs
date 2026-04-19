@@ -27,12 +27,15 @@ public partial class ReviewViewModel : ViewModelBase
     private readonly ISessionService _sessionService;
     private readonly ISessionStateService _sessionState;
     private readonly ISummaryService _summaryService;
+    private readonly ISettingsService _settingsService;
     private readonly EvaluationRulesService _rules;
     private readonly INavigationService _nav;
     private readonly IDialogService _dialog;
     private readonly IClipboardService _clipboard;
     private readonly INotificationService _notification;
     private readonly ISoundService _sound;
+
+    private string _formUrl = string.Empty;
 
     // -------------------------------------------------------------------------
     // Session data (loaded on navigate)
@@ -99,6 +102,7 @@ public partial class ReviewViewModel : ViewModelBase
         ISessionService sessionService,
         ISessionStateService sessionState,
         ISummaryService summaryService,
+        ISettingsService settingsService,
         EvaluationRulesService rules,
         INavigationService nav,
         IDialogService dialog,
@@ -109,6 +113,7 @@ public partial class ReviewViewModel : ViewModelBase
         _sessionService  = sessionService;
         _sessionState    = sessionState;
         _summaryService  = summaryService;
+        _settingsService = settingsService;
         _rules           = rules;
         _nav             = nav;
         _dialog          = dialog;
@@ -124,6 +129,9 @@ public partial class ReviewViewModel : ViewModelBase
     {
         await ExecuteBusyAsync(async () =>
         {
+            var appSettings = await _settingsService.LoadAsync();
+            _formUrl        = appSettings.Urls.FormUrl;
+
             Session         = _sessionState.CurrentSession;
             IsAiEnabled     = _summaryService.IsEnabled;
             ComputedStatus  = Session != null ? _rules.ComputeFinalStatus(Session) : SessionStatus.Draft;
@@ -261,6 +269,33 @@ public partial class ReviewViewModel : ViewModelBase
 
         _clipboard.SetText(sb.ToString());
         _notification.ShowSuccess("Review copied to clipboard.");
+    }
+
+    // -------------------------------------------------------------------------
+    // Fill cert form
+    // -------------------------------------------------------------------------
+
+    [RelayCommand]
+    private void FillForm()
+    {
+        if (string.IsNullOrWhiteSpace(_formUrl))
+        {
+            _notification.ShowError("No cert form URL configured. Add it in Settings → General.");
+            return;
+        }
+
+        try
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName        = _formUrl,
+                UseShellExecute = true
+            });
+        }
+        catch
+        {
+            _notification.ShowError("Could not open the cert form. Check the URL in Settings.");
+        }
     }
 
     // -------------------------------------------------------------------------

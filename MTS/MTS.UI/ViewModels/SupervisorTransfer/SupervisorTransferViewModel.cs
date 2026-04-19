@@ -85,15 +85,26 @@ public partial class SupervisorTransferViewModel : ViewModelBase
     {
         await ExecuteBusyAsync(async () =>
         {
+            // Smart Resume: a full Session object is passed when resuming from history
+            if (parameter is MTS.Core.Models.Session.Session restoredSession)
+                _sessionState.SetSession(restoredSession);
+
             var settings = await _settingsService.LoadAsync();
             Transfer1 = new TransferRecordViewModel(1, settings, _validation, _sound);
             Transfer2 = new TransferRecordViewModel(2, settings, _validation, _sound);
             Transfer2.IsVisible  = false;
             IsTransfer2Visible   = false;
 
-            // Build Discord post template from settings
             var candidate = _sessionState.CurrentSession?.Candidate;
             DiscordPostText = BuildDiscordPost(candidate?.CandidateName ?? "Candidate", settings);
+
+            // If the restored session already has a failed Transfer 1, show Transfer 2
+            var existing = _sessionState.CurrentSession;
+            if (existing != null && existing.SupTransfers.Count >= 1 && existing.SupsPassed == 0)
+            {
+                IsTransfer2Visible   = true;
+                Transfer2.IsVisible  = true;
+            }
 
             RefreshProgress();
         }, "Loading transfer setup...");

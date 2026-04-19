@@ -16,7 +16,7 @@
     <Grid>
         <Grid.RowDefinitions>
             <!-- Scrolling ticker -->
-            <RowDefinition Height="28"/>
+            <RowDefinition Height="30"/>
             <!-- Main area: sidebar + content -->
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
@@ -33,7 +33,7 @@
                            Canvas.Top="5"
                            Text="{Binding TickerMessage}"
                            Foreground="{StaticResource TickerTextBrush}"
-                           FontSize="12" FontWeight="SemiBold"
+                           FontSize="13" FontWeight="SemiBold"
                            TextWrapping="NoWrap"/>
             </Canvas>
         </Border>
@@ -565,13 +565,9 @@
             <!-- ============================================================
                  MAIN CONTENT AREA
             ============================================================ -->
-            <ScrollViewer Grid.Column="1"
-                          VerticalScrollBarVisibility="Auto"
-                          HorizontalScrollBarVisibility="Disabled"
-                          Background="{StaticResource AppBackgroundBrush}">
-                <ContentControl Content="{Binding CurrentViewModel}"
-                                Margin="0"/>
-            </ScrollViewer>
+            <ContentControl Grid.Column="1"
+                            Content="{Binding CurrentViewModel}"
+                            Background="{StaticResource AppBackgroundBrush}"/>
 
         </Grid>
     </Grid>

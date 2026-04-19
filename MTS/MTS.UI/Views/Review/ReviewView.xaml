@@ -197,6 +197,8 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="8"/>
                     <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="8"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
                 <Button Grid.Column="0" Content="← Back"
@@ -212,7 +214,11 @@
                         Style="{StaticResource GhostButton}"
                         Command="{Binding CopyReviewCommand}"/>
 
-                <Button Grid.Column="6"
+                <Button Grid.Column="6" Content="Fill Cert Form"
+                        Style="{StaticResource SecondaryButton}"
+                        Command="{Binding FillFormCommand}"/>
+
+                <Button Grid.Column="8"
                         Style="{StaticResource SuccessButton}"
                         Command="{Binding FinishSessionCommand}"
                         IsEnabled="{Binding CanFinish}"

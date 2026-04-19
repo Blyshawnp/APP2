@@ -1,6 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MTS.Core.Enums;
 using MTS.Core.Interfaces.Services;
 using MTS.Core.Models.Session;
 using MTS.UI.Services;
@@ -22,23 +21,26 @@ public partial class BasicsViewModel : ViewModelBase
     private readonly IDialogService _dialog;
 
     // -------------------------------------------------------------------------
-    // Tester / candidate info
+    // Candidate info
     // -------------------------------------------------------------------------
-
-    [ObservableProperty]
-    private string _testerName = string.Empty;
 
     [ObservableProperty]
     private string _candidateName = string.Empty;
 
     [ObservableProperty]
-    private Pronoun _pronoun = Pronoun.They;
-
-    [ObservableProperty]
     private bool _isFinalAttempt;
 
-    [ObservableProperty]
-    private bool _isSupervisorOnly;
+    public bool IsFinalAttemptNo
+    {
+        get => !_isFinalAttempt;
+        set { if (value) IsFinalAttempt = false; }
+    }
+
+    partial void OnIsFinalAttemptChanged(bool value)
+        => OnPropertyChanged(nameof(IsFinalAttemptNo));
+
+    // Set by navigation parameter — not exposed in UI
+    private bool _supervisorOnlyMode;
 
     // -------------------------------------------------------------------------
     // Headset pre-check
@@ -101,10 +103,16 @@ public partial class BasicsViewModel : ViewModelBase
         _dialog        = dialog;
     }
 
-    public override async Task OnNavigatedToAsync(object? parameter)
+    public override Task OnNavigatedToAsync(object? parameter)
     {
-        var appSettings = await _settings.LoadAsync();
-        TesterName = appSettings.TesterProfile?.TesterName ?? string.Empty;
+        if (parameter is string s)
+        {
+            if (s == "supervisorOnly")
+                _supervisorOnlyMode = true;
+            else if (!string.IsNullOrWhiteSpace(s))
+                CandidateName = s; // pre-fill candidate name from Smart Resume
+        }
+        return Task.CompletedTask;
     }
 
     // -------------------------------------------------------------------------
@@ -187,14 +195,12 @@ public partial class BasicsViewModel : ViewModelBase
         {
             var candidate = new CandidateInfo
             {
-                CandidateName = CandidateName.Trim(),
-                Pronoun       = Pronoun,
+                CandidateName  = CandidateName.Trim(),
                 IsFinalAttempt = IsFinalAttempt
             };
 
-            var session = await _sessionService.CreateSessionAsync(candidate, IsSupervisorOnly);
+            var session = await _sessionService.CreateSessionAsync(candidate, _supervisorOnlyMode);
 
-            // Persist pre-check data into the session
             session.PreChecks = new PreChecks
             {
                 HeadsetUsb         = IsHeadsetUsb,
@@ -207,7 +213,7 @@ public partial class BasicsViewModel : ViewModelBase
                 PopupsAllowed      = ArePopUpsAllowed
             };
 
-            if (IsSupervisorOnly)
+            if (_supervisorOnlyMode)
                 _nav.NavigateTo<SupervisorTransfer.SupervisorTransferViewModel>();
             else
                 _nav.NavigateTo<CallsViewModel>();
@@ -240,11 +246,10 @@ public partial class BasicsViewModel : ViewModelBase
             var candidate = new CandidateInfo
             {
                 CandidateName  = string.IsNullOrWhiteSpace(CandidateName) ? "Unknown" : CandidateName.Trim(),
-                Pronoun        = Pronoun,
                 IsFinalAttempt = IsFinalAttempt
             };
 
-            await _sessionService.CreateSessionAsync(candidate, IsSupervisorOnly);
+            await _sessionService.CreateSessionAsync(candidate, _supervisorOnlyMode);
             await _sessionService.SetAutoFailAsync(reason);
             _nav.NavigateTo<ReviewViewModel>();
         });

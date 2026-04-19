@@ -706,6 +706,7 @@
         <Grid Grid.Row="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
@@ -716,7 +717,17 @@
                     Style="{StaticResource GhostButton}"
                     Padding="16,10"/>
 
-            <TextBlock Grid.Column="1"
+            <!-- Reset is intentionally de-emphasised and separated from Save -->
+            <Button Grid.Column="1"
+                    Content="Reset to Defaults"
+                    Command="{Binding ResetToDefaultsCommand}"
+                    Style="{StaticResource GhostButton}"
+                    Foreground="{StaticResource FailBrush}"
+                    Padding="12,8" Margin="8,0,0,0"
+                    FontSize="12"
+                    ToolTip="Resets all lookup tables to factory defaults. A confirmation dialog will appear."/>
+
+            <TextBlock Grid.Column="2"
                        Text="&#x25CF; Unsaved changes"
                        Foreground="{StaticResource WarningBrush}"
                        VerticalAlignment="Center"
@@ -725,17 +736,11 @@
                        Visibility="{Binding IsDirty,
                                    Converter={StaticResource BoolToVisibility}}"/>
 
-            <StackPanel Grid.Column="2" Orientation="Horizontal">
-                <Button Content="Reset to Defaults"
-                        Command="{Binding ResetToDefaultsCommand}"
-                        Style="{StaticResource DangerButton}"
-                        Padding="16,10" Margin="0,0,8,0"/>
-
-                <Button Content="Save Settings"
-                        Command="{Binding SaveCommand}"
-                        Style="{StaticResource PrimaryButton}"
-                        Padding="24,10"/>
-            </StackPanel>
+            <Button Grid.Column="3"
+                    Content="Save Settings"
+                    Command="{Binding SaveCommand}"
+                    Style="{StaticResource PrimaryButton}"
+                    Padding="24,10"/>
         </Grid>
 
     </Grid>

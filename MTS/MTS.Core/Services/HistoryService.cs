@@ -17,4 +17,17 @@ public class HistoryService : IHistoryService
     public Task<HistoryStats> GetStatsAsync()           => _repo.GetStatsAsync();
     public Task<List<SessionSummary>> SearchAsync(string query) => _repo.SearchAsync(query);
     public Task DeleteAllAsync()                        => _repo.DeleteAllAsync();
+
+    public async Task<List<SessionSummary>> GetResumableAsync(string testerName)
+    {
+        var all = await _repo.GetAllSummariesAsync();
+        return all
+            .Where(s =>
+                (string.IsNullOrWhiteSpace(testerName) ||
+                 s.TesterName.Equals(testerName, StringComparison.OrdinalIgnoreCase)) &&
+                (s.CallsPassed + s.CallsFailed) > 0 &&
+                s.SupsPassed == 0)
+            .OrderByDescending(s => s.CreatedAt)
+            .ToList();
+    }
 }
