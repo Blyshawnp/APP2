@@ -7,153 +7,340 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d">
 
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <StackPanel Margin="32,24" MaxWidth="1040">
 
-        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
-            <StackPanel Margin="32,24" MaxWidth="860">
+            <!-- Header -->
+            <Grid Margin="0,0,0,20">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Help &amp; Documentation"
+                           Style="{StaticResource H1}"
+                           VerticalAlignment="Center"/>
+                <Button Grid.Column="1" Content="Replay Tutorial"
+                        Style="{StaticResource PrimaryButton}"
+                        Command="{Binding ReplayTutorialCommand}"
+                        Padding="18,9" FontSize="13"/>
+            </Grid>
 
-                <TextBlock Text="Help &amp; Support" Style="{StaticResource H1}" Margin="0,0,0,4"/>
-                <TextBlock Text="Everything you need to run mock sessions confidently."
-                           Style="{StaticResource Muted}" Margin="0,0,0,24"/>
+            <TabControl>
 
-                <TabControl>
+                <!-- ===================== How to Use ===================== -->
+                <TabItem Header="How to Use">
+                    <Border Style="{StaticResource Card}" Margin="0,16,0,0" Padding="22">
+                        <StackPanel>
+                            <TextBlock Text="How to Use Mock Testing Suite"
+                                       FontSize="18" FontWeight="Bold"
+                                       Foreground="{StaticResource AccentBrush}"
+                                       Margin="0,0,0,16"/>
 
-                    <!-- =================== How to Use =================== -->
-                    <TabItem Header="How to Use">
-                        <StackPanel Margin="0,16,0,0">
-                            <Border Style="{StaticResource Card}" Margin="0,0,0,16">
-                                <StackPanel>
-                                    <TextBlock Text="STARTING A SESSION" Style="{StaticResource SectionHeader}" Margin="0,0,0,10"/>
-                                    <TextBlock TextWrapping="Wrap" Margin="0,0,0,8">
-1. Open the app and navigate to <Run FontWeight="SemiBold">The Basics</Run> from the sidebar.
-                                    </TextBlock>
-                                    <TextBlock TextWrapping="Wrap" Margin="0,0,0,8">
-2. Enter the candidate's name, pronouns, and confirm headset / VPN / browser pre-checks.
-                                    </TextBlock>
-                                    <TextBlock TextWrapping="Wrap" Margin="0,0,0,8">
-3. Click <Run FontWeight="SemiBold">Continue</Run> to start the mock call sequence.
-                                    </TextBlock>
-                                    <TextBlock TextWrapping="Wrap">
-4. After all calls, complete the Supervisor Transfer, then navigate to <Run FontWeight="SemiBold">Review</Run> to finish.
-                                    </TextBlock>
-                                </StackPanel>
-                            </Border>
+                            <TextBlock Text="Home Screen" FontSize="14" FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,6"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,8"
+                                       Text="The Home screen is your dashboard. It shows your stats (Total Sessions, Pass Rate, NC/NS Rate) and recent sessions."/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,4">
+                                <Run Text="•" FontWeight="Bold"/>
+                                <Run Text=" Start New Session " FontWeight="SemiBold"/>— Begin a full mock call + supervisor transfer session
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,4">
+                                <Run Text="•" FontWeight="Bold"/>
+                                <Run Text=" Supervisor Transfer Only " FontWeight="SemiBold"/>— Used when a candidate previously ran out of time and only needs supervisor transfers
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,20">
+                                <Run Text="•" FontWeight="Bold"/>
+                                <Run Text=" Session History " FontWeight="SemiBold"/>— View all past sessions with search and detail views
+                            </TextBlock>
 
-                            <Border Style="{StaticResource Card}" Margin="0,0,0,16">
-                                <StackPanel>
-                                    <TextBlock Text="GRADING A CALL" Style="{StaticResource SectionHeader}" Margin="0,0,0,10"/>
-                                    <TextBlock TextWrapping="Wrap" Margin="0,0,0,8">
-Select the <Run Foreground="{StaticResource PassBrush}" FontWeight="SemiBold">PASS</Run> or <Run Foreground="{StaticResource FailBrush}" FontWeight="SemiBold">FAIL</Run> button for each call.
-                                    </TextBlock>
-                                    <TextBlock TextWrapping="Wrap" Margin="0,0,0,8">
-If FAIL is selected, the fail-reason section expands. Check all applicable reasons.
-                                    </TextBlock>
-                                    <TextBlock TextWrapping="Wrap">
-Add coaching notes in the Coaching section for any coaching points observed.
-                                    </TextBlock>
-                                </StackPanel>
-                            </Border>
+                            <TextBlock Text="The Basics Screen" FontSize="14" FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,6"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,8"
+                                       Text="This is the first step in every session. You'll verify the candidate's setup."/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,4">
+                                <Run Text="•" FontWeight="Bold"/>
+                                <Run Text=" Candidate Name " FontWeight="SemiBold"/>— Type the candidate's full name (required)
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,4">
+                                <Run Text="•" FontWeight="Bold"/>
+                                <Run Text=" Final Attempt " FontWeight="SemiBold"/>— Mark whether this is the candidate's last allowed mock session
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,4">
+                                <Run Text="•" FontWeight="Bold"/>
+                                <Run Text=" Headset " FontWeight="SemiBold"/>— Must be USB with noise-cancelling microphone. If not, auto-fails
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,4">
+                                <Run Text="•" FontWeight="Bold"/>
+                                <Run Text=" VPN " FontWeight="SemiBold"/>— If they have one, they must turn it off. If they can't, auto-fails
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,20">
+                                <Run Text="•" FontWeight="Bold"/>
+                                <Run Text=" Browser " FontWeight="SemiBold"/>— Must be default, extensions off, pop-ups allowed
+                            </TextBlock>
+
+                            <TextBlock Text="Calls Screen (Up to 3)" FontSize="14" FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,6"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,8"
+                                       Text="You'll grade up to 3 mock calls. The scenario card shows you exactly who to portray."/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,4"
+                                       Text="Routing logic: 2 passes (1 New Donor + 1 Existing Member) → Sup Transfers. 2 fails → session ends. 1+1 → Call 3."/>
+
+                            <TextBlock Text="Supervisor Transfer Screen (Up to 2)"
+                                       FontSize="14" FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextPrimaryBrush}" Margin="0,20,0,6"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,4"
+                                       Text="Tests the candidate's ability to transfer to a supervisor. Same coaching/fail flow as calls."/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,4">
+                                <Run Text="• Call the WXYZ number: " /><Run Text="1-828-630-7006" FontWeight="SemiBold"/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,4"
+                                       Text="• Pass Transfer 1 → done (go to Review). Fail both → Newbie Shift."/>
+
+                            <TextBlock Text="Review Screen" FontSize="14" FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextPrimaryBrush}" Margin="0,20,0,6"/>
+                            <TextBlock TextWrapping="Wrap"
+                                       Text="Final review of the session. The Pass/Fail/Incomplete banner is calculated automatically."/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,6,0,0">
+                                <Run Text="•" FontWeight="Bold"/>
+                                <Run Text=" Fill Form " FontWeight="SemiBold"/>— Opens the Cert Form and maps session data to form fields
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Margin="0,2,0,0">
+                                <Run Text="•" FontWeight="Bold"/>
+                                <Run Text=" Save &amp; Finish " FontWeight="SemiBold"/>— Saves to history and clears the session
+                            </TextBlock>
                         </StackPanel>
-                    </TabItem>
+                    </Border>
+                </TabItem>
 
-                    <!-- =================== Session Flows =================== -->
-                    <TabItem Header="Session Flows">
-                        <StackPanel Margin="0,16,0,0">
-                            <Border Style="{StaticResource Card}" Margin="0,0,0,16">
-                                <StackPanel>
-                                    <TextBlock Text="STANDARD FLOW" Style="{StaticResource SectionHeader}" Margin="0,0,0,10"/>
-                                    <TextBlock TextWrapping="Wrap">
-The Basics → Call 1 → Call 2 → Call 3 → Supervisor Transfer → Review → Save
-                                    </TextBlock>
-                                </StackPanel>
-                            </Border>
-                            <Border Style="{StaticResource Card}" Margin="0,0,0,16">
-                                <StackPanel>
-                                    <TextBlock Text="SUPERVISOR-ONLY FLOW" Style="{StaticResource SectionHeader}" Margin="0,0,0,10"/>
-                                    <TextBlock TextWrapping="Wrap">
-The Basics (check Supervisor Only) → Supervisor Transfer → Review → Save
-                                    </TextBlock>
-                                </StackPanel>
-                            </Border>
-                            <Border Style="{StaticResource Card}">
-                                <StackPanel>
-                                    <TextBlock Text="AUTO-FAIL SCENARIOS" Style="{StaticResource SectionHeader}" Margin="0,0,0,10"/>
-                                    <TextBlock TextWrapping="Wrap" Margin="0,0,0,6">• <Run FontWeight="SemiBold">NC/NS</Run> — candidate never connected.</TextBlock>
-                                    <TextBlock TextWrapping="Wrap" Margin="0,0,0,6">• <Run FontWeight="SemiBold">Not Ready</Run> — candidate joined unprepared.</TextBlock>
-                                    <TextBlock TextWrapping="Wrap" Margin="0,0,0,6">• <Run FontWeight="SemiBold">VPN can't disable</Run> — VPN running and cannot be turned off.</TextBlock>
-                                    <TextBlock TextWrapping="Wrap" Margin="0,0,0,6">• <Run FontWeight="SemiBold">Wrong headset</Run> — non-USB headset used.</TextBlock>
-                                    <TextBlock TextWrapping="Wrap">• <Run FontWeight="SemiBold">Browser not default</Run> — Chrome not set as default browser.</TextBlock>
-                                </StackPanel>
-                            </Border>
+                <!-- ===================== Session Flows ===================== -->
+                <TabItem Header="Session Flows">
+                    <Border Style="{StaticResource Card}" Margin="0,16,0,0" Padding="22">
+                        <StackPanel>
+                            <TextBlock Text="Session Flows"
+                                       FontSize="18" FontWeight="Bold"
+                                       Foreground="{StaticResource AccentBrush}"
+                                       Margin="0,0,0,16"/>
+
+                            <TextBlock Text="Standard Full Session" FontSize="14" FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,6"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,6"
+                                       Text="The Basics → Call 1 → Call 2 → (Call 3 if needed) → Sup Transfer 1 → (Sup Transfer 2 if needed) → Review → Save"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,20">
+                                <Run Text="Pass conditions: " FontWeight="SemiBold"/>
+                                <Run Text="2 passed calls (1 New Donor + 1 Existing) AND 1 passed Sup Transfer."/>
+                            </TextBlock>
+
+                            <TextBlock Text="Supervisor Transfer Only" FontSize="14" FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,6"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,6"
+                                       Text="Used when the candidate previously completed mock calls but still needs supervisor transfers."/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,4">
+                                <Run Text="•" FontWeight="Bold"/>
+                                <Run Text=" If you answer No to the resume prompt, the app starts a fresh Supervisor Transfer Only flow through Basics."/>
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,20">
+                                <Run Text="•" FontWeight="Bold"/>
+                                <Run Text=" If you answer Yes, Smart Resume searches your saved history for prior mock-call sessions completed by the current tester and lets you continue the correct candidate into Supervisor Transfer."/>
+                            </TextBlock>
+
+                            <TextBlock Text="Newbie Shift (Incomplete)" FontSize="14" FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,6"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,20"
+                                       Text='If the candidate fails both Sup Transfers or can&apos;t complete due to tech issues, a Newbie Shift is scheduled. The session is marked "Incomplete" rather than "Fail".'/>
+
+                            <TextBlock Text="Auto-Fail Scenarios" FontSize="14" FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,6"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,3">
+                                <Run Text="• NC/NS " FontWeight="SemiBold"/>— No Call / No Show
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,3">
+                                <Run Text="• Stopped Responding " FontWeight="SemiBold"/>— Candidate went silent in Discord
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,3">
+                                <Run Text="• Not Ready " FontWeight="SemiBold"/>— Incorrect setup, can't log in
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,3">
+                                <Run Text="• Wrong Headset " FontWeight="SemiBold"/>— Not USB or not noise-cancelling
+                            </TextBlock>
+                            <TextBlock TextWrapping="Wrap">
+                                <Run Text="• VPN " FontWeight="SemiBold"/>— Using VPN and can't turn it off
+                            </TextBlock>
                         </StackPanel>
-                    </TabItem>
+                    </Border>
+                </TabItem>
 
-                    <!-- =================== FAQ =================== -->
-                    <TabItem Header="FAQ">
-                        <StackPanel Margin="0,16,0,0">
-                            <Border Style="{StaticResource Card}" Margin="0,0,0,12">
-                                <StackPanel>
-                                    <TextBlock Text="Where is session data stored?" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                                    <TextBlock TextWrapping="Wrap" Style="{StaticResource Muted}">
-All data is stored locally in %AppData%\MTS\mts.db. Nothing is sent to external servers.
-                                    </TextBlock>
-                                </StackPanel>
-                            </Border>
-                            <Border Style="{StaticResource Card}" Margin="0,0,0,12">
-                                <StackPanel>
-                                    <TextBlock Text="Can I edit a session after saving?" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                                    <TextBlock TextWrapping="Wrap" Style="{StaticResource Muted}">
-Sessions are read-only once saved to History. You can view details from the History screen.
-                                    </TextBlock>
-                                </StackPanel>
-                            </Border>
-                            <Border Style="{StaticResource Card}">
-                                <StackPanel>
-                                    <TextBlock Text="How do I update the shows / donors / fail reasons?" FontWeight="SemiBold" Margin="0,0,0,6"/>
-                                    <TextBlock TextWrapping="Wrap" Style="{StaticResource Muted}">
-Navigate to Settings in the sidebar to add, edit, or remove any list items.
-                                    </TextBlock>
-                                </StackPanel>
-                            </Border>
+                <!-- ===================== Integration Setup ===================== -->
+                <TabItem Header="Integration Setup">
+                    <Border Style="{StaticResource Card}" Margin="0,16,0,0" Padding="22">
+                        <StackPanel>
+                            <TextBlock Text="Integration Setup Guides"
+                                       FontSize="18" FontWeight="Bold"
+                                       Foreground="{StaticResource AccentBrush}"
+                                       Margin="0,0,0,8"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,18"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       Text="All integrations are optional. The app works perfectly without them."/>
+
+                            <TextBlock Text="Gemini AI — Smart Summaries" FontSize="14" FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,6"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,10"
+                                       Text="Rewrites your coaching and fail summaries into clean, professional language using Google's Gemini AI."/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,3" Text="1. Go to aistudio.google.com in your browser"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,3" Text="2. Sign in with your Google account"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,3" Text='3. Click "Get API Key" in the left sidebar'/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,3" Text='4. Click "Create API Key"'/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,3" Text="5. Select any Google Cloud project (or create a new one)"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,3" Text="6. Copy the generated API key"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,3" Text="7. In this app: Go to Settings → Gemini AI"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,3" Text='8. Check "Enable Gemini AI Summaries"'/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,3" Text='9. Paste your API key in the "API Key" field'/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,22" Text='10. Click "Save Settings"'/>
+
+                            <TextBlock Text="Google Sheets — Auto Backup" FontSize="14" FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,6"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,10"
+                                       Text="Automatically logs every completed session to a Google Spreadsheet."/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,3" Text="1. Go to console.cloud.google.com"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,3" Text="2. Create a new project (or select an existing one)"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,3" Text="3. Go to APIs &amp; Services → Library"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,3" Text='4. Search for and enable "Google Sheets API"'/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,3" Text='5. Also enable "Google Drive API"'/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,3" Text="6. Go to APIs &amp; Services → Credentials"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,3" Text='7. Click "Create Credentials" → "Service Account"'/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,3" Text="8. Give it a name and click through"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,3" Text='9. Click on the new service account → "Keys" tab'/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,3" Text='10. Click "Add Key" → "Create new key" → JSON'/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,3" Text="11. Save the downloaded file as service_account.json"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,3" Text="12. Create or open a Google Sheet, share with the service account's client_email (Editor access)"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,3" Text="13. Copy the Spreadsheet ID from the sheet URL"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,22" Text='14. In Settings → Google Sheets: enable, paste ID, click "Save Settings"'/>
+
+                            <TextBlock Text="Google Calendar" FontSize="14" FontWeight="SemiBold"
+                                       Foreground="{StaticResource TextPrimaryBrush}" Margin="0,0,0,6"/>
+                            <TextBlock TextWrapping="Wrap"
+                                       Text='The "Add to Google Calendar" button on the Newbie Shift screen creates a calendar event. No setup needed — it uses a Google Calendar URL template.'/>
                         </StackPanel>
-                    </TabItem>
+                    </Border>
+                </TabItem>
 
-                    <!-- =================== Support =================== -->
-                    <TabItem Header="Support">
-                        <StackPanel Margin="0,16,0,0">
-                            <Border Style="{StaticResource Card}">
-                                <StackPanel>
-                                    <TextBlock Text="CONTACT ACD SUPPORT" Style="{StaticResource SectionHeader}" Margin="0,0,0,10"/>
-                                    <TextBlock TextWrapping="Wrap" Margin="0,0,0,8">
-For technical issues with MTS, reach out via the ACD Discord server in the #tech-support channel.
-                                    </TextBlock>
-                                    <TextBlock TextWrapping="Wrap" Style="{StaticResource Muted}">
-App Version: 1.0.0
-                                    </TextBlock>
-                                </StackPanel>
-                            </Border>
+                <!-- ===================== FAQ ===================== -->
+                <TabItem Header="FAQ">
+                    <Border Style="{StaticResource Card}" Margin="0,16,0,0" Padding="22">
+                        <StackPanel>
+                            <TextBlock Text="Frequently Asked Questions"
+                                       FontSize="18" FontWeight="Bold"
+                                       Foreground="{StaticResource AccentBrush}"
+                                       Margin="0,0,0,16"/>
+
+                            <TextBlock FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"
+                                       Margin="0,0,0,4" Text="Q: What if the candidate stops responding?"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,14"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       Text='A: Click the red "Stopped Responding" button. This instantly ends the session as a fail.'/>
+
+                            <TextBlock FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"
+                                       Margin="0,0,0,4" Text="Q: What if the candidate has technical issues?"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,14"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       Text='A: Click "Tech Issue". The app walks you through troubleshooting: check DTE status, clear browsing data, re-login.'/>
+
+                            <TextBlock FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"
+                                       Margin="0,0,0,4" Text="Q: Can I go back and change something?"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,14"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       Text='A: Yes — click "Back" on any screen. Your data is saved as you go.'/>
+
+                            <TextBlock FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"
+                                       Margin="0,0,0,4" Text="Q: What if I forget to select coaching?"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,14"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       Text="A: The app will ask you to confirm if you want to continue without coaching."/>
+
+                            <TextBlock FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"
+                                       Margin="0,0,0,4" Text="Q: How do I do a Supervisor Transfer ONLY session?"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,14"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       Text='A: On the Home screen, click "Supervisor Transfer Only". This skips Mock Calls.'/>
+
+                            <TextBlock FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"
+                                       Margin="0,0,0,4" Text='Q: What does "Final Attempt" mean?'/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,14"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       Text="A: Use this on The Basics screen when the candidate is on their last allowed attempt. The app uses it in the session flow and messaging."/>
+
+                            <TextBlock FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"
+                                       Margin="0,0,0,4" Text="Q: Where is my data stored?"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,14"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       Text="A: In the app's local database. Nothing goes online unless Google Sheets is enabled."/>
+
+                            <TextBlock FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"
+                                       Margin="0,0,0,4" Text="Q: How do I customize the Discord templates?"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,14"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       Text="A: Go to Settings → Discord tab. You can add, edit, and remove both message templates and screenshot images."/>
+
+                            <TextBlock FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"
+                                       Margin="0,0,0,4" Text="Q: Can I edit the caller data and shows?"/>
+                            <TextBlock TextWrapping="Wrap"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       Text="A: Yes — go to Settings. The Call Types, Shows, Callers, and Sup Reasons tabs let you fully customize all scenario data."/>
                         </StackPanel>
-                    </TabItem>
+                    </Border>
+                </TabItem>
 
-                </TabControl>
+                <!-- ===================== Support ===================== -->
+                <TabItem Header="Support">
+                    <Border Style="{StaticResource Card}" Margin="0,16,0,0" Padding="26">
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="Get Support"
+                                       FontSize="18" FontWeight="Bold"
+                                       Foreground="{StaticResource AccentBrush}"
+                                       HorizontalAlignment="Center"
+                                       Margin="0,0,0,12"/>
 
-            </StackPanel>
-        </ScrollViewer>
+                            <TextBlock TextWrapping="Wrap"
+                                       HorizontalAlignment="Center"
+                                       Foreground="{StaticResource TextSecondaryBrush}"
+                                       Margin="0,0,0,18"
+                                       Text="Need help with the app? Reach out using one of these options:"/>
 
-        <!-- Footer -->
-        <Border Grid.Row="1"
-                Background="{StaticResource SurfaceBrush}"
-                BorderBrush="{StaticResource BorderBrush}"
-                BorderThickness="0,1,0,0"
-                Padding="32,12">
-            <Button Content="← Back to Dashboard"
-                    Style="{StaticResource SecondaryButton}"
-                    Command="{Binding BackCommand}"
-                    HorizontalAlignment="Left"/>
-        </Border>
-    </Grid>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,18">
+                                <Button Content="Send Email"
+                                        Style="{StaticResource PrimaryButton}"
+                                        Command="{Binding SendEmailCommand}"
+                                        Padding="26,10" FontSize="13" Margin="0,0,10,0"/>
+                                <Button Content="Message on Discord"
+                                        Command="{Binding OpenDiscordCommand}"
+                                        Padding="26,10" FontSize="13">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+                                            <Setter Property="Background" Value="#5865F2"/>
+                                            <Setter Property="BorderBrush" Value="#5865F2"/>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                            </StackPanel>
+
+                            <TextBlock HorizontalAlignment="Center" Margin="0,0,0,4">
+                                <Run Text="Email: " FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                                <Run Text="blyshawnp@gmail.com" Foreground="{StaticResource TextSecondaryBrush}"/>
+                            </TextBlock>
+                            <TextBlock HorizontalAlignment="Center" Margin="0,0,0,14">
+                                <Run Text="Discord: " FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
+                                <Run Text="shawnbly" Foreground="{StaticResource TextSecondaryBrush}"/>
+                            </TextBlock>
+
+                            <TextBlock TextWrapping="Wrap"
+                                       HorizontalAlignment="Center" TextAlignment="Center"
+                                       Foreground="{StaticResource TextMutedBrush}" FontSize="12"
+                                       Text="Include a description of the issue, what screen you were on, and any error messages you saw."/>
+                        </StackPanel>
+                    </Border>
+                </TabItem>
+
+            </TabControl>
+
+        </StackPanel>
+    </ScrollViewer>
 </UserControl>

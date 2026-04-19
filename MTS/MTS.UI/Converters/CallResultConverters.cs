@@ -36,6 +36,18 @@ public class SessionStatusToBrushConverter : IValueConverter
         => null;
 }
 
+[ValueConversion(typeof(bool), typeof(Brush))]
+public class BoolToPassFailBrushConverter : IValueConverter
+{
+    public object Convert(object? value, Type targetType, object parameter, CultureInfo culture)
+        => value is true
+            ? (Brush)new SolidColorBrush(Color.FromRgb(34, 197, 94))
+            : new SolidColorBrush(Color.FromRgb(239, 68, 68));
+
+    public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        => null;
+}
+
 [ValueConversion(typeof(bool?), typeof(bool))]
 public class EnumEqualityConverter : IValueConverter
 {

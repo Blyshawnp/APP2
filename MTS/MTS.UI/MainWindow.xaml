@@ -43,7 +43,7 @@
         ================================================================ -->
         <Grid Grid.Row="1">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="155"/>
+                <ColumnDefinition Width="220"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
@@ -514,25 +514,41 @@
                                 Margin="8,0,8,12">
                         <Separator Margin="0,4,0,8"/>
 
-                        <!-- Discord Post -->
+                        <!-- Discord Post (indigo) -->
                         <Button Command="{Binding GoToDiscordPostCommand}"
-                                Margin="0,2"
-                                Padding="10,8"
-                                Style="{StaticResource PrimaryButton}"
+                                Margin="0,2" Padding="10,9"
                                 HorizontalContentAlignment="Left">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource PrimaryButton}">
+                                    <Setter Property="Background" Value="#5865F2"/>
+                                    <Setter Property="BorderBrush" Value="#5865F2"/>
+                                </Style>
+                            </Button.Style>
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="&#xEC24;" FontFamily="Segoe MDL2 Assets" FontSize="12"
-                                           VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                           VerticalAlignment="Center" Margin="0,0,6,0" Foreground="White"/>
                                 <TextBlock Text="Discord Post" FontSize="11" FontWeight="SemiBold"
+                                           VerticalAlignment="Center" Foreground="White"/>
+                            </StackPanel>
+                        </Button>
+
+                        <!-- Sheets (green) -->
+                        <Button Command="{Binding OpenSheetsCommand}"
+                                Margin="0,2" Padding="10,9"
+                                Style="{StaticResource SuccessButton}"
+                                HorizontalContentAlignment="Left">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="+" FontSize="14" FontWeight="Bold"
+                                           VerticalAlignment="Center" Margin="0,0,6,0"/>
+                                <TextBlock Text="Sheets" FontSize="11" FontWeight="SemiBold"
                                            VerticalAlignment="Center"/>
                             </StackPanel>
                         </Button>
 
-                        <!-- Cert Spreadsheet -->
+                        <!-- Cert Spreadsheet (dark gray) -->
                         <Button Command="{Binding OpenCertSpreadsheetCommand}"
-                                Margin="0,2"
-                                Padding="10,8"
-                                Style="{StaticResource SuccessButton}"
+                                Margin="0,2" Padding="10,9"
+                                Style="{StaticResource SecondaryButton}"
                                 HorizontalContentAlignment="Left">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="&#xE9D2;" FontFamily="Segoe MDL2 Assets" FontSize="12"
@@ -544,10 +560,9 @@
 
                         <Separator Margin="0,6,0,4"/>
 
-                        <!-- Exit App -->
+                        <!-- Exit App (red) -->
                         <Button Command="{Binding ExitAppCommand}"
-                                Margin="0,2"
-                                Padding="10,8"
+                                Margin="0,2" Padding="10,9"
                                 Style="{StaticResource DangerButton}"
                                 HorizontalContentAlignment="Left">
                             <StackPanel Orientation="Horizontal">

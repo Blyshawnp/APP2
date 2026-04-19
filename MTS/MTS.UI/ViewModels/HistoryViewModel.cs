@@ -92,6 +92,29 @@ public partial class HistoryViewModel : ViewModelBase
     [RelayCommand]
     private void Back() => _nav.NavigateTo<DashboardViewModel>();
 
+    [RelayCommand]
+    private async Task ViewSession(SessionSummary? summary)
+    {
+        if (summary is null) return;
+
+        string details =
+            $"Candidate: {summary.CandidateName}\n" +
+            $"Tester: {summary.TesterName}\n" +
+            $"Date: {summary.CreatedAt:yyyy-MM-dd h:mm tt}\n" +
+            $"Status: {summary.Status}\n" +
+            $"Calls Passed: {summary.CallsPassed}\n" +
+            $"Calls Failed: {summary.CallsFailed}\n" +
+            $"Sup Transfers Passed: {summary.SupsPassed}\n" +
+            (summary.AutoFailReason.HasValue
+                ? $"Auto-Fail Reason: {summary.AutoFailReason}\n"
+                : string.Empty) +
+            (summary.HasNewbieShift ? "Includes Newbie Shift\n" : string.Empty) +
+            (summary.IsSupervisorOnly ? "Supervisor Transfer Only\n" : string.Empty) +
+            (summary.IsFinalAttempt ? "Final Attempt\n" : string.Empty);
+
+        await _dialog.ShowAlertAsync("Session Details", details.TrimEnd());
+    }
+
     // -------------------------------------------------------------------------
     // Private helpers
     // -------------------------------------------------------------------------

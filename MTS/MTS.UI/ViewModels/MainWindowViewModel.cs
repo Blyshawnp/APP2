@@ -149,11 +149,19 @@ public partial class MainWindowViewModel : ViewModelBase
     }
 
     [RelayCommand]
+    private void OpenSheets()
+    {
+        const string url = "https://docs.google.com/spreadsheets";
+        try { Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }); }
+        catch { }
+    }
+
+    [RelayCommand]
     private void OpenCertSpreadsheet()
     {
         const string url = "https://docs.google.com/spreadsheets";
         try { Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }); }
-        catch { /* silently ignore */ }
+        catch { }
     }
 
     [RelayCommand]

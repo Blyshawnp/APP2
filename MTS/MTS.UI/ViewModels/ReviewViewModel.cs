@@ -57,6 +57,37 @@ public partial class ReviewViewModel : ViewModelBase
     public bool HasAutoFail       => Session?.HasAutoFail ?? false;
     public string AutoFailReason  => Session?.AutoFailReason?.ToString() ?? string.Empty;
 
+    // Skills label
+    public string SkillsLabel => IsSupervisorOnly
+        ? "Supervisor Transfer Only"
+        : "Mock Calls + Supervisor Transfer";
+
+    // Per-call results
+    public string Call1Result      => GetCallResult(0);
+    public bool   Call1Passed      => Session?.Calls.Count > 0 && Session.Calls[0].IsPassed;
+    public string Call2Result      => GetCallResult(1);
+    public bool   Call2Passed      => Session?.Calls.Count > 1 && Session.Calls[1].IsPassed;
+    public string Call3Result      => GetCallResult(2);
+
+    // Per-transfer results
+    public string Transfer1Result  => GetTransferResult(0);
+    public bool   Transfer1Passed  => Session?.SupTransfers.Count > 0 && Session.SupTransfers[0].IsPassed;
+    public string Transfer2Result  => GetTransferResult(1);
+
+    private string GetCallResult(int idx)
+    {
+        if (Session?.Calls.Count > idx)
+            return Session.Calls[idx].IsPassed ? "PASS" : "FAIL";
+        return "Did Not Take";
+    }
+
+    private string GetTransferResult(int idx)
+    {
+        if (Session?.SupTransfers.Count > idx)
+            return Session.SupTransfers[idx].IsPassed ? "PASS" : "FAIL";
+        return "Did Not Take";
+    }
+
     // -------------------------------------------------------------------------
     // Computed final status
     // -------------------------------------------------------------------------
@@ -269,6 +300,24 @@ public partial class ReviewViewModel : ViewModelBase
 
         _clipboard.SetText(sb.ToString());
         _notification.ShowSuccess("Review copied to clipboard.");
+    }
+
+    // -------------------------------------------------------------------------
+    // Copy individual summaries
+    // -------------------------------------------------------------------------
+
+    [RelayCommand]
+    private void CopyCoachingSummary()
+    {
+        if (!string.IsNullOrWhiteSpace(CoachingSummary))
+            _clipboard.SetText(CoachingSummary);
+    }
+
+    [RelayCommand]
+    private void CopyFailSummary()
+    {
+        if (!string.IsNullOrWhiteSpace(FailSummary))
+            _clipboard.SetText(FailSummary);
     }
 
     // -------------------------------------------------------------------------
