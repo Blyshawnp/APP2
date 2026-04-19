@@ -93,11 +93,7 @@
                         <CheckBox Content="Enable Gemini AI Summaries"
                                   IsChecked="{Binding GeminiEnabled}"
                                   FontWeight="SemiBold"
-                                  Margin="0,0,0,20"/>
-
-                        <TextBlock Text="API Key" Style="{StaticResource Label}" Margin="0,0,0,4"/>
-                        <TextBox Text="{Binding GeminiApiKey, UpdateSourceTrigger=PropertyChanged}"
-                                 Margin="0,0,0,20"/>
+                                  Margin="0,0,0,24"/>
 
                         <TextBlock Text="Coaching Summary Prompt" Style="{StaticResource Label}" Margin="0,0,0,4"/>
                         <TextBlock Text="Used to rewrite coaching notes into professional language."
