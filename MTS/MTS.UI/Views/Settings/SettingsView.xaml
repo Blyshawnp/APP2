@@ -65,18 +65,6 @@
 
                         <Separator Margin="0,0,0,24"/>
 
-                        <!-- Form Fill -->
-                        <TextBlock Text="Form Fill" Style="{StaticResource H2}" Margin="0,0,0,16"/>
-
-                        <TextBlock Text="Form Fill Browser" Style="{StaticResource Label}" Margin="0,0,0,4"/>
-                        <TextBlock Text="Which browser to launch when opening the certification form. 'Default' uses the system default."
-                                   Style="{StaticResource Muted}" FontSize="11" TextWrapping="Wrap" Margin="0,0,0,6"/>
-                        <ComboBox ItemsSource="{Binding FormFillBrowserOptions}"
-                                  SelectedItem="{Binding FormFillBrowser}"
-                                  Margin="0,0,0,24"/>
-
-                        <Separator Margin="0,0,0,24"/>
-
                         <!-- Theme -->
                         <TextBlock Text="Theme" Style="{StaticResource H2}" Margin="0,0,0,16"/>
                         <TextBlock Text="Restart the application after changing the theme for full effect."
@@ -729,17 +717,7 @@
                     Style="{StaticResource GhostButton}"
                     Padding="16,10"/>
 
-            <!-- Reset is intentionally de-emphasised and separated from Save -->
-            <Button Grid.Column="1"
-                    Content="Reset to Defaults"
-                    Command="{Binding ResetToDefaultsCommand}"
-                    Style="{StaticResource GhostButton}"
-                    Foreground="{StaticResource FailBrush}"
-                    Padding="12,8" Margin="8,0,0,0"
-                    FontSize="12"
-                    ToolTip="Resets all lookup tables to factory defaults. A confirmation dialog will appear."/>
-
-            <TextBlock Grid.Column="2"
+            <TextBlock Grid.Column="1"
                        Text="&#x25CF; Unsaved changes"
                        Foreground="{StaticResource WarningBrush}"
                        VerticalAlignment="Center"
@@ -748,11 +726,17 @@
                        Visibility="{Binding IsDirty,
                                    Converter={StaticResource BoolToVisibility}}"/>
 
-            <Button Grid.Column="3"
-                    Content="Save Settings"
-                    Command="{Binding SaveCommand}"
-                    Style="{StaticResource PrimaryButton}"
-                    Padding="24,10"/>
+            <StackPanel Grid.Column="2" Orientation="Horizontal">
+                <Button Content="Reset to Defaults"
+                        Command="{Binding ResetToDefaultsCommand}"
+                        Style="{StaticResource DangerButton}"
+                        Padding="16,10" Margin="0,0,8,0"/>
+
+                <Button Content="Save Settings"
+                        Command="{Binding SaveCommand}"
+                        Style="{StaticResource PrimaryButton}"
+                        Padding="24,10"/>
+            </StackPanel>
         </Grid>
 
     </Grid>

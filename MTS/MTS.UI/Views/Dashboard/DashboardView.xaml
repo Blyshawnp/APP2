@@ -15,148 +15,157 @@
             ================================================================ -->
             <Grid Margin="0,0,0,28">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="16"/>
                     <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <!-- ACD logo badge -->
-                <Border Grid.Column="0"
-                        Background="{StaticResource AccentBrush}"
-                        CornerRadius="4"
-                        Padding="14,8"
-                        VerticalAlignment="Center">
-                    <TextBlock Text="ACD" FontSize="18" FontWeight="Bold" Foreground="White"/>
-                </Border>
-
-                <StackPanel Grid.Column="2" VerticalAlignment="Center">
-                    <TextBlock Margin="0,0,0,3">
-                        <Run Text="Welcome, " FontSize="28" FontWeight="Bold"
+                <StackPanel Grid.Column="0">
+                    <TextBlock Margin="0,0,0,4">
+                        <Run Text="Welcome back, " FontSize="26" FontWeight="Bold"
                              Foreground="{StaticResource TextPrimaryBrush}"/>
-                        <Run Text="{Binding WelcomeName}" FontSize="28" FontWeight="Bold"
-                             Foreground="{StaticResource TextPrimaryBrush}"/>
-                        <Run Text="!" FontSize="28" FontWeight="Bold"
+                        <Run Text="{Binding WelcomeName}" FontSize="26" FontWeight="Bold"
+                             Foreground="{StaticResource AccentBrush}"/>
+                        <Run Text="!" FontSize="26" FontWeight="Bold"
                              Foreground="{StaticResource TextPrimaryBrush}"/>
                     </TextBlock>
-                    <TextBlock Text="Mock Testing Suite — Certification"
+                    <TextBlock Text="Mock Testing Suite — session dashboard"
                                Style="{StaticResource Muted}" FontSize="13"/>
+                </StackPanel>
+
+                <!-- Quick action buttons in header -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Button Style="{StaticResource SuccessButton}"
+                            Command="{Binding StartSessionCommand}"
+                            Padding="22,10" FontSize="14" FontWeight="SemiBold"
+                            Margin="0,0,10,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#x25B6;" Margin="0,0,7,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="New Session" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Style="{StaticResource SecondaryButton}"
+                            Command="{Binding StartSupervisorOnlyCommand}"
+                            Padding="16,10" FontSize="13"
+                            Margin="0,0,10,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#x1F4DE;" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="Sup Only" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Style="{StaticResource GhostButton}"
+                            Command="{Binding OpenHistoryCommand}"
+                            Padding="16,10" FontSize="13">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#x1F4CB;" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                            <TextBlock Text="History" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
                 </StackPanel>
             </Grid>
 
             <!-- ================================================================
                  Stats row — 3 cards matching Electron
             ================================================================ -->
-            <Grid Margin="0,0,0,24">
+            <Grid Margin="0,0,0,28">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="10"/>
                     <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="16"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="10"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="10"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <Border Grid.Column="0" Style="{StaticResource Card}" Padding="20,18">
-                    <StackPanel HorizontalAlignment="Center">
-                        <TextBlock Text="TOTAL SESSIONS"
-                                   Style="{StaticResource SectionHeader}"
-                                   HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                <!-- Total Sessions -->
+                <Border Grid.Column="0" Style="{StaticResource Card}" Padding="16,14">
+                    <StackPanel>
+                        <TextBlock Text="TOTAL" Style="{StaticResource SectionHeader}" Margin="0,0,0,6"/>
                         <TextBlock Text="{Binding Stats.TotalSessions}"
-                                   FontSize="36" FontWeight="Bold"
-                                   Foreground="{StaticResource TextPrimaryBrush}"
-                                   HorizontalAlignment="Center"/>
+                                   FontSize="32" FontWeight="Bold"
+                                   Foreground="{StaticResource AccentBrush}"/>
+                        <TextBlock Text="sessions" Style="{StaticResource Muted}" FontSize="11" Margin="0,2,0,0"/>
                     </StackPanel>
                 </Border>
 
-                <Border Grid.Column="2" Style="{StaticResource Card}" Padding="20,18">
-                    <StackPanel HorizontalAlignment="Center">
-                        <TextBlock Text="PASS RATE"
-                                   Style="{StaticResource SectionHeader}"
-                                   HorizontalAlignment="Center" Margin="0,0,0,10"/>
-                        <TextBlock FontSize="36" FontWeight="Bold"
-                                   Foreground="{StaticResource PassBrush}"
-                                   HorizontalAlignment="Center">
+                <!-- Passed -->
+                <Border Grid.Column="2" Style="{StaticResource Card}" Padding="16,14">
+                    <StackPanel>
+                        <TextBlock Text="PASSED" Style="{StaticResource SectionHeader}" Margin="0,0,0,6"/>
+                        <TextBlock Text="{Binding Stats.TotalPass}"
+                                   FontSize="32" FontWeight="Bold"
+                                   Foreground="{StaticResource PassBrush}"/>
+                        <TextBlock Text="sessions" Style="{StaticResource Muted}" FontSize="11" Margin="0,2,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Failed -->
+                <Border Grid.Column="4" Style="{StaticResource Card}" Padding="16,14">
+                    <StackPanel>
+                        <TextBlock Text="FAILED" Style="{StaticResource SectionHeader}" Margin="0,0,0,6"/>
+                        <TextBlock Text="{Binding Stats.TotalFail}"
+                                   FontSize="32" FontWeight="Bold"
+                                   Foreground="{StaticResource FailBrush}"/>
+                        <TextBlock Text="sessions" Style="{StaticResource Muted}" FontSize="11" Margin="0,2,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- NC/NS -->
+                <Border Grid.Column="6" Style="{StaticResource Card}" Padding="16,14">
+                    <StackPanel>
+                        <TextBlock Text="NC / NS" Style="{StaticResource SectionHeader}" Margin="0,0,0,6"/>
+                        <TextBlock Text="{Binding Stats.TotalNcNs}"
+                                   FontSize="32" FontWeight="Bold"
+                                   Foreground="{StaticResource WarningBrush}"/>
+                        <TextBlock Text="sessions" Style="{StaticResource Muted}" FontSize="11" Margin="0,2,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Pass Rate -->
+                <Border Grid.Column="8" Style="{StaticResource Card}" Padding="16,14">
+                    <StackPanel>
+                        <TextBlock Text="PASS RATE" Style="{StaticResource SectionHeader}" Margin="0,0,0,6"/>
+                        <TextBlock FontSize="32" FontWeight="Bold"
+                                   Foreground="{StaticResource PassBrush}">
                             <Run Text="{Binding Stats.PassRate, Mode=OneWay}"/><Run Text="%"/>
                         </TextBlock>
+                        <TextBlock Text="of total" Style="{StaticResource Muted}" FontSize="11" Margin="0,2,0,0"/>
                     </StackPanel>
                 </Border>
-
-                <Border Grid.Column="4" Style="{StaticResource Card}" Padding="20,18">
-                    <StackPanel HorizontalAlignment="Center">
-                        <TextBlock Text="NC/NS RATE"
-                                   Style="{StaticResource SectionHeader}"
-                                   HorizontalAlignment="Center" Margin="0,0,0,10"/>
-                        <TextBlock FontSize="36" FontWeight="Bold"
-                                   Foreground="{StaticResource FailBrush}"
-                                   HorizontalAlignment="Center">
-                            <Run Text="{Binding Stats.NcNsRate, Mode=OneWay}"/><Run Text="%"/>
-                        </TextBlock>
-                    </StackPanel>
-                </Border>
-            </Grid>
-
-            <!-- ================================================================
-                 Action buttons — 3-column row
-            ================================================================ -->
-            <Grid Margin="0,0,0,32">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="16"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="16"/>
-                    <ColumnDefinition Width="*"/>
-                </Grid.ColumnDefinitions>
-
-                <Button Grid.Column="0"
-                        Style="{StaticResource PrimaryButton}"
-                        Command="{Binding StartSessionCommand}"
-                        Padding="0,16"
-                        FontSize="14" FontWeight="SemiBold">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <TextBlock Text="&#x1F680;" FontSize="14" Margin="0,0,8,0" VerticalAlignment="Center"/>
-                        <TextBlock Text="Start New Session" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </Button>
-
-                <Button Grid.Column="2"
-                        Style="{StaticResource SuccessButton}"
-                        Command="{Binding StartSupervisorOnlyCommand}"
-                        Padding="0,16"
-                        FontSize="14" FontWeight="SemiBold">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <TextBlock Text="&#xE77B;" FontFamily="Segoe MDL2 Assets" FontSize="13"
-                                   Margin="0,0,8,0" VerticalAlignment="Center"/>
-                        <TextBlock Text="Supervisor Transfer Only" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </Button>
-
-                <Button Grid.Column="4"
-                        Style="{StaticResource SecondaryButton}"
-                        Command="{Binding OpenHistoryCommand}"
-                        Padding="0,16"
-                        FontSize="14" FontWeight="SemiBold">
-                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                        <TextBlock Text="&#xE81C;" FontFamily="Segoe MDL2 Assets" FontSize="13"
-                                   Margin="0,0,8,0" VerticalAlignment="Center"/>
-                        <TextBlock Text="Session History" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </Button>
             </Grid>
 
             <!-- ================================================================
                  Recent Sessions
             ================================================================ -->
-            <TextBlock Text="RECENT SESSIONS"
-                       Style="{StaticResource SectionHeader}"
-                       Margin="0,0,0,12"/>
+            <Grid Margin="0,0,0,10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="RECENT SESSIONS"
+                           Style="{StaticResource SectionHeader}"
+                           VerticalAlignment="Center"/>
+                <Button Grid.Column="1"
+                        Style="{StaticResource GhostButton}"
+                        Command="{Binding OpenHistoryCommand}"
+                        Padding="10,5" FontSize="12">
+                    <TextBlock Text="View all &#x2192;"/>
+                </Button>
+            </Grid>
 
             <!-- Empty state -->
             <Border Style="{StaticResource Card}"
                     Visibility="{Binding HasHistory, Converter={StaticResource InverseBoolToVisibility}}">
                 <StackPanel HorizontalAlignment="Center" Margin="0,32">
+                    <TextBlock Text="&#x1F4CB;" FontSize="36" HorizontalAlignment="Center" Margin="0,0,0,12"/>
                     <TextBlock Text="No sessions recorded yet."
                                Style="{StaticResource Muted}"
                                HorizontalAlignment="Center" FontSize="14" Margin="0,0,0,6"/>
-                    <TextBlock Text="Click Start New Session above to get started."
+                    <TextBlock Text="Click New Session above to get started."
                                Style="{StaticResource Muted}"
                                HorizontalAlignment="Center" FontSize="12"/>
                 </StackPanel>
@@ -166,63 +175,103 @@
             <Border Style="{StaticResource Card}"
                     Padding="0"
                     Visibility="{Binding HasHistory, Converter={StaticResource BoolToVisibility}}">
-                <ItemsControl ItemsSource="{Binding RecentSessions}">
-                    <ItemsControl.ItemTemplate>
-                        <DataTemplate>
-                            <Border BorderBrush="{StaticResource BorderBrush}"
-                                    BorderThickness="0,0,0,1">
-                                <Grid Margin="20,12">
+                <StackPanel>
+
+                    <!-- Column headers -->
+                    <Grid Margin="16,12,16,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="110"/>
+                            <ColumnDefinition Width="70"/>
+                            <ColumnDefinition Width="70"/>
+                            <ColumnDefinition Width="90"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="DATE"      Style="{StaticResource SectionHeader}"/>
+                        <TextBlock Grid.Column="1" Text="CANDIDATE" Style="{StaticResource SectionHeader}"/>
+                        <TextBlock Grid.Column="2" Text="TESTER"    Style="{StaticResource SectionHeader}"/>
+                        <TextBlock Grid.Column="3" Text="STATUS"    Style="{StaticResource SectionHeader}"/>
+                        <TextBlock Grid.Column="4" Text="CALLS"     Style="{StaticResource SectionHeader}" HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Column="5" Text="SUPS"      Style="{StaticResource SectionHeader}" HorizontalAlignment="Center"/>
+                        <TextBlock Grid.Column="6" Text="FLAGS"     Style="{StaticResource SectionHeader}" HorizontalAlignment="Center"/>
+                    </Grid>
+
+                    <Separator Margin="0"/>
+
+                    <ItemsControl ItemsSource="{Binding RecentSessions}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="16,9,16,9">
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="170"/>
-                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="150"/>
                                         <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="110"/>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="70"/>
+                                        <ColumnDefinition Width="90"/>
                                     </Grid.ColumnDefinitions>
 
                                     <TextBlock Grid.Column="0"
-                                               Text="{Binding CreatedAt, StringFormat='yyyy-MM-dd h:mm tt'}"
-                                               Style="{StaticResource Muted}" FontSize="12"
-                                               VerticalAlignment="Center"/>
+                                               Text="{Binding CreatedAt, StringFormat='MMM d, yyyy'}"
+                                               Style="{StaticResource Muted}" FontSize="12"/>
 
-                                    <TextBlock Grid.Column="1" Text=" • "
-                                               Style="{StaticResource Muted}"
-                                               VerticalAlignment="Center" FontSize="12"/>
-
-                                    <TextBlock Grid.Column="2"
+                                    <TextBlock Grid.Column="1"
                                                Text="{Binding CandidateName}"
                                                FontWeight="SemiBold"
                                                Foreground="{StaticResource TextPrimaryBrush}"
                                                VerticalAlignment="Center"/>
 
-                                    <!-- Status badge -->
-                                    <Border Grid.Column="3"
-                                            CornerRadius="4" Padding="10,4"
-                                            VerticalAlignment="Center">
-                                        <Border.Style>
-                                            <Style TargetType="Border">
-                                                <Setter Property="Background" Value="{StaticResource PassBrush}"/>
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Status}" Value="Fail">
-                                                        <Setter Property="Background" Value="{StaticResource FailBrush}"/>
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Status}" Value="Incomplete">
-                                                        <Setter Property="Background" Value="{StaticResource WarningBrush}"/>
-                                                    </DataTrigger>
-                                                    <DataTrigger Binding="{Binding Status}" Value="Draft">
-                                                        <Setter Property="Background" Value="{StaticResource TextMutedBrush}"/>
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Border.Style>
-                                        <TextBlock Text="{Binding Status}"
-                                                   FontSize="11" FontWeight="Bold"
-                                                   Foreground="White"/>
-                                    </Border>
+                                    <TextBlock Grid.Column="2"
+                                               Text="{Binding TesterName}"
+                                               Style="{StaticResource Muted}"
+                                               VerticalAlignment="Center"/>
+
+                                    <TextBlock Grid.Column="3"
+                                               Text="{Binding Status}"
+                                               Foreground="{Binding Status, Converter={StaticResource SessionStatusToBrush}}"
+                                               FontWeight="SemiBold"
+                                               VerticalAlignment="Center"/>
+
+                                    <TextBlock Grid.Column="4"
+                                               Text="{Binding CallsPassed}"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Foreground="{StaticResource PassBrush}"
+                                               FontWeight="SemiBold"/>
+
+                                    <TextBlock Grid.Column="5"
+                                               Text="{Binding SupsPassed}"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               Foreground="{StaticResource AccentBrush}"
+                                               FontWeight="SemiBold"/>
+
+                                    <!-- Flags: Final Attempt, Sup-Only -->
+                                    <StackPanel Grid.Column="6" Orientation="Horizontal"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center">
+                                        <Border CornerRadius="4" Padding="5,2" Margin="0,0,3,0"
+                                                Background="{StaticResource WarningBrush}"
+                                                Visibility="{Binding IsFinalAttempt, Converter={StaticResource BoolToVisibility}}">
+                                            <TextBlock Text="FINAL" FontSize="9" FontWeight="Bold"
+                                                       Foreground="White"/>
+                                        </Border>
+                                        <Border CornerRadius="4" Padding="5,2"
+                                                Background="{StaticResource AccentBrush}"
+                                                Visibility="{Binding IsSupervisorOnly, Converter={StaticResource BoolToVisibility}}">
+                                            <TextBlock Text="SUP" FontSize="9" FontWeight="Bold"
+                                                       Foreground="White"/>
+                                        </Border>
+                                    </StackPanel>
+
                                 </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </ItemsControl.ItemTemplate>
-                </ItemsControl>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                </StackPanel>
             </Border>
 
         </StackPanel>

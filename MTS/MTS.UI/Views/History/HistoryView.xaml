@@ -15,7 +15,7 @@
         </Grid.RowDefinitions>
 
         <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
-            <StackPanel Margin="32,24" MaxWidth="1100">
+            <StackPanel Margin="32,24" MaxWidth="1040">
 
                 <!-- Header -->
                 <Grid Margin="0,0,0,24">
@@ -25,8 +25,6 @@
                     </Grid.ColumnDefinitions>
                     <StackPanel Grid.Column="0">
                         <TextBlock Text="Session History" Style="{StaticResource H1}" Margin="0,0,0,4"/>
-                        <TextBlock Text="Review past certification sessions and outcomes."
-                                   Style="{StaticResource Muted}"/>
                     </StackPanel>
                     <Button Grid.Column="1" Content="Clear All History"
                             Style="{StaticResource DangerButton}"
@@ -106,18 +104,13 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="8"/>
                         <ColumnDefinition Width="Auto"/>
-                        <ColumnDefinition Width="8"/>
-                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBox Grid.Column="0"
                              Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}"
-                             Tag="Search by candidate or tester name..."/>
+                             Tag="Search by candidate name..."/>
                     <Button Grid.Column="2" Content="Search"
                             Style="{StaticResource SecondaryButton}"
                             Command="{Binding SearchCommand}"/>
-                    <Button Grid.Column="4" Content="Clear"
-                            Style="{StaticResource GhostButton}"
-                            Command="{Binding ClearSearchCommand}"/>
                 </Grid>
 
                 <!-- Empty state -->
@@ -145,19 +138,19 @@
                 <Border Style="{StaticResource Card}"
                         Visibility="{Binding HasHistory, Converter={StaticResource BoolToVisibility}}">
                     <StackPanel>
-                        <Grid Margin="12,0,12,8">
+                        <Grid Margin="0,0,0,8">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="180"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="130"/>
-                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="140"/>
+                                <ColumnDefinition Width="80"/>
                             </Grid.ColumnDefinitions>
                             <TextBlock Grid.Column="0" Text="DATE"      Style="{StaticResource SectionHeader}"/>
                             <TextBlock Grid.Column="1" Text="CANDIDATE" Style="{StaticResource SectionHeader}"/>
                             <TextBlock Grid.Column="2" Text="TESTER"    Style="{StaticResource SectionHeader}"/>
                             <TextBlock Grid.Column="3" Text="STATUS"    Style="{StaticResource SectionHeader}"/>
-                            <TextBlock Grid.Column="4" Text=""          Style="{StaticResource SectionHeader}"/>
+                            <TextBlock Grid.Column="4" Text=""           Style="{StaticResource SectionHeader}"/>
                         </Grid>
 
                         <Separator Margin="0,0,0,4"/>
@@ -165,75 +158,26 @@
                         <ItemsControl ItemsSource="{Binding Sessions}">
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Padding="12,8" Margin="0,2"
-                                            Background="Transparent"
-                                            CornerRadius="6">
-                                        <Border.Style>
-                                            <Style TargetType="Border">
-                                                <Style.Triggers>
-                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                        <Setter Property="Background" Value="{StaticResource NavHoverBrush}"/>
-                                                    </Trigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </Border.Style>
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="180"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="130"/>
-                                                <ColumnDefinition Width="110"/>
-                                            </Grid.ColumnDefinitions>
-                                            <TextBlock Grid.Column="0"
-                                                       Text="{Binding CreatedAt, StringFormat='yyyy-MM-dd h:mm tt'}"
-                                                       Style="{StaticResource Muted}" FontSize="12"
-                                                       VerticalAlignment="Center"/>
-                                            <TextBlock Grid.Column="1" Text="{Binding CandidateName}"
-                                                       FontWeight="SemiBold" VerticalAlignment="Center"/>
-                                            <TextBlock Grid.Column="2" Text="{Binding TesterName}"
-                                                       Style="{StaticResource Muted}" VerticalAlignment="Center"/>
-
-                                            <!-- Status pill -->
-                                            <Border Grid.Column="3"
-                                                    CornerRadius="12"
-                                                    Padding="12,4"
-                                                    HorizontalAlignment="Left"
-                                                    VerticalAlignment="Center">
-                                                <Border.Style>
-                                                    <Style TargetType="Border">
-                                                        <Setter Property="Background" Value="#2A2F45"/>
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding Status}" Value="{x:Static enums:SessionStatus.Pass}">
-                                                                <Setter Property="Background" Value="#16A34A"/>
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding Status}" Value="{x:Static enums:SessionStatus.Fail}">
-                                                                <Setter Property="Background" Value="#DC2626"/>
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding Status}" Value="{x:Static enums:SessionStatus.Incomplete}">
-                                                                <Setter Property="Background" Value="#D97706"/>
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </Border.Style>
-                                                <TextBlock Text="{Binding Status}"
-                                                           Foreground="White"
-                                                           FontWeight="Bold"
-                                                           FontSize="11"
-                                                           HorizontalAlignment="Center"/>
-                                            </Border>
-
-                                            <Button Grid.Column="4"
-                                                    Content="View"
-                                                    Style="{StaticResource SecondaryButton}"
-                                                    Padding="14,4"
-                                                    HorizontalAlignment="Left"
-                                                    VerticalAlignment="Center"
-                                                    Command="{Binding DataContext.ViewSessionCommand,
-                                                             RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                    CommandParameter="{Binding}"/>
-                                        </Grid>
-                                    </Border>
+                                    <Grid Margin="0,6">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="180"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="140"/>
+                                            <ColumnDefinition Width="80"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0"
+                                                   Text="{Binding CreatedAt, StringFormat='yyyy-MM-dd h:mm tt'}"
+                                                   Style="{StaticResource Muted}" FontSize="12"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding CandidateName}"
+                                                   FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding TesterName}"
+                                                   Style="{StaticResource Muted}" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="3" Text="{Binding Status}"
+                                                   Foreground="{Binding Status, Converter={StaticResource SessionStatusToBrush}}"
+                                                   FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="4" Text="" VerticalAlignment="Center"/>
+                                    </Grid>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
