@@ -18,8 +18,8 @@
                         CornerRadius="8" Padding="18,8"
                         HorizontalAlignment="Center"
                         Margin="0,0,0,18">
-                    <TextBlock Text="ACD" FontSize="15" FontWeight="Bold"
-                               Foreground="White" LetterSpacing="3"/>
+                    <TextBlock Text="A C D" FontSize="15" FontWeight="Bold"
+                               Foreground="White"/>
                 </Border>
                 <TextBlock HorizontalAlignment="Center" Margin="0,0,0,4">
                     <Run Text="Welcome, " FontSize="28" FontWeight="SemiBold"
@@ -168,9 +168,10 @@
                 <ItemsControl ItemsSource="{Binding RecentSessions}">
                     <ItemsControl.ItemTemplate>
                         <DataTemplate>
-                            <Border Padding="16,10" Background="Transparent">
+                            <Border Padding="16,10">
                                 <Border.Style>
                                     <Style TargetType="Border">
+                                        <Setter Property="Background" Value="Transparent"/>
                                         <Style.Triggers>
                                             <Trigger Property="IsMouseOver" Value="True">
                                                 <Setter Property="Background"

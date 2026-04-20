@@ -89,8 +89,7 @@
                     <!-- ====================================================
                          RIGHT: Form + grading
                     ==================================================== -->
-                    <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
-                        <StackPanel Margin="20,20">
+                    <StackPanel Grid.Column="1" Margin="20,20">
 
                             <!-- Card header: call number + submitted badge -->
                             <Grid Margin="0,0,0,16">
@@ -270,6 +269,11 @@
                                                BasedOn="{StaticResource SuccessButton}">
                                             <Style.Triggers>
                                                 <DataTrigger Binding="{Binding IsPassSelected}"
+                                                             Value="True">
+                                                    <Setter Property="BorderBrush" Value="White"/>
+                                                    <Setter Property="BorderThickness" Value="2"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding IsPassSelected}"
                                                              Value="False">
                                                     <Setter Property="Opacity" Value="0.45"/>
                                                 </DataTrigger>
@@ -286,6 +290,11 @@
                                         <Style TargetType="Button"
                                                BasedOn="{StaticResource DangerButton}">
                                             <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsFailSelected}"
+                                                             Value="True">
+                                                    <Setter Property="BorderBrush" Value="White"/>
+                                                    <Setter Property="BorderThickness" Value="2"/>
+                                                </DataTrigger>
                                                 <DataTrigger Binding="{Binding IsFailSelected}"
                                                              Value="False">
                                                     <Setter Property="Opacity" Value="0.45"/>
@@ -336,7 +345,6 @@
                                                  Converter={StaticResource NullToVisibility}}"/>
 
                         </StackPanel>
-                    </ScrollViewer>
                 </Grid>
             </Border>
         </DataTemplate>
