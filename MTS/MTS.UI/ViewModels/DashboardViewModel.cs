@@ -104,10 +104,14 @@ public partial class DashboardViewModel : ViewModelBase
                 _nav.NavigateTo<SupervisorTransferViewModel>(fullSession);
                 return;
             }
+
+            await _dialog.ShowAlertAsync(
+                "Session Not Found",
+                "Could not load the previous session. Starting with fresh pre-checks.");
         }
 
-        // Settings changed — go through Basics with candidate name pre-filled
-        _nav.NavigateTo<BasicsViewModel>(picked.CandidateName);
+        // Settings changed (or session not found) — re-run Basics in supervisor-only mode
+        _nav.NavigateTo<BasicsViewModel>((picked.CandidateName, true));
     }
 
     [RelayCommand]

@@ -149,19 +149,21 @@ public partial class MainWindowViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void OpenSheets()
-    {
-        const string url = "https://docs.google.com/spreadsheets";
-        try { Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }); }
-        catch { }
-    }
+    private async Task OpenSheets()
+        => await LaunchUrlAsync("https://docs.google.com/spreadsheets");
 
     [RelayCommand]
-    private void OpenCertSpreadsheet()
+    private async Task OpenCertSpreadsheet()
+        => await LaunchUrlAsync("https://docs.google.com/spreadsheets");
+
+    private async Task LaunchUrlAsync(string url)
     {
-        const string url = "https://docs.google.com/spreadsheets";
         try { Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }); }
-        catch { }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Failed to open URL '{url}': {ex}");
+            await _dialog.ShowAlertAsync("Could not open link", $"Unable to open: {url}");
+        }
     }
 
     [RelayCommand]

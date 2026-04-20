@@ -170,9 +170,10 @@ public partial class SettingsViewModel : ViewModelBase
         FormUrl      = settings.Urls.FormUrl;
         CertSheetUrl = settings.Urls.CertSheetUrl;
 
-        FormFillBrowser = string.IsNullOrWhiteSpace(settings.UiPreferences.FormFillBrowser)
-            ? "Default"
-            : settings.UiPreferences.FormFillBrowser;
+        var savedBrowser = settings.UiPreferences.FormFillBrowser?.Trim();
+        FormFillBrowser = FormFillBrowserOptions.Contains(savedBrowser ?? string.Empty)
+            ? savedBrowser!
+            : "Default";
 
         // Gemini AI
         GeminiEnabled        = settings.Gemini.Enabled;
@@ -257,7 +258,9 @@ public partial class SettingsViewModel : ViewModelBase
         settings.Urls.FormUrl              = FormUrl.Trim();
         settings.Urls.CertSheetUrl         = CertSheetUrl.Trim();
 
-        settings.UiPreferences.FormFillBrowser = FormFillBrowser;
+        settings.UiPreferences.FormFillBrowser = FormFillBrowserOptions.Contains(FormFillBrowser)
+            ? FormFillBrowser
+            : "Default";
 
         // Gemini AI
         settings.Gemini.Enabled        = GeminiEnabled;

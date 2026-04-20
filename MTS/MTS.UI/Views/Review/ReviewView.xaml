@@ -109,7 +109,7 @@
                             <TextBlock Margin="0,2">
                                 <Run Text="Call 3: " FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
                                 <Run Text="{Binding Call3Result}"
-                                     Foreground="{StaticResource TextMutedBrush}"/>
+                                     Foreground="{Binding Call3Passed, Converter={StaticResource BoolToPassFailBrush}}"/>
                             </TextBlock>
                         </StackPanel>
 
@@ -128,7 +128,7 @@
                             <TextBlock Margin="0,2">
                                 <Run Text="Transfer 2: " FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
                                 <Run Text="{Binding Transfer2Result}"
-                                     Foreground="{StaticResource TextMutedBrush}"/>
+                                     Foreground="{Binding Transfer2Passed, Converter={StaticResource BoolToPassFailBrush}}"/>
                             </TextBlock>
                         </StackPanel>
 
@@ -187,16 +187,11 @@
                                    Foreground="{StaticResource TextPrimaryBrush}"
                                    Margin="0,0,0,10"/>
 
-                        <TextBox AcceptsReturn="True" TextWrapping="Wrap"
+                        <TextBox Text="{Binding FailSummary, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                 AcceptsReturn="True" TextWrapping="Wrap"
                                  MinHeight="90" MaxHeight="200"
                                  VerticalScrollBarVisibility="Auto"
-                                 Margin="0,0,0,10">
-                            <TextBox.Style>
-                                <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
-                                    <Setter Property="Text" Value="{Binding FailSummary, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-                                </Style>
-                            </TextBox.Style>
-                        </TextBox>
+                                 Margin="0,0,0,10"/>
 
                         <StackPanel Orientation="Horizontal">
                             <Button Content="Copy"

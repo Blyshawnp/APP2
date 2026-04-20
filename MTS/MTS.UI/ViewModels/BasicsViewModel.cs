@@ -113,6 +113,11 @@ public partial class BasicsViewModel : ViewModelBase
             else if (!string.IsNullOrWhiteSpace(s))
                 CandidateName = s; // pre-fill candidate name from Smart Resume
         }
+        else if (parameter is ValueTuple<string, bool> t)
+        {
+            CandidateName       = t.Item1;
+            _supervisorOnlyMode = t.Item2;
+        }
         return Task.CompletedTask;
     }
 
