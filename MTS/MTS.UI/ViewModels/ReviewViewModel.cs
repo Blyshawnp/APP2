@@ -80,13 +80,11 @@ public partial class ReviewViewModel : ViewModelBase
     public string Call2Result      => GetCallResult(1);
     public bool   Call2Passed      => Session?.Calls.Count > 1 && Session.Calls[1].IsPassed;
     public string Call3Result      => GetCallResult(2);
-    public bool   Call3Passed      => Session?.Calls.Count > 2 && Session.Calls[2].IsPassed;
 
     // Per-transfer results
     public string Transfer1Result  => GetTransferResult(0);
     public bool   Transfer1Passed  => Session?.SupTransfers.Count > 0 && Session.SupTransfers[0].IsPassed;
     public string Transfer2Result  => GetTransferResult(1);
-    public bool   Transfer2Passed  => Session?.SupTransfers.Count > 1 && Session.SupTransfers[1].IsPassed;
 
     private string GetCallResult(int idx)
     {
@@ -347,18 +345,11 @@ public partial class ReviewViewModel : ViewModelBase
             return;
         }
 
-        if (!Uri.TryCreate(_formUrl, UriKind.Absolute, out var uri) ||
-            (uri.Scheme != Uri.UriSchemeHttp && uri.Scheme != Uri.UriSchemeHttps))
-        {
-            _notification.ShowError("Cert form URL must be a valid http/https URL.");
-            return;
-        }
-
         try
         {
             System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
             {
-                FileName        = uri.AbsoluteUri,
+                FileName        = _formUrl,
                 UseShellExecute = true
             });
         }

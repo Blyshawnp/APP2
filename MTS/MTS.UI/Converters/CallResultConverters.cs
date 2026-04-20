@@ -36,23 +36,6 @@ public class SessionStatusToBrushConverter : IValueConverter
         => null;
 }
 
-// Returns a darker pill-background for status badges (softer than the foreground colour)
-[ValueConversion(typeof(SessionStatus), typeof(Brush))]
-public class SessionStatusToPillBrushConverter : IValueConverter
-{
-    public object Convert(object? value, Type targetType, object parameter, CultureInfo culture)
-        => value switch
-        {
-            SessionStatus.Pass       => new SolidColorBrush(Color.FromRgb(22, 163, 74)),   // #16A34A
-            SessionStatus.Fail       => new SolidColorBrush(Color.FromRgb(220, 38, 38)),   // #DC2626
-            SessionStatus.Incomplete => new SolidColorBrush(Color.FromRgb(217, 119, 6)),   // #D97706
-            _                        => new SolidColorBrush(Color.FromRgb(42, 47, 69))     // #2A2F45
-        };
-
-    public object? ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        => null;
-}
-
 [ValueConversion(typeof(bool), typeof(Brush))]
 public class BoolToPassFailBrushConverter : IValueConverter
 {

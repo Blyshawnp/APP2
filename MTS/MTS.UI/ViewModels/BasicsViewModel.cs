@@ -1,6 +1,5 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using MTS.Core.Enums;
 using MTS.Core.Interfaces.Services;
 using MTS.Core.Models.Session;
 using MTS.UI.Services;
@@ -112,11 +111,6 @@ public partial class BasicsViewModel : ViewModelBase
                 _supervisorOnlyMode = true;
             else if (!string.IsNullOrWhiteSpace(s))
                 CandidateName = s; // pre-fill candidate name from Smart Resume
-        }
-        else if (parameter is ValueTuple<string, bool> t)
-        {
-            CandidateName       = t.Item1;
-            _supervisorOnlyMode = t.Item2;
         }
         return Task.CompletedTask;
     }

@@ -193,7 +193,7 @@
                             <TextBlock TextWrapping="Wrap" Margin="0,0,0,3" Text="6. Copy the generated API key"/>
                             <TextBlock TextWrapping="Wrap" Margin="0,0,0,3" Text="7. In this app: Go to Settings → Gemini AI"/>
                             <TextBlock TextWrapping="Wrap" Margin="0,0,0,3" Text='8. Check "Enable Gemini AI Summaries"'/>
-                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,3" Text="9. Place the API key in the gemini_config.json file in the app directory (no UI entry needed)"/>
+                            <TextBlock TextWrapping="Wrap" Margin="0,0,0,3" Text='9. Paste your API key in the "API Key" field'/>
                             <TextBlock TextWrapping="Wrap" Margin="0,0,0,22" Text='10. Click "Save Settings"'/>
 
                             <TextBlock Text="Google Sheets — Auto Backup" FontSize="14" FontWeight="SemiBold"
