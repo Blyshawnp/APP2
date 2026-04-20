@@ -9,6 +9,15 @@
     <RootNamespace>MTS.UI</RootNamespace>
     <AssemblyName>MTS.UI</AssemblyName>
     <ApplicationManifest>app.manifest</ApplicationManifest>
+
+    <!-- Product metadata — version flows to Assembly.GetName().Version in MainWindowViewModel -->
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <Product>Mock Testing Suite</Product>
+    <Company>ACD</Company>
+    <Description>Media Training Suite for ACD call center agent evaluation</Description>
+    <Copyright>Copyright © ACD 2025</Copyright>
   </PropertyGroup>
 
   <ItemGroup>
