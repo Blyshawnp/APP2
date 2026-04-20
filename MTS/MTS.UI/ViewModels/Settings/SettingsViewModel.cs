@@ -32,7 +32,6 @@ public partial class SettingsViewModel : ViewModelBase
     // Gemini AI
     // ================================================================
     [ObservableProperty] private bool   _geminiEnabled;
-    [ObservableProperty] private string _geminiApiKey = string.Empty;
     [ObservableProperty] private string _geminiCoachingPrompt = string.Empty;
     [ObservableProperty] private string _geminiFailPrompt = string.Empty;
 
@@ -163,7 +162,6 @@ public partial class SettingsViewModel : ViewModelBase
 
         // Gemini AI
         GeminiEnabled        = settings.Gemini.Enabled;
-        GeminiApiKey         = settings.Gemini.ApiKey;
         GeminiCoachingPrompt = settings.Gemini.CoachingPrompt;
         GeminiFailPrompt     = settings.Gemini.FailPrompt;
 
@@ -247,7 +245,6 @@ public partial class SettingsViewModel : ViewModelBase
 
         // Gemini AI
         settings.Gemini.Enabled        = GeminiEnabled;
-        settings.Gemini.ApiKey         = GeminiApiKey.Trim();
         settings.Gemini.CoachingPrompt = GeminiCoachingPrompt;
         settings.Gemini.FailPrompt     = GeminiFailPrompt;
 

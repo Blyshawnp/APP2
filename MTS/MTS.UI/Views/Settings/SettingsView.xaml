@@ -65,6 +65,18 @@
 
                         <Separator Margin="0,0,0,24"/>
 
+                        <!-- Form Fill -->
+                        <TextBlock Text="Form Fill" Style="{StaticResource H2}" Margin="0,0,0,16"/>
+
+                        <TextBlock Text="Form Fill Browser" Style="{StaticResource Label}" Margin="0,0,0,4"/>
+                        <TextBlock Text="Which browser to launch when opening the certification form. 'Default' uses the system default."
+                                   Style="{StaticResource Muted}" FontSize="11" TextWrapping="Wrap" Margin="0,0,0,6"/>
+                        <ComboBox ItemsSource="{Binding FormFillBrowserOptions}"
+                                  SelectedItem="{Binding FormFillBrowser}"
+                                  Margin="0,0,0,24"/>
+
+                        <Separator Margin="0,0,0,24"/>
+
                         <!-- Theme -->
                         <TextBlock Text="Theme" Style="{StaticResource H2}" Margin="0,0,0,16"/>
                         <TextBlock Text="Restart the application after changing the theme for full effect."
@@ -93,11 +105,7 @@
                         <CheckBox Content="Enable Gemini AI Summaries"
                                   IsChecked="{Binding GeminiEnabled}"
                                   FontWeight="SemiBold"
-                                  Margin="0,0,0,20"/>
-
-                        <TextBlock Text="API Key" Style="{StaticResource Label}" Margin="0,0,0,4"/>
-                        <TextBox Text="{Binding GeminiApiKey, UpdateSourceTrigger=PropertyChanged}"
-                                 Margin="0,0,0,20"/>
+                                  Margin="0,0,0,24"/>
 
                         <TextBlock Text="Coaching Summary Prompt" Style="{StaticResource Label}" Margin="0,0,0,4"/>
                         <TextBlock Text="Used to rewrite coaching notes into professional language."
