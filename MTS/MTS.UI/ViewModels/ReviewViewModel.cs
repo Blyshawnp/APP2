@@ -47,6 +47,18 @@ public partial class ReviewViewModel : ViewModelBase
     [NotifyPropertyChangedFor(nameof(SupsPassed))]
     [NotifyPropertyChangedFor(nameof(HasNewbieShift))]
     [NotifyPropertyChangedFor(nameof(HasAutoFail))]
+    [NotifyPropertyChangedFor(nameof(AutoFailReason))]
+    [NotifyPropertyChangedFor(nameof(SkillsLabel))]
+    [NotifyPropertyChangedFor(nameof(Call1Result))]
+    [NotifyPropertyChangedFor(nameof(Call1Passed))]
+    [NotifyPropertyChangedFor(nameof(Call2Result))]
+    [NotifyPropertyChangedFor(nameof(Call2Passed))]
+    [NotifyPropertyChangedFor(nameof(Call3Result))]
+    [NotifyPropertyChangedFor(nameof(Call3Passed))]
+    [NotifyPropertyChangedFor(nameof(Transfer1Result))]
+    [NotifyPropertyChangedFor(nameof(Transfer1Passed))]
+    [NotifyPropertyChangedFor(nameof(Transfer2Result))]
+    [NotifyPropertyChangedFor(nameof(Transfer2Passed))]
     private Session? _session;
 
     public string CandidateName   => Session?.Candidate.CandidateName ?? string.Empty;
