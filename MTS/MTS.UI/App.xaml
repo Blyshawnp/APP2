@@ -37,7 +37,8 @@
             <conv:EnumEqualityConverter             x:Key="EnumEquality"/>
             <conv:NavIconBrushConverter             x:Key="NavIconBrushConverter"/>
             <conv:NullableBoolConverter             x:Key="NullableBool"/>
-            <conv:BoolToPassFailBrushConverter      x:Key="BoolToPassFailBrush"/>
+            <conv:BoolToPassFailBrushConverter          x:Key="BoolToPassFailBrush"/>
+            <conv:SessionStatusToPillBrushConverter     x:Key="SessionStatusToPillBrush"/>
 
             <!-- ============================================================
                  ViewModel → View DataTemplates

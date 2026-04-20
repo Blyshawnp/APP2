@@ -2,7 +2,6 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:vm="clr-namespace:MTS.UI.ViewModels"
-             xmlns:enums="clr-namespace:MTS.Core.Enums;assembly=MTS.Core"
              d:DataContext="{d:DesignInstance Type=vm:HistoryViewModel}"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -192,23 +191,8 @@
                                                     CornerRadius="12"
                                                     Padding="12,4"
                                                     HorizontalAlignment="Left"
-                                                    VerticalAlignment="Center">
-                                                <Border.Style>
-                                                    <Style TargetType="Border">
-                                                        <Setter Property="Background" Value="#2A2F45"/>
-                                                        <Style.Triggers>
-                                                            <DataTrigger Binding="{Binding Status}" Value="{x:Static enums:SessionStatus.Pass}">
-                                                                <Setter Property="Background" Value="#16A34A"/>
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding Status}" Value="{x:Static enums:SessionStatus.Fail}">
-                                                                <Setter Property="Background" Value="#DC2626"/>
-                                                            </DataTrigger>
-                                                            <DataTrigger Binding="{Binding Status}" Value="{x:Static enums:SessionStatus.Incomplete}">
-                                                                <Setter Property="Background" Value="#D97706"/>
-                                                            </DataTrigger>
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </Border.Style>
+                                                    VerticalAlignment="Center"
+                                                    Background="{Binding Status, Converter={StaticResource SessionStatusToPillBrush}}">
                                                 <TextBlock Text="{Binding Status}"
                                                            Foreground="White"
                                                            FontWeight="Bold"
