@@ -29,6 +29,16 @@ public partial class SettingsViewModel : ViewModelBase
     [ObservableProperty] private string _certSheetUrl = string.Empty;
 
     // ================================================================
+    // General — Form Fill Browser
+    // ================================================================
+    [ObservableProperty] private string _formFillBrowser = "Default";
+
+    public IReadOnlyList<string> FormFillBrowserOptions { get; } = new[]
+    {
+        "Default", "Chrome", "Edge", "Firefox", "Brave",
+    };
+
+    // ================================================================
     // Gemini AI
     // ================================================================
     [ObservableProperty] private bool   _geminiEnabled;
@@ -160,6 +170,10 @@ public partial class SettingsViewModel : ViewModelBase
         FormUrl      = settings.Urls.FormUrl;
         CertSheetUrl = settings.Urls.CertSheetUrl;
 
+        FormFillBrowser = string.IsNullOrWhiteSpace(settings.UiPreferences.FormFillBrowser)
+            ? "Default"
+            : settings.UiPreferences.FormFillBrowser;
+
         // Gemini AI
         GeminiEnabled        = settings.Gemini.Enabled;
         GeminiCoachingPrompt = settings.Gemini.CoachingPrompt;
@@ -242,6 +256,8 @@ public partial class SettingsViewModel : ViewModelBase
         settings.TesterProfile.DisplayName = DisplayName.Trim();
         settings.Urls.FormUrl              = FormUrl.Trim();
         settings.Urls.CertSheetUrl         = CertSheetUrl.Trim();
+
+        settings.UiPreferences.FormFillBrowser = FormFillBrowser;
 
         // Gemini AI
         settings.Gemini.Enabled        = GeminiEnabled;
