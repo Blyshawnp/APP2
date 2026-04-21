@@ -14,6 +14,7 @@ namespace MTS.UI;
 public partial class App : Application
 {
     private IHost? _host;
+    private INotificationService? _notificationService;
 
     protected override async void OnStartup(StartupEventArgs e)
     {
@@ -30,43 +31,41 @@ public partial class App : Application
         AppDomain.CurrentDomain.UnhandledException += (_, args) =>
         {
             Debug.WriteLine($"[Domain] Unhandled: {args.ExceptionObject}");
-            if (args.ExceptionObject is Exception ex)
+
+            // Marshal UI interaction to the UI thread if available
+            if (Application.Current?.Dispatcher != null)
             {
-                // Marshal to UI thread if available to avoid cross-thread access
-                if (Application.Current?.Dispatcher != null)
+                Application.Current.Dispatcher.Invoke(() =>
                 {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
+                    if (args.ExceptionObject is Exception ex)
                         MessageBox.Show(ex.Message, "Fatal Error",
                             MessageBoxButton.OK, MessageBoxImage.Error);
-                    });
-                }
-                else
-                {
-                    // Fallback: just log if dispatcher not available
-                    Debug.WriteLine($"[Domain] Cannot show UI - dispatcher unavailable");
-                }
+                });
+            }
+            else
+            {
+                // Fallback if dispatcher is not available
+                if (args.ExceptionObject is Exception ex)
+                    MessageBox.Show(ex.Message, "Fatal Error",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
             }
         };
 
         TaskScheduler.UnobservedTaskException += (_, args) =>
         {
+            // Log the full exception for diagnostics
             Debug.WriteLine($"[Task] Unobserved: {args.Exception}");
 
-            // Surface error to user via notification service (when host is ready)
-            try
+            // Surface the error to the user via notification service if available
+            if (_notificationService != null && Application.Current?.Dispatcher != null)
             {
-                if (_host?.Services != null)
+                Application.Current.Dispatcher.BeginInvoke(() =>
                 {
-                    var notificationService = _host.Services.GetService<INotificationService>();
-                    notificationService?.ShowError("Background task failed. Check logs for details.");
-                }
-            }
-            catch
-            {
-                // Avoid throwing in exception handler
+                    _notificationService.ShowError("Background task failed. Please check application logs.", 5000);
+                });
             }
 
+            // Mark as observed to prevent app termination
             args.SetObserved();
         };
 
@@ -79,6 +78,9 @@ public partial class App : Application
                 .Build();
 
             await _host.StartAsync();
+
+            // Resolve notification service for use in exception handlers
+            _notificationService = _host.Services.GetRequiredService<INotificationService>();
 
             var mainWindow = _host.Services.GetRequiredService<MainWindow>();
             mainWindow.Show();
