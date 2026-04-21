@@ -29,14 +29,33 @@ public partial class TransferRecordViewModel : ObservableObject
     // -------------------------------------------------------------------------
     // Setup fields
     // -------------------------------------------------------------------------
-    [ObservableProperty] private Show? _selectedShow;
-    [ObservableProperty] private Donor? _selectedCaller;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ScenarioText))]
+    private Show? _selectedShow;
+
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ScenarioText))]
+    private Donor? _selectedCaller;
 
     [ObservableProperty]
     [NotifyPropertyChangedFor(nameof(AvailableCallers))]
     private CallType? _selectedCallType;
 
-    [ObservableProperty] private string _selectedReason = string.Empty;
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(ScenarioText))]
+    private string _selectedReason = string.Empty;
+
+    public string ScenarioText
+    {
+        get
+        {
+            string caller = SelectedCaller?.DisplayName ?? "[Caller]";
+            string fname  = caller.Split(' ')[0];
+            string reason = SelectedReason.Length > 0 ? SelectedReason.ToLowerInvariant() : "[reason]";
+            return $"For this call you will portray {caller}. {fname} would like to speak with a supervisor. " +
+                   $"The caller was {reason} during a previous call.";
+        }
+    }
 
     public ObservableCollection<Show> AvailableShows { get; } = new();
     public ObservableCollection<string> AvailableReasons { get; } = new();
