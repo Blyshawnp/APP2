@@ -11,6 +11,25 @@
              d:DataContext="{d:DesignInstance vm:SupervisorTransferViewModel}">
 
     <UserControl.Resources>
+        <!-- Reusable style for disabling completed transfers -->
+        <Style x:Key="CompletedGridStyle" TargetType="Grid">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsCompleted}" Value="True">
+                    <Setter Property="IsEnabled" Value="False"/>
+                    <Setter Property="Opacity"   Value="0.6"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="CompletedBorderStyle" TargetType="Border" BasedOn="{StaticResource Card}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding IsCompleted}" Value="True">
+                    <Setter Property="IsEnabled" Value="False"/>
+                    <Setter Property="Opacity"   Value="0.6"/>
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+
         <DataTemplate x:Key="TransferCardTemplate" DataType="{x:Type vm:TransferRecordViewModel}">
             <StackPanel>
 
@@ -47,17 +66,7 @@
                 <!-- ============================================================
                      ROW 1: Split — Call Setup (left) | Scenario (right)
                 ============================================================ -->
-                <Grid Margin="0,0,0,12">
-                    <Grid.Style>
-                        <Style TargetType="Grid">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsCompleted}" Value="True">
-                                    <Setter Property="IsEnabled" Value="False"/>
-                                    <Setter Property="Opacity"   Value="0.6"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Grid.Style>
+                <Grid Margin="0,0,0,12" Style="{StaticResource CompletedGridStyle}">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="12"/>
@@ -124,17 +133,8 @@
                 <!-- ============================================================
                      ROW 2: Caller Demographics
                 ============================================================ -->
-                <Border Padding="20,18" Margin="0,0,0,12">
-                    <Border.Style>
-                        <Style TargetType="Border" BasedOn="{StaticResource Card}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsCompleted}" Value="True">
-                                    <Setter Property="IsEnabled" Value="False"/>
-                                    <Setter Property="Opacity"   Value="0.6"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Border.Style>
+                <Border Padding="20,18" Margin="0,0,0,12"
+                        Style="{StaticResource CompletedBorderStyle}">
                     <StackPanel>
                         <TextBlock Text="CALLER INFO" Style="{StaticResource SectionHeader}"
                                    Margin="0,0,0,12"/>
@@ -168,17 +168,8 @@
                 <!-- ============================================================
                      ROW 3: Transfer Result
                 ============================================================ -->
-                <Border Padding="20,18" Margin="0,0,0,12">
-                    <Border.Style>
-                        <Style TargetType="Border" BasedOn="{StaticResource Card}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsCompleted}" Value="True">
-                                    <Setter Property="IsEnabled" Value="False"/>
-                                    <Setter Property="Opacity"   Value="0.6"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Border.Style>
+                <Border Padding="20,18" Margin="0,0,0,12"
+                        Style="{StaticResource CompletedBorderStyle}">
                     <StackPanel>
                         <TextBlock Text="TRANSFER RESULT" Style="{StaticResource SectionHeader}"
                                    Margin="0,0,0,12"/>
@@ -234,17 +225,8 @@
                      ROW 4: Coaching (shown after result selected)
                 ============================================================ -->
                 <Border Padding="20,18" Margin="0,0,0,12"
-                        Visibility="{Binding HasResult, Converter={StaticResource BoolToVisibility}}">
-                    <Border.Style>
-                        <Style TargetType="Border" BasedOn="{StaticResource Card}">
-                            <Style.Triggers>
-                                <DataTrigger Binding="{Binding IsCompleted}" Value="True">
-                                    <Setter Property="IsEnabled" Value="False"/>
-                                    <Setter Property="Opacity"   Value="0.6"/>
-                                </DataTrigger>
-                            </Style.Triggers>
-                        </Style>
-                    </Border.Style>
+                        Visibility="{Binding HasResult, Converter={StaticResource BoolToVisibility}}"
+                        Style="{StaticResource CompletedBorderStyle}">
                     <StackPanel>
                         <TextBlock Text="COACHING GIVEN" Style="{StaticResource SectionHeader}"
                                    Margin="0,0,0,4"/>

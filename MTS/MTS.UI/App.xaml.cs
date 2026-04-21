@@ -31,13 +31,42 @@ public partial class App : Application
         {
             Debug.WriteLine($"[Domain] Unhandled: {args.ExceptionObject}");
             if (args.ExceptionObject is Exception ex)
-                MessageBox.Show(ex.Message, "Fatal Error",
-                    MessageBoxButton.OK, MessageBoxImage.Error);
+            {
+                // Marshal to UI thread if available to avoid cross-thread access
+                if (Application.Current?.Dispatcher != null)
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        MessageBox.Show(ex.Message, "Fatal Error",
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+                    });
+                }
+                else
+                {
+                    // Fallback: just log if dispatcher not available
+                    Debug.WriteLine($"[Domain] Cannot show UI - dispatcher unavailable");
+                }
+            }
         };
 
         TaskScheduler.UnobservedTaskException += (_, args) =>
         {
             Debug.WriteLine($"[Task] Unobserved: {args.Exception}");
+
+            // Surface error to user via notification service (when host is ready)
+            try
+            {
+                if (_host?.Services != null)
+                {
+                    var notificationService = _host.Services.GetService<INotificationService>();
+                    notificationService?.ShowError("Background task failed. Check logs for details.");
+                }
+            }
+            catch
+            {
+                // Avoid throwing in exception handler
+            }
+
             args.SetObserved();
         };
 
