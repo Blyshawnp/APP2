@@ -33,7 +33,7 @@ public class DialogService : IDialogService
             Width                 = 480,
             Height                = 380,
             WindowStartupLocation = WindowStartupLocation.CenterOwner,
-            Owner                 = Application.Current.MainWindow,
+            Owner                 = Application.Current?.MainWindow,
             Background            = new SolidColorBrush(Color.FromRgb(18, 24, 38)),
             ResizeMode            = ResizeMode.NoResize
         };

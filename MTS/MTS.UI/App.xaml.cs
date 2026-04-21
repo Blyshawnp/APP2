@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -16,16 +17,50 @@ public partial class App : Application
 
     protected override async void OnStartup(StartupEventArgs e)
     {
+        // Catch unhandled exceptions from all sources so the app never
+        // silently vanishes — show a message then let the user decide.
+        DispatcherUnhandledException += (_, args) =>
+        {
+            Debug.WriteLine($"[UI] Unhandled: {args.Exception}");
+            MessageBox.Show(args.Exception.Message, "Unexpected Error",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+            args.Handled = true;
+        };
+
+        AppDomain.CurrentDomain.UnhandledException += (_, args) =>
+        {
+            Debug.WriteLine($"[Domain] Unhandled: {args.ExceptionObject}");
+            if (args.ExceptionObject is Exception ex)
+                MessageBox.Show(ex.Message, "Fatal Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+        };
+
+        TaskScheduler.UnobservedTaskException += (_, args) =>
+        {
+            Debug.WriteLine($"[Task] Unobserved: {args.Exception}");
+            args.SetObserved();
+        };
+
         base.OnStartup(e);
 
-        _host = Host.CreateDefaultBuilder()
-            .ConfigureServices(ConfigureServices)
-            .Build();
+        try
+        {
+            _host = Host.CreateDefaultBuilder()
+                .ConfigureServices(ConfigureServices)
+                .Build();
 
-        await _host.StartAsync();
+            await _host.StartAsync();
 
-        var mainWindow = _host.Services.GetRequiredService<MainWindow>();
-        mainWindow.Show();
+            var mainWindow = _host.Services.GetRequiredService<MainWindow>();
+            mainWindow.Show();
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[Startup] Fatal: {ex}");
+            MessageBox.Show($"Failed to start MTS:\n\n{ex.Message}", "Startup Error",
+                MessageBoxButton.OK, MessageBoxImage.Error);
+            Shutdown(1);
+        }
     }
 
     private static void ConfigureServices(IServiceCollection services)
@@ -59,11 +94,21 @@ public partial class App : Application
 
     protected override async void OnExit(ExitEventArgs e)
     {
-        if (_host != null)
+        try
         {
-            await _host.StopAsync();
-            _host.Dispose();
+            if (_host != null)
+            {
+                await _host.StopAsync();
+                _host.Dispose();
+            }
         }
-        base.OnExit(e);
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"[Shutdown] {ex}");
+        }
+        finally
+        {
+            base.OnExit(e);
+        }
     }
 }

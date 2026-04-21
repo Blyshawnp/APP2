@@ -1,5 +1,6 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MTS.Core.Enums;
 using MTS.Core.Interfaces.Services;
 using MTS.Core.Models.Session;
 using MTS.UI.Services;
@@ -32,7 +33,7 @@ public partial class BasicsViewModel : ViewModelBase
 
     public bool IsFinalAttemptNo
     {
-        get => !_isFinalAttempt;
+        get => !IsFinalAttempt;
         set { if (value) IsFinalAttempt = false; }
     }
 

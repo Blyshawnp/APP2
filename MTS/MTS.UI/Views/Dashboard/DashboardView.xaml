@@ -200,7 +200,7 @@
                                             CornerRadius="12" Padding="12,4"
                                             VerticalAlignment="Center"
                                             Background="{Binding Status,
-                                                         Converter={StaticResource SessionStatusToPillBrush}}">
+                                                         Converter={StaticResource SessionStatusToBrush}}">
                                         <TextBlock Text="{Binding Status}"
                                                    Foreground="White" FontWeight="Bold"
                                                    FontSize="11" HorizontalAlignment="Center"/>

@@ -159,6 +159,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [RelayCommand]
     private void OpenCertSpreadsheet()
     {
+        const string url = "https://docs.google.com/spreadsheets";
         try { Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }); }
         catch { }
     }
