@@ -91,8 +91,8 @@ public class DialogService : IDialogService
 
         btnOk.Click += (_, _) =>
         {
-            if (listBox.SelectedItem is ListBoxItem li)
-                selected = (T)li.Tag!;
+            if (listBox.SelectedItem is ListBoxItem { Tag: T item })
+                selected = item;
             win.DialogResult = selected != null;
         };
         btnCancel.Click += (_, _) => win.DialogResult = false;

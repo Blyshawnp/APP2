@@ -50,8 +50,8 @@ public partial class TransferRecordViewModel : ObservableObject
         get
         {
             string caller = SelectedCaller?.DisplayName ?? "[Caller]";
-            string fname  = caller.Split(' ')[0];
-            string reason = !string.IsNullOrEmpty(SelectedReason) ? SelectedReason.ToLowerInvariant() : "[reason]";
+            string fname  = caller.Split(' ', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? caller;
+            string reason = SelectedReason.Length > 0 ? SelectedReason.ToLowerInvariant() : "[reason]";
             return $"For this call you will portray {caller}. {fname} would like to speak with a supervisor. " +
                    $"The caller was {reason} during a previous call.";
         }
