@@ -12,24 +12,90 @@
 
     <UserControl.Resources>
         <DataTemplate x:Key="CallCardTemplate" DataType="{x:Type vm:CallRecordViewModel}">
-            <Border Style="{StaticResource Card}" Padding="0" Margin="0,0,0,4">
-                <Grid>
+            <StackPanel>
+
+                <!-- ============================================================
+                     ROW 1: Split — Call Setup (left) | Scenario (right)
+                ============================================================ -->
+                <Grid Margin="0,0,0,12">
                     <Grid.ColumnDefinitions>
-                        <!-- LEFT: Scenario panel -->
-                        <ColumnDefinition Width="280"/>
-                        <!-- RIGHT: Form + grading -->
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="12"/>
                         <ColumnDefinition Width="*"/>
                     </Grid.ColumnDefinitions>
 
-                    <!-- ====================================================
-                         LEFT: Scenario panel
-                    ==================================================== -->
-                    <Border Grid.Column="0"
+                    <!-- LEFT: Call Setup -->
+                    <Border Grid.Column="0" Style="{StaticResource Card}" Padding="20,18">
+                        <StackPanel>
+                            <TextBlock Text="CALL SETUP" Style="{StaticResource SectionHeader}"
+                                       Margin="0,0,0,14"/>
+
+                            <!-- Validation errors -->
+                            <wb:WarningBannerControl Warnings="{Binding ValidationErrors}"
+                                                     Margin="0,0,0,10"/>
+
+                            <!-- Card header: submitted badge -->
+                            <Border Background="{StaticResource PassSurfaceBrush}"
+                                    BorderBrush="{StaticResource PassBrush}"
+                                    BorderThickness="1" CornerRadius="12" Padding="10,3"
+                                    HorizontalAlignment="Right" Margin="0,0,0,10"
+                                    Visibility="{Binding IsCompleted,
+                                                 Converter={StaticResource BoolToVisibility}}">
+                                <TextBlock Text="Submitted" FontSize="11" FontWeight="SemiBold"
+                                           Foreground="{StaticResource PassBrush}"/>
+                            </Border>
+
+                            <!-- Call Type + Show -->
+                            <Grid Margin="0,0,0,10">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="12"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Text="Call Type" Style="{StaticResource Label}"
+                                               Margin="0,0,0,4"/>
+                                    <ComboBox ItemsSource="{Binding AvailableCallTypes}"
+                                              SelectedItem="{Binding SelectedCallType, Mode=TwoWay}"
+                                              DisplayMemberPath="Label"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Text="Show" Style="{StaticResource Label}"
+                                               Margin="0,0,0,4"/>
+                                    <ComboBox ItemsSource="{Binding AvailableShows}"
+                                              SelectedItem="{Binding SelectedShow, Mode=TwoWay}"
+                                              DisplayMemberPath="Name"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <!-- Caller -->
+                            <StackPanel Margin="0,0,0,10">
+                                <TextBlock Text="Caller" Style="{StaticResource Label}"
+                                           Margin="0,0,0,4"/>
+                                <ComboBox ItemsSource="{Binding AvailableCallers}"
+                                          SelectedItem="{Binding SelectedCaller, Mode=TwoWay}"
+                                          DisplayMemberPath="DisplayName"/>
+                            </StackPanel>
+
+                            <!-- Donation -->
+                            <StackPanel>
+                                <TextBlock Text="Donation Amount ($)" Style="{StaticResource Label}"
+                                           Margin="0,0,0,4"/>
+                                <TextBox Text="{Binding DonationAmount, Mode=TwoWay,
+                                                StringFormat='{}{0:F2}',
+                                                UpdateSourceTrigger=LostFocus}"
+                                         MaxWidth="140" HorizontalAlignment="Left"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- RIGHT: Scenario -->
+                    <Border Grid.Column="2"
                             Background="{StaticResource ScenarioBrush}"
                             BorderBrush="{StaticResource ScenarioBorderBrush}"
-                            BorderThickness="0,0,1,0"
-                            CornerRadius="8,0,0,8"
-                            Padding="18,20">
+                            BorderThickness="2"
+                            CornerRadius="8"
+                            Padding="20,18">
                         <StackPanel>
                             <TextBlock Text="SCENARIO"
                                        Style="{StaticResource SectionHeader}"
@@ -85,268 +151,228 @@
                                     Margin="0,14,0,0"/>
                         </StackPanel>
                     </Border>
+                </Grid>
 
-                    <!-- ====================================================
-                         RIGHT: Form + grading
-                    ==================================================== -->
-                    <StackPanel Grid.Column="1" Margin="20,20">
+                <!-- ============================================================
+                     ROW 2: Payment Simulation
+                ============================================================ -->
+                <Border Style="{StaticResource Card}" Padding="20,18" Margin="0,0,0,12">
+                    <StackPanel>
+                        <TextBlock Text="PAYMENT SIMULATION" Style="{StaticResource SectionHeader}"
+                                   Margin="0,0,0,12"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
 
-                            <!-- Card header: call number + submitted badge -->
-                            <Grid Margin="0,0,0,16">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto"/>
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Grid.Column="0" Orientation="Horizontal">
-                                    <Border Width="30" Height="30" CornerRadius="15"
-                                            Background="{StaticResource AccentBrush}"
-                                            Margin="0,0,10,0">
-                                        <TextBlock Text="{Binding CallNumber}"
-                                                   FontWeight="Bold" FontSize="14"
-                                                   Foreground="White"
-                                                   HorizontalAlignment="Center"
-                                                   VerticalAlignment="Center"/>
-                                    </Border>
-                                    <TextBlock Text="{Binding CallNumber, StringFormat='Call {0}'}"
-                                               Style="{StaticResource H2}" VerticalAlignment="Center"/>
-                                </StackPanel>
-                                <Border Grid.Column="1"
-                                        Background="{StaticResource PassSurfaceBrush}"
-                                        BorderBrush="{StaticResource PassBrush}"
-                                        BorderThickness="1" CornerRadius="12" Padding="10,3"
-                                        Visibility="{Binding IsCompleted,
-                                                     Converter={StaticResource BoolToVisibility}}">
-                                    <TextBlock Text="Submitted" FontSize="11" FontWeight="SemiBold"
-                                               Foreground="{StaticResource PassBrush}"/>
-                                </Border>
-                            </Grid>
-
-                            <!-- Validation errors -->
-                            <wb:WarningBannerControl Warnings="{Binding ValidationErrors}"
-                                                     Margin="0,0,0,12"/>
-
-                            <!-- Call setup row -->
-                            <Grid Margin="0,0,0,12">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="12"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="12"/>
-                                    <ColumnDefinition Width="100"/>
-                                </Grid.ColumnDefinitions>
-                                <StackPanel Grid.Column="0">
-                                    <TextBlock Text="Call Type" Style="{StaticResource Label}"
-                                               Margin="0,0,0,4"/>
-                                    <ComboBox ItemsSource="{Binding AvailableCallTypes}"
-                                              SelectedItem="{Binding SelectedCallType, Mode=TwoWay}"
-                                              DisplayMemberPath="Label"/>
-                                </StackPanel>
-                                <StackPanel Grid.Column="2">
-                                    <TextBlock Text="Show" Style="{StaticResource Label}"
-                                               Margin="0,0,0,4"/>
-                                    <ComboBox ItemsSource="{Binding AvailableShows}"
-                                              SelectedItem="{Binding SelectedShow, Mode=TwoWay}"
-                                              DisplayMemberPath="Name"/>
-                                </StackPanel>
-                                <StackPanel Grid.Column="4">
-                                    <TextBlock Text="Amount ($)" Style="{StaticResource Label}"
-                                               Margin="0,0,0,4"/>
-                                    <TextBox Text="{Binding DonationAmount, Mode=TwoWay,
-                                                    StringFormat='{}{0:F2}',
-                                                    UpdateSourceTrigger=LostFocus}"/>
-                                </StackPanel>
-                            </Grid>
-
-                            <!-- Caller -->
-                            <StackPanel Margin="0,0,0,12">
-                                <TextBlock Text="Caller" Style="{StaticResource Label}"
-                                           Margin="0,0,0,4"/>
-                                <ComboBox ItemsSource="{Binding AvailableCallers}"
-                                          SelectedItem="{Binding SelectedCaller, Mode=TwoWay}"
-                                          DisplayMemberPath="DisplayName"/>
-                            </StackPanel>
-
-                            <!-- Caller demographics -->
-                            <Border Background="{StaticResource SurfaceElevatedBrush}"
-                                    CornerRadius="6" Padding="12,10" Margin="0,0,0,12">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="16"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0">
-                                        <TextBlock Text="Address" Style="{StaticResource Label}"
-                                                   Margin="0,0,0,2"/>
-                                        <TextBlock Text="{Binding SelectedCaller.FullAddress}"
-                                                   Style="{StaticResource Muted}" FontSize="12"
-                                                   TextWrapping="Wrap"/>
-                                    </StackPanel>
-                                    <StackPanel Grid.Column="2">
-                                        <TextBlock Text="Phone" Style="{StaticResource Label}"
-                                                   Margin="0,0,0,2"/>
-                                        <TextBlock Text="{Binding SelectedCaller.Phone}"
-                                                   Style="{StaticResource Muted}" FontSize="12"/>
-                                        <TextBlock Text="Email" Style="{StaticResource Label}"
-                                                   Margin="0,6,0,2"/>
-                                        <TextBlock Text="{Binding SelectedCaller.Email}"
-                                                   Style="{StaticResource Muted}" FontSize="12"/>
-                                    </StackPanel>
-                                </Grid>
-                            </Border>
-
-                            <!-- Payment Simulation -->
-                            <Border Background="{StaticResource SurfaceElevatedBrush}"
-                                    CornerRadius="6" Padding="12,10" Margin="0,0,0,20">
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="*"/>
-                                        <ColumnDefinition Width="16"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <StackPanel Grid.Column="0">
-                                        <TextBlock Text="PAYMENT SIMULATION"
-                                                   Style="{StaticResource SectionHeader}"
-                                                   Margin="0,0,0,8"/>
-                                        <TextBlock Text="AmEx Card" Style="{StaticResource Label}"
-                                                   Margin="0,0,0,3"/>
-                                        <TextBlock Text="{Binding PaymentSim.CardNumber}"
-                                                   FontFamily="Consolas" FontSize="13"
-                                                   Foreground="{StaticResource TextPrimaryBrush}"/>
-                                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
-                                            <StackPanel Margin="0,0,16,0">
-                                                <TextBlock Text="Expiry" Style="{StaticResource Label}"
-                                                           Margin="0,0,0,2"/>
-                                                <TextBlock Text="{Binding PaymentSim.CardExpiry}"
-                                                           FontFamily="Consolas" FontSize="12"
-                                                           Foreground="{StaticResource TextPrimaryBrush}"/>
-                                            </StackPanel>
-                                            <StackPanel>
-                                                <TextBlock Text="CID" Style="{StaticResource Label}"
-                                                           Margin="0,0,0,2"/>
-                                                <TextBlock Text="{Binding PaymentSim.CardCvv}"
-                                                           FontFamily="Consolas" FontSize="12"
-                                                           Foreground="{StaticResource TextPrimaryBrush}"/>
-                                            </StackPanel>
+                            <!-- CC card -->
+                            <Border Grid.Column="0"
+                                    Background="{StaticResource SurfaceElevatedBrush}"
+                                    CornerRadius="6" Padding="16,14">
+                                <StackPanel>
+                                    <TextBlock Text="&#x1F4B3;  AMERICAN EXPRESS"
+                                               FontWeight="Bold" FontSize="11"
+                                               Foreground="{StaticResource TextSecondaryBrush}"
+                                               Margin="0,0,0,8"/>
+                                    <TextBlock Text="{Binding PaymentSim.CardNumber}"
+                                               FontFamily="Consolas" FontSize="18" FontWeight="Bold"
+                                               Foreground="{StaticResource TextPrimaryBrush}"
+                                               Margin="0,0,0,6"/>
+                                    <StackPanel Orientation="Horizontal">
+                                        <StackPanel Margin="0,0,20,0">
+                                            <TextBlock Text="EXP" Style="{StaticResource Muted}"
+                                                       FontSize="10" Margin="0,0,0,2"/>
+                                            <TextBlock Text="{Binding PaymentSim.CardExpiry}"
+                                                       FontFamily="Consolas" FontSize="13"
+                                                       Foreground="{StaticResource TextPrimaryBrush}"/>
+                                        </StackPanel>
+                                        <StackPanel>
+                                            <TextBlock Text="CID" Style="{StaticResource Muted}"
+                                                       FontSize="10" Margin="0,0,0,2"/>
+                                            <TextBlock Text="{Binding PaymentSim.CardCvv}"
+                                                       FontFamily="Consolas" FontSize="13"
+                                                       Foreground="{StaticResource TextPrimaryBrush}"/>
                                         </StackPanel>
                                     </StackPanel>
-                                    <StackPanel Grid.Column="2">
-                                        <TextBlock Text="EFT / Bank Draft"
-                                                   Style="{StaticResource Label}"
-                                                   Margin="0,0,0,3"/>
-                                        <TextBlock Text="Routing" Style="{StaticResource Muted}"
-                                                   FontSize="11"/>
-                                        <TextBlock Text="{Binding PaymentSim.BankRouting}"
-                                                   FontFamily="Consolas" FontSize="13"
-                                                   Foreground="{StaticResource TextPrimaryBrush}"/>
-                                        <TextBlock Text="Account" Style="{StaticResource Muted}"
-                                                   FontSize="11" Margin="0,4,0,0"/>
-                                        <TextBlock Text="{Binding PaymentSim.BankAccount}"
-                                                   FontFamily="Consolas" FontSize="13"
-                                                   Foreground="{StaticResource TextPrimaryBrush}"/>
-                                    </StackPanel>
-                                </Grid>
-                            </Border>
-
-                            <Separator Margin="0,0,0,16"/>
-
-                            <!-- PASS / FAIL -->
-                            <TextBlock Text="Result" Style="{StaticResource Label}"
-                                       Margin="0,0,0,8"/>
-                            <Grid Margin="0,0,0,16">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="12"/>
-                                    <ColumnDefinition Width="*"/>
-                                </Grid.ColumnDefinitions>
-                                <Button Grid.Column="0"
-                                        Content="&#x2713;  PASS"
-                                        Command="{Binding SelectPassCommand}"
-                                        Padding="0,12" FontSize="15" FontWeight="Bold"
-                                        HorizontalAlignment="Stretch">
-                                    <Button.Style>
-                                        <Style TargetType="Button"
-                                               BasedOn="{StaticResource SuccessButton}">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsPassSelected}"
-                                                             Value="True">
-                                                    <Setter Property="BorderBrush" Value="White"/>
-                                                    <Setter Property="BorderThickness" Value="2"/>
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsPassSelected}"
-                                                             Value="False">
-                                                    <Setter Property="Opacity" Value="0.45"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Button.Style>
-                                </Button>
-                                <Button Grid.Column="2"
-                                        Content="&#x2717;  FAIL"
-                                        Command="{Binding SelectFailCommand}"
-                                        Padding="0,12" FontSize="15" FontWeight="Bold"
-                                        HorizontalAlignment="Stretch">
-                                    <Button.Style>
-                                        <Style TargetType="Button"
-                                               BasedOn="{StaticResource DangerButton}">
-                                            <Style.Triggers>
-                                                <DataTrigger Binding="{Binding IsFailSelected}"
-                                                             Value="True">
-                                                    <Setter Property="BorderBrush" Value="White"/>
-                                                    <Setter Property="BorderThickness" Value="2"/>
-                                                </DataTrigger>
-                                                <DataTrigger Binding="{Binding IsFailSelected}"
-                                                             Value="False">
-                                                    <Setter Property="Opacity" Value="0.45"/>
-                                                </DataTrigger>
-                                            </Style.Triggers>
-                                        </Style>
-                                    </Button.Style>
-                                </Button>
-                            </Grid>
-
-                            <!-- Coaching -->
-                            <Grid Visibility="{Binding Result, Converter={StaticResource NullToVisibility}}"
-                                  Margin="0,0,0,12">
-                                <StackPanel>
-                                    <TextBlock Text="COACHING" Style="{StaticResource SectionHeader}"
-                                               Margin="0,0,0,8"/>
-                                    <cg:CoachingGrid Items="{Binding CoachingItems}"
-                                                     ShowCoachingWarning="{Binding HasCoachingSkippedWarning}"/>
-                                </StackPanel>
-                            </Grid>
-
-                            <!-- Fail reasons -->
-                            <Border Visibility="{Binding ShowFailSection,
-                                                 Converter={StaticResource BoolToVisibility}}"
-                                    Background="{StaticResource FailSurfaceBrush}"
-                                    BorderBrush="{StaticResource FailBrush}"
-                                    BorderThickness="1" CornerRadius="6" Padding="12"
-                                    Margin="0,0,0,12">
-                                <StackPanel>
-                                    <TextBlock Text="FAIL REASONS"
-                                               Style="{StaticResource SectionHeader}"
-                                               Foreground="{StaticResource FailBrush}"
-                                               Margin="0,0,0,8"/>
-                                    <fg:FailReasonsGrid Items="{Binding FailItems}"
-                                                        ShowRequiredError="{Binding HasOtherFail}"/>
                                 </StackPanel>
                             </Border>
 
-                            <!-- Submit -->
-                            <Button Style="{StaticResource PrimaryButton}"
-                                    Command="{Binding DataContext.SubmitCallCommand,
-                                             RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                    CommandParameter="{Binding}"
-                                    Content="Submit Call"
-                                    HorizontalAlignment="Left"
-                                    Padding="24,10"
-                                    Visibility="{Binding Result,
-                                                 Converter={StaticResource NullToVisibility}}"/>
+                            <!-- EFT card -->
+                            <Border Grid.Column="2"
+                                    Background="{StaticResource SurfaceElevatedBrush}"
+                                    CornerRadius="6" Padding="16,14">
+                                <StackPanel>
+                                    <TextBlock Text="&#x1F3E6;  EFT / BANK DRAFT"
+                                               FontWeight="Bold" FontSize="11"
+                                               Foreground="{StaticResource TextSecondaryBrush}"
+                                               Margin="0,0,0,8"/>
+                                    <TextBlock Text="Routing" Style="{StaticResource Muted}"
+                                               FontSize="10" Margin="0,0,0,2"/>
+                                    <TextBlock Text="{Binding PaymentSim.BankRouting}"
+                                               FontFamily="Consolas" FontSize="15" FontWeight="Bold"
+                                               Foreground="{StaticResource TextPrimaryBrush}"
+                                               Margin="0,0,0,6"/>
+                                    <TextBlock Text="Account" Style="{StaticResource Muted}"
+                                               FontSize="10" Margin="0,0,0,2"/>
+                                    <TextBlock Text="{Binding PaymentSim.BankAccount}"
+                                               FontFamily="Consolas" FontSize="15" FontWeight="Bold"
+                                               Foreground="{StaticResource TextPrimaryBrush}"/>
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </StackPanel>
+                </Border>
 
-                        </StackPanel>
-                </Grid>
-            </Border>
+                <!-- ============================================================
+                     ROW 3: Caller Demographics
+                ============================================================ -->
+                <Border Style="{StaticResource Card}" Padding="20,18" Margin="0,0,0,12">
+                    <StackPanel>
+                        <TextBlock Text="CALLER DEMOGRAPHICS" Style="{StaticResource SectionHeader}"
+                                   Margin="0,0,0,12"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0">
+                                <TextBlock Text="Address" Style="{StaticResource Label}"
+                                           Margin="0,0,0,2"/>
+                                <TextBlock Text="{Binding SelectedCaller.FullAddress}"
+                                           Style="{StaticResource Muted}" FontSize="12"
+                                           TextWrapping="Wrap"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2">
+                                <TextBlock Text="Phone" Style="{StaticResource Label}"
+                                           Margin="0,0,0,2"/>
+                                <TextBlock Text="{Binding SelectedCaller.Phone}"
+                                           Style="{StaticResource Muted}" FontSize="12"/>
+                                <TextBlock Text="Email" Style="{StaticResource Label}"
+                                           Margin="0,8,0,2"/>
+                                <TextBlock Text="{Binding SelectedCaller.Email}"
+                                           Style="{StaticResource Muted}" FontSize="12"/>
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- ============================================================
+                     ROW 4: Call Result
+                ============================================================ -->
+                <Border Style="{StaticResource Card}" Padding="20,18" Margin="0,0,0,12">
+                    <StackPanel>
+                        <TextBlock Text="CALL RESULT" Style="{StaticResource SectionHeader}"
+                                   Margin="0,0,0,12"/>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Button Grid.Column="0"
+                                    Content="&#x2713;  PASS"
+                                    Command="{Binding SelectPassCommand}"
+                                    Padding="0,14" FontSize="16" FontWeight="Bold"
+                                    HorizontalAlignment="Stretch">
+                                <Button.Style>
+                                    <Style TargetType="Button"
+                                           BasedOn="{StaticResource SuccessButton}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsPassSelected}"
+                                                         Value="True">
+                                                <Setter Property="BorderBrush" Value="White"/>
+                                                <Setter Property="BorderThickness" Value="2"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsPassSelected}"
+                                                         Value="False">
+                                                <Setter Property="Opacity" Value="0.45"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                            <Button Grid.Column="2"
+                                    Content="&#x2717;  FAIL"
+                                    Command="{Binding SelectFailCommand}"
+                                    Padding="0,14" FontSize="16" FontWeight="Bold"
+                                    HorizontalAlignment="Stretch">
+                                <Button.Style>
+                                    <Style TargetType="Button"
+                                           BasedOn="{StaticResource DangerButton}">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsFailSelected}"
+                                                         Value="True">
+                                                <Setter Property="BorderBrush" Value="White"/>
+                                                <Setter Property="BorderThickness" Value="2"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding IsFailSelected}"
+                                                         Value="False">
+                                                <Setter Property="Opacity" Value="0.45"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- ============================================================
+                     ROW 5: Coaching (shown after result selected)
+                ============================================================ -->
+                <Border Style="{StaticResource Card}" Padding="20,18" Margin="0,0,0,12"
+                        Visibility="{Binding Result, Converter={StaticResource NullToVisibility}}">
+                    <StackPanel>
+                        <TextBlock Text="COACHING GIVEN" Style="{StaticResource SectionHeader}"
+                                   Margin="0,0,0,4"/>
+                        <TextBlock Text="One or more may be selected"
+                                   Style="{StaticResource Muted}" FontSize="12"
+                                   Margin="0,0,0,12"/>
+                        <cg:CoachingGrid Items="{Binding CoachingItems}"
+                                         ShowCoachingWarning="{Binding HasCoachingSkippedWarning}"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- ============================================================
+                     ROW 6: Fail Reasons (Fail only)
+                ============================================================ -->
+                <Border Visibility="{Binding ShowFailSection,
+                                     Converter={StaticResource BoolToVisibility}}"
+                        Background="{StaticResource FailSurfaceBrush}"
+                        BorderBrush="{StaticResource FailBrush}"
+                        BorderThickness="1" CornerRadius="8" Padding="20,18"
+                        Margin="0,0,0,12">
+                    <StackPanel>
+                        <TextBlock Text="&#x26A0; FAIL REASONS"
+                                   Style="{StaticResource SectionHeader}"
+                                   Foreground="{StaticResource FailBrush}"
+                                   Margin="0,0,0,4"/>
+                        <TextBlock Text="One or more may be selected"
+                                   Style="{StaticResource Muted}" FontSize="12"
+                                   Margin="0,0,0,12"/>
+                        <fg:FailReasonsGrid Items="{Binding FailItems}"
+                                            ShowRequiredError="{Binding HasOtherFail}"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- ============================================================
+                     ROW 7: Submit
+                ============================================================ -->
+                <Button Style="{StaticResource PrimaryButton}"
+                        Command="{Binding DataContext.SubmitCallCommand,
+                                 RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        CommandParameter="{Binding}"
+                        Content="Submit Call"
+                        HorizontalAlignment="Left"
+                        Padding="28,11"
+                        Margin="0,0,0,8"
+                        Visibility="{Binding Result,
+                                     Converter={StaticResource NullToVisibility}}"/>
+
+            </StackPanel>
         </DataTemplate>
     </UserControl.Resources>
 
@@ -360,7 +386,7 @@
              SCROLLABLE CONTENT
         ================================================================ -->
         <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
-            <StackPanel Margin="32,24" MaxWidth="1020">
+            <StackPanel Margin="32,24" MaxWidth="1060">
 
                 <!-- Header -->
                 <Grid Margin="0,0,0,4">
@@ -521,8 +547,7 @@
 
                 <!-- Active call card -->
                 <ContentPresenter Content="{Binding ActiveCall}"
-                                  ContentTemplate="{StaticResource CallCardTemplate}"
-                                  Margin="0,0,0,16"/>
+                                  ContentTemplate="{StaticResource CallCardTemplate}"/>
 
             </StackPanel>
         </ScrollViewer>
