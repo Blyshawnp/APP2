@@ -33,7 +33,7 @@ public partial class BasicsViewModel : ViewModelBase
 
     public bool IsFinalAttemptNo
     {
-        get => !_isFinalAttempt;
+        get => !IsFinalAttempt;
         set { if (value) IsFinalAttempt = false; }
     }
 
