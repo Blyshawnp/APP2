@@ -49,23 +49,14 @@ public partial class App : Application
                     MessageBox.Show(ex.Message, "Fatal Error",
                         MessageBoxButton.OK, MessageBoxImage.Error);
             }
+            if (args.ExceptionObject is Exception ex)
+                MessageBox.Show(ex.Message, "Fatal Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
         };
 
         TaskScheduler.UnobservedTaskException += (_, args) =>
         {
-            // Log the full exception for diagnostics
             Debug.WriteLine($"[Task] Unobserved: {args.Exception}");
-
-            // Surface the error to the user via notification service if available
-            if (_notificationService != null && Application.Current?.Dispatcher != null)
-            {
-                Application.Current.Dispatcher.BeginInvoke(() =>
-                {
-                    _notificationService.ShowError("Background task failed. Please check application logs.", 5000);
-                });
-            }
-
-            // Mark as observed to prevent app termination
             args.SetObserved();
         };
 
@@ -78,9 +69,6 @@ public partial class App : Application
                 .Build();
 
             await _host.StartAsync();
-
-            // Resolve notification service for use in exception handlers
-            _notificationService = _host.Services.GetRequiredService<INotificationService>();
 
             var mainWindow = _host.Services.GetRequiredService<MainWindow>();
             mainWindow.Show();
@@ -138,6 +126,8 @@ public partial class App : Application
                     _host.Dispose();
                     _host = null;
                 }
+                await _host.StopAsync();
+                _host.Dispose();
             }
         }
         catch (Exception ex)

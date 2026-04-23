@@ -174,6 +174,7 @@ public partial class MainWindowViewModel : ViewModelBase
             return;
         }
 
+        const string url = "https://docs.google.com/spreadsheets";
         try { Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }); }
         catch { }
     }
