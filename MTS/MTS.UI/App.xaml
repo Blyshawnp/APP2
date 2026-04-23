@@ -39,6 +39,7 @@
             <conv:NavIconBrushConverter             x:Key="NavIconBrushConverter"/>
             <conv:NullableBoolConverter             x:Key="NullableBool"/>
             <conv:BoolToPassFailBrushConverter      x:Key="BoolToPassFailBrush"/>
+            <conv:ResultStringToBrushConverter      x:Key="ResultStringToBrush"/>
 
             <!-- ============================================================
                  ViewModel → View DataTemplates
