@@ -14,6 +14,7 @@ namespace MTS.UI;
 public partial class App : Application
 {
     private IHost? _host;
+    private INotificationService? _notificationService;
 
     protected override async void OnStartup(StartupEventArgs e)
     {
@@ -30,6 +31,24 @@ public partial class App : Application
         AppDomain.CurrentDomain.UnhandledException += (_, args) =>
         {
             Debug.WriteLine($"[Domain] Unhandled: {args.ExceptionObject}");
+
+            // Marshal UI interaction to the UI thread if available
+            if (Application.Current?.Dispatcher != null)
+            {
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    if (args.ExceptionObject is Exception ex)
+                        MessageBox.Show(ex.Message, "Fatal Error",
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+                });
+            }
+            else
+            {
+                // Fallback if dispatcher is not available
+                if (args.ExceptionObject is Exception ex)
+                    MessageBox.Show(ex.Message, "Fatal Error",
+                        MessageBoxButton.OK, MessageBoxImage.Error);
+            }
             if (args.ExceptionObject is Exception ex)
                 MessageBox.Show(ex.Message, "Fatal Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
@@ -98,6 +117,15 @@ public partial class App : Application
         {
             if (_host != null)
             {
+                try
+                {
+                    await _host.StopAsync();
+                }
+                finally
+                {
+                    _host.Dispose();
+                    _host = null;
+                }
                 await _host.StopAsync();
                 _host.Dispose();
             }

@@ -30,6 +30,7 @@
             ============================================================ -->
             <conv:BoolToVisibilityConverter         x:Key="BoolToVisibility"/>
             <conv:InverseBoolToVisibilityConverter  x:Key="InverseBoolToVisibility"/>
+            <conv:InverseBooleanConverter           x:Key="InverseBoolean"/>
             <conv:NullToVisibilityConverter         x:Key="NullToVisibility"/>
             <conv:EmptyStringToVisibilityConverter  x:Key="EmptyStringToVisibility"/>
             <conv:CallResultToBrushConverter        x:Key="CallResultToBrush"/>
@@ -38,6 +39,7 @@
             <conv:NavIconBrushConverter             x:Key="NavIconBrushConverter"/>
             <conv:NullableBoolConverter             x:Key="NullableBool"/>
             <conv:BoolToPassFailBrushConverter      x:Key="BoolToPassFailBrush"/>
+            <conv:ResultStringToBrushConverter      x:Key="ResultStringToBrush"/>
 
             <!-- ============================================================
                  ViewModel → View DataTemplates
