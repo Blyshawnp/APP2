@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using System.Reflection;
+using System.Windows;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using MTS.Core.Interfaces.Services;
@@ -16,6 +17,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly INavigationService _nav;
     private readonly ISessionStateService _sessionState;
     private readonly IDialogService _dialog;
+    private readonly ISettingsService _settings;
 
     // -------------------------------------------------------------------------
     // Current displayed view
@@ -79,11 +81,13 @@ public partial class MainWindowViewModel : ViewModelBase
     public MainWindowViewModel(
         INavigationService nav,
         ISessionStateService sessionState,
-        IDialogService dialog)
+        IDialogService dialog,
+        ISettingsService settings)
     {
         _nav          = nav;
         _sessionState = sessionState;
         _dialog       = dialog;
+        _settings     = settings;
 
         _nav.Navigated               += OnNavigated;
         _sessionState.SessionChanged += OnSessionChanged;
@@ -157,9 +161,19 @@ public partial class MainWindowViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private void OpenCertSpreadsheet()
+    private async Task OpenCertSpreadsheet()
     {
-        const string url = "https://docs.google.com/spreadsheets";
+        var appSettings = await _settings.LoadAsync();
+        var url = appSettings.Urls.CertSheetUrl;
+
+        if (string.IsNullOrWhiteSpace(url))
+        {
+            MessageBox.Show(
+                "No cert sheet URL configured. Add it in Settings → General.",
+                "Not Configured", MessageBoxButton.OK, MessageBoxImage.Information);
+            return;
+        }
+
         try { Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }); }
         catch { }
     }

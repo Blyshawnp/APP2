@@ -129,8 +129,15 @@ public partial class App : Application
         {
             if (_host != null)
             {
-                await _host.StopAsync();
-                _host.Dispose();
+                try
+                {
+                    await _host.StopAsync();
+                }
+                finally
+                {
+                    _host.Dispose();
+                    _host = null;
+                }
             }
         }
         catch (Exception ex)

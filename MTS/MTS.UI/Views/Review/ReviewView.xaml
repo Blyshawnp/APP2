@@ -109,7 +109,7 @@
                             <TextBlock Margin="0,2">
                                 <Run Text="Call 3: " FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
                                 <Run Text="{Binding Call3Result, Mode=OneWay}"
-                                     Foreground="{StaticResource TextMutedBrush}"/>
+                                     Foreground="{Binding Call3Passed, Converter={StaticResource BoolToPassFailBrush}}"/>
                             </TextBlock>
                         </StackPanel>
 
@@ -128,7 +128,7 @@
                             <TextBlock Margin="0,2">
                                 <Run Text="Transfer 2: " FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
                                 <Run Text="{Binding Transfer2Result, Mode=OneWay}"
-                                     Foreground="{StaticResource TextMutedBrush}"/>
+                                     Foreground="{Binding Transfer2Passed, Converter={StaticResource BoolToPassFailBrush}}"/>
                             </TextBlock>
                         </StackPanel>
 
