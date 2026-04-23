@@ -69,12 +69,12 @@
                                    Foreground="{StaticResource AccentBrush}"
                                    Margin="0,0,0,10">
                             <Run Text="Candidate: "/>
-                            <Run Text="{Binding CandidateName}"/>
+                            <Run Text="{Binding CandidateName, Mode=OneWay}"/>
                         </TextBlock>
 
                         <TextBlock Margin="0,0,0,14">
                             <Run Text="Skills: " FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
-                            <Run Text="{Binding SkillsLabel}" Foreground="{StaticResource TextSecondaryBrush}"/>
+                            <Run Text="{Binding SkillsLabel, Mode=OneWay}" Foreground="{StaticResource TextSecondaryBrush}"/>
                         </TextBlock>
 
                         <!-- Auto-fail badge -->
@@ -98,17 +98,17 @@
                                     Visibility="{Binding IsSupervisorOnly, Converter={StaticResource InverseBoolToVisibility}}">
                             <TextBlock Margin="0,2">
                                 <Run Text="Call 1: " FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
-                                <Run Text="{Binding Call1Result}"
+                                <Run Text="{Binding Call1Result, Mode=OneWay}"
                                      Foreground="{Binding Call1Passed, Converter={StaticResource BoolToPassFailBrush}}"/>
                             </TextBlock>
                             <TextBlock Margin="0,2">
                                 <Run Text="Call 2: " FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
-                                <Run Text="{Binding Call2Result}"
+                                <Run Text="{Binding Call2Result, Mode=OneWay}"
                                      Foreground="{Binding Call2Passed, Converter={StaticResource BoolToPassFailBrush}}"/>
                             </TextBlock>
                             <TextBlock Margin="0,2">
                                 <Run Text="Call 3: " FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
-                                <Run Text="{Binding Call3Result}"
+                                <Run Text="{Binding Call3Result, Mode=OneWay}"
                                      Foreground="{StaticResource TextMutedBrush}"/>
                             </TextBlock>
                         </StackPanel>
@@ -122,12 +122,12 @@
                         <StackPanel>
                             <TextBlock Margin="0,2">
                                 <Run Text="Transfer 1: " FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
-                                <Run Text="{Binding Transfer1Result}"
+                                <Run Text="{Binding Transfer1Result, Mode=OneWay}"
                                      Foreground="{Binding Transfer1Passed, Converter={StaticResource BoolToPassFailBrush}}"/>
                             </TextBlock>
                             <TextBlock Margin="0,2">
                                 <Run Text="Transfer 2: " FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}"/>
-                                <Run Text="{Binding Transfer2Result}"
+                                <Run Text="{Binding Transfer2Result, Mode=OneWay}"
                                      Foreground="{StaticResource TextMutedBrush}"/>
                             </TextBlock>
                         </StackPanel>
